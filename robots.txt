@@ -1,0 +1,4 @@
+User-agent: *
+Disallow: /tmp/
+
+SITEMAP: http://www.site.com/sitemap.xml

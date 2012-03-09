@@ -1,0 +1,21 @@
+/* *********************************************************************
+[PROJECT] by Liquid Source
+http://www.liquid-source.com
+
+File: dataTables.css
+File description: Sets styles for the datatables table
+Author: Nick Wilkins
+
+Credit: See http://datatables.net/styling/custom_classes for more information
+********************************************************************* */
+
+.dataTables_length label { width: inherit;}
+.dataTables_filter label { width: inherit;}
+
+table.dataTable th.sorting_desc, table.dataTable th.sorting_asc { background-color: #eee ; }
+table.dataTable th.sorting { background-color: #ddd ; }
+
+table.dataTable tr.odd { background-color: #eee ; }
+table.dataTable tr.odd td.sorting_1, table.dataTable tr.odd td.sorting_2, table.dataTable tr.odd td.sorting_3, table.dataTable tr.odd td.sorting_4 { background-color: #bbb ; }
+table.dataTable tr.even { background-color: #fff ; }
+table.dataTable tr.even td.sorting_1, table.dataTable tr.even td.sorting_2, table.dataTable tr.even td.sorting_3, table.dataTable tr.even td.sorting_4 { background-color: #ccc ; }

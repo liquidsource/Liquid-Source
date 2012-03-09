@@ -1,0 +1,103 @@
+/* *********************************************************************
+[PROJECT] by Liquid Source
+http://www.liquid-source.com
+
+File: less_master.less
+File description: Core Less file, setting out various rules for the site
+Author: Nick Wilkins
+********************************************************************* */
+
+@import url(core.less);
+
+
+/* Base style definition for font on the site. Everything else inherits from here */
+html { font-family: 'Open Sans', sans-serif, arial, verdana; color: @textColor; font-size: 1em; line-height:1.5; }
+
+/* Base Typography */
+p { margin: 1em 0px; line-height:1.5 }
+
+/* Links */
+A, A:Visited { color: @linkColor; text-decoration: none; outline:none; cursor:pointer !important; }
+A:Hover { color: @linkHoverColor; text-decoration: underline; outline:none; }
+
+/* Headers */
+h1, h2, h3, h4, h5, h6 { color: @headerColor; margin: 5px 0px; }
+h1 { font-size: @h1headerSize; }
+h2 { font-size: @h1headerSize - 0.2em; }
+h3 { font-size: @h1headerSize - 0.4em; }
+h4 { font-size: @h1headerSize - 0.6em; }
+h5 { font-size: @h1headerSize - 0.8em; }
+h6 { font-size: @h1headerSize - 1em; }
+
+/* Body */
+body { font-size: 10pt;  }
+
+/* Core Sections */
+header { background: #eee; }
+#main { background: #fff; padding: 10px 0px; }
+footer { background: #999; border-top: 2px solid #888; border-bottom:2px solid #333; }
+
+/* Header */
+#top_header {
+  height: 70px;
+  padding-top:5px;
+  width: 100%;
+  background: #222222;
+}
+
+/* Footer */
+footer {
+  ul li { float:left; margin: 10px 0px; font-size: 0.8em; border-left: 1px solid #bbb; padding: 0px 5px; }
+  ul li:first-child { border-left: none; padding-left:0px; }
+  
+  .f_right ul li { float:left; margin: 10px 0px; font-size: 0.8em; border:none; }
+  
+  a { color: #333 !important; }
+  a:Hover { text-decoration:underline; }
+}
+
+/* Site wide classes */
+.wrap { margin: 0 auto; width: 1580px; }
+.noinfo { color: #666; font-style;italic; margin-left: 50px; font-size: 0.9em; }
+
+/* Menu */
+#nav {
+  li { z-index: 99; font-weight: bold; float:left; position:relative;
+      a { padding: 15px 30px; display:block; }
+      a:Hover { background: #ddd; color: #333; }
+    }
+}
+
+
+/* Alert Warning Messages */
+h4.alert { display: block;width: 100%;.border-radius(5px); background-position: 10px 10px;border: 1px solid #77BACE;color: #082B33;padding: 10px 0;text-indent: 40px;font-size: 1em; background-repeat: no-repeat !important; background-position: 10px 50% !important; }
+h4.alert_info { background: #B5E5EF url(../../images/icons/icn_alert_info.png); }
+h4.alert_warning { background: #F5F3BA url(../../images/icons/icn_alert_warning.png); }
+h4.alert_error { background: #F3D9D9 url(../../images/icons/icn_alert_error.png); }
+h4.alert_success { background: #E2F6C5 url(../../images/icons/icn_alert_success.png); }
+
+@media only screen and (min-width: 1300px) and (max-width: 1600px) {
+  .wrap { width: 1280px; }
+}
+@media only screen and (min-width: 1024px) and (max-width: 1300px) {
+  .wrap { width: 980px; }
+}
+@media only screen and (min-width: 768px) and (max-width: 1024px) {
+  .wrap { width: 730px; }
+}
+
+@media only screen and (min-width: 480px) and (max-width: 768px) {
+  .wrap { width: 440px; }
+}
+
+@media only screen and (max-width: 480px) {
+  .wrap { width: 300px; }
+  header { background: transparent; }
+  #nav {
+    li { z-index: 99; font-weight: bold; position:relative; float:none;
+        a { padding: 5px 10px; display:block; text-align:center; background-color: #eee; .border-radius(3px); margin-top:3px; }
+        a:Hover { background: #ddd; color: #333; }
+      }
+    li:last-child { margin-left: 0px !important; }
+  }
+}

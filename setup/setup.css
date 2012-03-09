@@ -1,0 +1,162 @@
+html {
+  font-family: arial, sans-serif, verdana;
+  color:#333333;
+  font-size:1em;
+  line-height:1.125em;
+}
+p { margin:1em 0px; }
+A, A:Visited {
+  color:#0093cb;
+  text-decoration:none;
+  outline:none;
+  cursor:pointer;
+}
+A:Hover {
+  color:#002d65;
+  text-decoration:underline;
+  outline:none;
+}
+h1, h2, h3, h4, h5, h6 { color:#0093cb; }
+h1 { font-size:2em; }
+h2 { font-size:1.8em; }
+h3 { font-size:1.6em; }
+h4 { font-size:1.4em; }
+h5 { font-size:1.2em; }
+h6 { font-size:1em; }
+body { font-size:10pt; }
+header { background:#eeeeee; }
+#main {
+  background:#dddddd;
+  padding:10px 0px;
+}
+footer { background:#eeeeee; }
+#top_header {
+	height: 70px;
+	padding-top:5px;
+	width: 100%;
+	background: #222222;
+}
+footer ul li {
+  float:left;
+  margin:10px 0px;
+  font-size:0.8em;
+  border-left:1px solid #bbbbbb;
+  padding:0px 5px;
+}
+footer ul li:first-child {
+  border-left:none;
+  padding-left:0px;
+}
+footer .f_right ul li {
+  float:left;
+  margin:10px 0px;
+  font-size:0.8em;
+  border:none;
+}
+.wrap {
+  margin:0 auto;
+  width:980px;
+}
+.sub_info { color: #666; font-size: 0.8em; }
+.box {
+	border: 2px solid #333; border-radius: 5px; background-color: #fff; padding: 15px; margin: 20px auto;
+}
+#nav li {
+  z-index:99;
+  font-weight:bold;
+  float:left;
+  position:relative;
+}
+#nav li a {
+  padding:15px 30px;
+  display:block;
+}
+#nav li a:Hover {
+  background:#dddddd;
+  color:#333333;
+}
+h4.alert {
+  display:block;
+  width:95%;
+  -webkit-border-radius:5px;
+  -moz-border-radius:5px;
+  border-radius:5px;
+  background-position:10px 10px;
+  border:1px solid #77bace;
+  color:#082b33;
+  padding:10px 0;
+  text-indent:40px;
+  font-size:1em;
+  background-repeat:no-repeat !important;
+  background-position:10px 50% !important;
+}
+h4.alert_info { background:#b5e5ef url(../images/icons/icn_alert_info.png); }
+h4.alert_warning { background:#f5f3ba url(../images/icons/icn_alert_warning.png); }
+h4.alert_error { background:#f3d9d9 url(../images/icons/icn_alert_error.png); }
+h4.alert_success { background:#e2f6c5 url(../images/icons/icn_alert_success.png); }
+@media only screen and (max-width: 768px) {
+}
+@media only screen and (max-width: 480px) {
+}
+
+fieldset { margin-bottom:10px; }
+input[type=submit], input[type=button], button {
+	-webkit-border-radius:5px;
+	-moz-border-radius:5px;
+	border-radius:5px;
+	border:none;
+	padding:5px 10px;
+	font-weight:bold;
+	color:#ffffff;
+	cursor:pointer;
+	text-shadow:1px 1px 1px #999;
+	background:#0093cb;
+	height: 35px;
+	font-size: 1em;
+	border: 1px solid #3079ED !important;
+	background: #4B8DF8;
+	background: -webkit-linear-gradient(top, #4C8FFD, #4787ED);
+	background: -moz-linear-gradient(top, #4C8FFD, #4787ED);
+	background: -ms-linear-gradient(top, #4C8FFD, #4787ED);
+	background: -o-linear-gradient(top, #4C8FFD, #4787ED);
+	-webkit-transition: border .20s;
+	-moz-transition: border .20s;
+	-o-transition: border .20s;
+	transition: border .20s;
+}
+input[type=submit]:Hover, input[type=button]:Hover, button:Hover {
+	border: 1px solid #2F5BB7 !important;
+	background: #3F83F1;
+	background: -webkit-linear-gradient(top, #4D90FE, #357AE8);
+	background: -moz-linear-gradient(top, #4D90FE, #357AE8);
+	background: -ms-linear-gradient(top, #4D90FE, #357AE8);
+	background: -o-linear-gradient(top, #4D90FE, #357AE8);
+}
+button[disabled] { color:#dddddd; }
+input[disabled], select[disabled], textarea[disabled] { background-color:#dddddd; }
+input[type=text], input[type=password], input[type=email], select, textarea {
+  padding:3px 10px;
+  color:#666666;
+  border:1px solid #cccccc;
+  -webkit-border-radius:5px;
+  -moz-border-radius:5px;
+  border-radius:5px;
+}
+select {
+  padding:2px 5px;
+  width:173px;
+}
+textarea {
+  width:316px;
+  margin-bottom:20px;
+  height:80px;
+}
+label {
+  width:150px;
+  margin-bottom:5px;
+  cursor:text;
+}
+input:focus, select:focus, textarea:focus { border:1px solid #f57f20; }
+input:hover, select:hover, textarea:hover { border:1px solid #ffd915; }
+input[type=button]:focus, input[type=button]:hover, input[type=submit]:focus, input[type=submit]:hover { border:none; }
+
