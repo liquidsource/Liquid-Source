@@ -1,7 +1,6 @@
 <?php
 /* Called at the top of every page. Gets the current module or default one if a module is not passed */
 function getModule($module) {
-	mysql_set_charset('utf8');
     if(empty($module)) {
         $rs = mq("select pg_slug from " . DB_TBL_PAGES . " where isDefault='1' and isAdmin='0' order by pgid asc");
         if(mnr($rs) > 0) { $rw = mfa($rs); return $rw['pg_slug']; } else { echo "Error 101. No defualt module chosen."; die; }

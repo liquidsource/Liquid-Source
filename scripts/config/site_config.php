@@ -35,6 +35,14 @@ if($settingup != "true") {
 		die;
 	}
 	
+	if(USE_MYSQLI) {
+		global $db;
+		mysqli_set_charset($db,'utf8');
+	}
+	else {
+		mysql_set_charset('utf8');
+	}
+	
 	$rs = mq("SELECT * FROM " . DB_TBL_SITE_OPTIONS);
 	if (!$rs) {
 		header('Location: ' . REDIRECT_ROOT_PATH . 'setup/setup.php');
