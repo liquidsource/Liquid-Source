@@ -1,8 +1,13 @@
 <?php
+/* The core file that needs to be included on all pages */
 include("scripts/system.php");
-$module = getModule($_GET['module']);
+
+/* This echos out everything upto and including the <body> tag */
+topPage(MODULE);
+
+/* You are now ready to roll with the page */
 ?>
-<?php topPage($module); ?>
+
 <header>
     <?php include("incs/header.php"); ?>
 </header>
@@ -12,4 +17,8 @@ $module = getModule($_GET['module']);
 <footer>
     <?php include("incs/footer.php"); ?>
 </footer>
-<?php bottomPage($module) ?>
+
+<?php
+/* And now echo out all the JS and closing body and html tags */
+bottomPage($module);
+?>

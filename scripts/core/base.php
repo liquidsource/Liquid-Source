@@ -1,5 +1,12 @@
 <?php
-/* *** USER RELATED FUNCTIONS *** */
+/**
+ * FILE: base.php
+ * OBJECTIVE: Core functions for Liquid Source 
+ */
+
+/**
+ * USER RELATED FUNCTIONS
+ */
 function getMid() { return $_SESSION['mid']; }
 function getUserFullName($mid) {
 	if($mid > 0) {
@@ -24,7 +31,36 @@ function sendForgotPassword($email) {
     }
 }
 
-/* *** HELPER FUNCTIONS *** */
+
+/**
+ * FORM BOT PROTECTIONS FUNCTIONS
+ */
+function checkFormBot($arr) {
+	if($_GET['g_timeloaded'] != $_POST['p_timeloaded']) return true;
+	if($_POST['aformfield'] != "") return true;
+	
+	extract($arr);
+	if($timecheck > 0) { if(time() - $_GET['p_timeloaded'] < $timecheck) return true; }
+	if($nohtml != "") { if(strlen($nohtml) != striptags(strlen($nohtml))) { return true; } }
+	
+	return checkBotFromUserAgent();
+}
+function checkBotFromUserAgent() {
+	$bot_list = array("Teoma", "alexa", "froogle", "Gigabot", "inktomi","looksmart", "URL_Spider_SQL", "Firefly", "NationalDirectory",
+    "Ask Jeeves", "TECNOSEEK", "InfoSeek", "WebFindBot", "girafabot","crawler", "www.galaxy.com", "Googlebot", "Scooter", "Slurp",
+    "msnbot", "appie", "FAST", "WebBug", "Spade", "ZyBorg", "rabaz","Baiduspider", "Feedfetcher-Google", "TechnoratiSnoop", "Rankivabot",
+    "Mediapartners-Google", "Sogou web spider", "WebAlta Crawler","Spider","msnbot","AdsBot","bitlybot","Twitterbot","bingbot","YandexBot","LinkedInBot",
+    "spider","Birubot","TweetmemeBot", "Exabot", "Showyoubot", "SkimWordsBot", "MLBot","SemrushBot"
+    );
+    foreach($bot_list as $bot) {
+        if(strpos($_SERVER['HTTP_USER_AGENT'],$bot) > 0 || strpos($_SERVER['HTTP_USER_AGENT'],$bot) === 0) { return true; }
+    }
+    return false;
+}
+
+/**
+ * MISCELANIOUS HELPER FUNCTIONS
+ */
 function projectParsers($newf) {
 	if(USE_FORM_PARSER) {
 		$newf = str_replace("</form>",
@@ -74,165 +110,79 @@ function strToSlug($str,$module=NULL,$uid=NULL){
 	}
     return $str;
 }
-function checkFormBot($arr) {
-	if($_GET['g_timeloaded'] != $_POST['p_timeloaded']) return true;
-	if($_POST['aformfield'] != "") return true;
-	
-	extract($arr);
-	if($timecheck > 0) { if(time() - $_GET['p_timeloaded'] < $timecheck) return true; }
-	if($nohtml != "") { if(strlen($nohtml) != striptags(strlen($nohtml))) { return true; } }
-	
-	return checkBotFromUserAgent();
-}
 function log_me($sc,$info=NULL) {
 	$mid = getMid();
 	$ip = getRealIpAddr();
 	$ua = $_SERVER['HTTP_USER_AGENT'];
 	$rs = mq("insert into " . DB_TBL_SITE_LOG . " (sl_ip,sl_useragent,mid,sl_sc,sl_info) values ('$ip','$ua','$mid','$sc','$info')");
 }
+function md5_of_dir($folder) {
+	$dircontent = scandir($folder);
+	$ret='';
+	foreach($dircontent as $filename) {
+		if ($filename != '.' && $filename != '..') {
+			if (filemtime($folder.$filename) === false) return false;
+			$ret.=date("YmdHis", filemtime($folder.$filename)).$filename;
+		}
+	}
+	return md5($ret);
+}
+function delete_old_md5s($folder) {
+	$olddate=time() - 60;
+	$dircontent = scandir($folder);
+	foreach($dircontent as $filename) {
+		if (strlen($filename)==36 && filemtime($folder.$filename)<$olddate) {
+			unlink($folder.$filename);
+    	}
+	}
+}
 
-/* *** GRAB TABLE INFORMATION, MULTIPLE ROWS *** */
-function ls_m_getPostInfo($arr=array()) {
-    extract($arr);
-    if($num != "") { $limit = $num; } else { $limit = " 0,1000"; }
-    if($cid != "") {
-        $jc = " inner join " . DB_TBL_CATEGROY_LINK . " c on posts.pid = c.uid ";
-        $wc = " and c.l_type='post' and cid='$cid' ";
-    }
-	if($orderby == "") { $orderby = "pid"; }
-	if($orderdir == "") { $orderdir = "asc"; }
-	if($active == "") { $wc .= " and p_active='1' "; } else { $wc .= " and p_active='$active' "; }
-	
-    $ret_arr = array();
-    $rs = mq("select pid from " . DB_TBL_POSTS . " $jc where p_type='post' $wc order by $orderby $orderdir limit $limit");
-    while($rw = mfa($rs)) {
-		$ret = new Post($rw['pid']);
-		if($ret != "") $ret_arr[] = $ret;
-    }
-    return $ret_arr;
-}
-function ls_m_getTemplateInfo($arr=array()) {
-    extract($arr);
-    if($num != "") { $limit = $num; } else { $limit = " 0,1000"; }
-	if($orderby == "") { $orderby = "pid"; }
-	if($orderdir == "") { $orderdir = "asc"; }
-	if($active == "") { $wc .= " and p_active='1' "; } else { $wc .= " and p_active='$active' "; }
-	
-    $ret_arr = array();
-    $rs = mq("select pid from " . DB_TBL_POSTS . " where p_type='template' $wc order by $orderby $orderdir limit $limit");
-    while($rw = mfa($rs)) {
-		$ret = new Template($rw['pid']);
-		if($ret != "") $ret_arr[] = $ret;
-    }
-    return $ret_arr;
-}
-function ls_m_getPageInfo($arr=array()) {
-    extract($arr);
-    if($num != "") { $limit = $num; } else { $limit = " 0,1000"; }
-	if($orderby == "") { $orderby = "pgid"; }
-	if($orderdir == "") { $orderdir = "asc"; }
-	if($active == "") { $wc .= " and pg_active='1' "; } else { $wc .= " and pg_active='$active' "; }
-    $ret_arr = array();
-    $rs = mq("select pgid from " . DB_TBL_PAGES . " where isAdmin=0 $wc order by $orderby $orderdir limit $limit");
-    while($rw = mfa($rs)) {
-		$ret = new Page($rw['pgid']);
-		if($ret != "") $ret_arr[] = $ret;
-    }
-    return $ret_arr;
-}
-function ls_m_getMemberInfo($arr=array()) {
-	extract($arr);
-    if($num != "") { $limit = $num; } else { $limit = " 0,1000"; }
-	if($orderby == "") { $orderby = "m.mid"; }
-	if($orderdir == "") { $orderdir = "asc"; }
-	if($m_type == "") { $m_type = "U"; }
-	if($active == "") { $wc .= " and m_active='1' "; } else { $wc .= " and m_active='$active' "; }
-	
-    $ret_arr = array();
-    $rs = mq("select m.mid from " . DB_TBL_MEMBERS . " m inner join " . DB_TBL_MEMBER_PROFILE . " p on m.mid = p.mid where m_type='$m_type' $wc order by $orderby $orderdir limit $limit");
-    while($rw = mfa($rs)) {
-		$ret = new Member($rw['mid']);
-		if($ret != "") $ret_arr[] = $ret;
-    }
-    return $ret_arr;
-}
-function ls_m_getMediaInfo($arr=array()) {
-	extract($arr);
-    if($num != "") { $limit = $num; } else { $limit = " 0,1000"; }
-	if($orderby == "") { $orderby = "lid"; }
-	if($orderdir == "") { $orderdir = "asc"; }
-	if($active == "") { $wc .= " and md_active='1' "; } else { $wc .= " and md_active='$active' "; }
-	
-	$ret_arr = array();
-    $rs = mq("select mdid from " . DB_TBL_MEDIA . " where 1=1 $wc order by $orderby $orderdir limit $limit");
-    while($rw = mfa($rs)) {
-		$ret = new Media($rw['mdid']);
-		if($ret != "") $ret_arr[] = $ret;
-    }
-    return $ret_arr;
-}
-function ls_m_getLinkInfo($arr=array()) {
-	extract($arr);
-    if($num != "") { $limit = $num; } else { $limit = " 0,1000"; }
-	if($orderby == "") { $orderby = "lid"; }
-	if($orderdir == "") { $orderdir = "asc"; }
-	
-	$ret_arr = array();
-    $rs = mq("select lid from " . DB_TBL_LINKS . " order by $orderby $orderdir limit $limit");
-    while($rw = mfa($rs)) {
-		$ret = new Link($rw['lid']);
-		if($ret != NULL) $ret_arr[] = $ret;
-    }
-    return $ret_arr;
-}
-function ls_m_getCategoryInfo($arr=array()) {
-	extract($arr);
-    if($num != "") { $limit = $num; } else { $limit = " 0,1000"; }
-	if($orderby == "") { $orderby = "cid"; }
-	if($orderdir == "") { $orderdir = "asc"; }
-	if($parent == "") { $parent = "0"; }
-	if($type == "") { $type = "post"; }
-	$wc = " and c_type='$type' ";
-	$ret_arr = array();
-	$rs = mq("select * from " . DB_TBL_CATEGORIES . " where c_parent=$parent $wc order by $orderby $orderdir limit $limit");
+/**
+ * TABLE HELPER FUNCTIONS
+ */
+function getPages($arr) { return LS::pages($arr); }
+function getPosts($arr) { return LS::posts($arr); }
+function getTemplates($arr) { return LS::templates($arr); }
+function getLinks($arr) { return LS::links($arr); }
+function getCategories($arr) { return LS::categories($arr); }
+function getMembers($arr) { return LS::members($arr); }
+function getMedia($arr) { return LS::media($arr); }
+
+/**
+ * CATEGORY HELPER FUNCTIONS
+ */
+function getCategoryArray($uid,$l_type='post') {
+	$rs = mq("select distinct cid from " . DB_TBL_CATEGORY_LINK . " where uid='$uid' and l_type='$l_type'");
 	while($rw = mfa($rs)) {
-		$ret = new Category($rw['cid']);
-		if($ret != NULL) $ret_arr[] = $ret;
+		$ret_arr[] = new Category($rw['cid']);
 	}
-    return $ret_arr;
+	return $ret_arr;
+}
+function getCategoryNames($uid,$l_type='post',$seperator=',') {
+	$cats = getCategoryArray($uid,$l_type);
+	foreach($cats as $cat) {
+		$ret .= $cat->name . $seperator . " ";
+	}
+	if(strlen($ret) > 0)
+		return substr($ret,0,-2);
+}
+function inCategory($catids,$uid,$l_type='post') {
+	$cat_arr = explode(",",$catids);
+	foreach($cat_arr as $catid) {
+		$catid = trim($catid);
+		if($catid != "") {
+			$rs = mq("select jcid from " . DB_TBL_CATEGORY_LINK . " where uid='$uid' and l_type='$_ltype' and cid='$catid'");
+			if(mnr($rs) > 0) {
+				return true;
+			}
+		}
+	}
+	return false;
 }
 
-/* *** HELPER TABLE RELATED FUNCTIONS *** */
-function getCategoryId($uid,$l_type='post') {
-	return getFieldValue("select cid as n from " . DB_TBL_CATEGORY_LINK . " where uid='$uid' and l_type='$l_type'");
-}
-function getCategoryName($uid,$l_type='post') {
-	$cid = getCategoryId($uid,$l_type);
-	if(is_array($cid)) {
-		foreach($cid as $c) {
-			$ret .= getFieldValue("select c_name as n from " . DB_TBL_CATEGORIES . " where cid='$c'") . ",";
-		}
-		$ret = substr($ret,0,-1);
-	} else{
-		$ret = getFieldValue("select c_name as n from " . DB_TBL_CATEGORIES . " where cid='$cid'");
-	}
-	return $ret;
-}
-function getFieldValue($sql,$arg='n') {
-	$rs = mq($sql);
-	if(mnr($rs) > 0) {
-		if(mnr($rs) > 1) {
-			while($rw=mfa($rs)) {
-				$ret_arr[] = $rw[$arg];
-			}
-			return $ret_arr;
-		} else {
-			$rw = mfa($rs);
-			return $rw[$arg];
-		}
-	}
-	return "";
-}
+/**
+ * META DATA HELPER FUNCTIONS
+ */
 function insertMetaData($arg,$val,$uid,$typee,$ident) {
 	if($arg != "") {
 		$arg = mres($arg);
@@ -256,5 +206,24 @@ function getMetaData($uid,$typee) {
 		$i++;
 	}
 	return $ret_arr;
+}
+
+/**
+ * DATABASE HELPER FUNCTIONS
+ */
+function getFieldValue($sql,$arg='n') {
+	$rs = mq($sql);
+	if(mnr($rs) > 0) {
+		if(mnr($rs) > 1) {
+			while($rw=mfa($rs)) {
+				$ret_arr[] = $rw[$arg];
+			}
+			return $ret_arr;
+		} else {
+			$rw = mfa($rs);
+			return $rw[$arg];
+		}
+	}
+	return "";
 }
 ?>

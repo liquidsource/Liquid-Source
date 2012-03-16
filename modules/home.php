@@ -28,7 +28,7 @@
 <tr><td><pre>&nbsp;&nbsp;|- config</pre></td><td><em class="noinfo">The site config file that is used by the system. You would have changed this already</em></td></tr>
 <tr><td><pre>&nbsp;&nbsp;|- core</pre></td><td><em class="noinfo">A collection of Liquid Source core php function files</em></td></tr>
 <tr><td><pre>|- setup</pre></td><td><em class="noinfo">After setup this folder can be deleted. Used to setup the site.</em></td></tr>
-<tr><td><pre>|- uploads</pre></td><td><em class="noinfo">A folder to hold all media uploads</em></td></tr>
+<tr><td><pre>|- uploads</pre></td><td><em class="noinfo">A folder to hold all media uploads. You may have to enable write permissions on this folder.</em></td></tr>
 </table>
 
 
@@ -43,7 +43,8 @@
 <p>to get the relevant text page content. In the base setup 'Login' and 'Register' are examples of bespoke pages, and 'About Us' is an example text page.</p>
 
 <p><strong>But how does the system know what to load up?</strong></p>
-<p>In the backend admin you can create pages and define them as bespoke or text. Just remember to set the page slug as the relevant url 'module slug'.</p>
+<p>In the backend admin you can create pages and define them as bespoke or text. Just remember to set the page slug as the relevant url 'module slug'. If a page is not specified in the backend
+	the system will still try loading up the page, looking in the 'modules' folder for a bespoke page.</p>
 
 <h2>CSS and LESS</h2>
 <p>Liquid Source utilises the amazing work of Alexis Sellier and uses the LESS CSS framework. If you are unfamliar with LESS we suggest you check out the documentation on the LESS page that can be found
@@ -71,17 +72,19 @@
 	<li><pre style='display:inline'>Email</pre> - class to build and send out emails.</li>
 	<li><pre style='display:inline'>Feed</pre> - can build and write xml feeds, including sitemaps and rss feeds.</li>
 	<li><pre style='display:inline'>Links</pre> - deals with links and lists of links.</li>
+	<li><pre style='display:inline'>Liquid Source</pre> - The main root class that deals with a whole heap of functionality.</li>
 	<li><pre style='display:inline'>Media</pre> - holds information on any media that is used on the site (such as uploaded images).</li>
 	<li><pre style='display:inline'>Member</pre> - used to register, login, logout, sanitze and security check members.</li>
 	<li><pre style='display:inline'>Post</pre> - for displaying and echoing out posts.</li>
 	<li><pre style='display:inline'>Page</pre> - for displaying and echoing out pages.</li>
 	<li><pre style='display:inline'>Template</pre> - for building email templates than can be used to send base emails.</li>
+	<li><pre style='display:inline'>Menu</pre> - for storing and displaying menu structures for the site.</li>
 </ul>
 <p>As well as additional core classes. Documentation on how to use the classes is included in your core documentation.</p>
 
 <h2>Pre-Installed Packages and Modules</h2>
-<p>One the major advantages to Liquid Source is its initial group of core packages that come with the system, allowing you the developer to save time and effort in figuring out and including
-	base elements again and again. All the packages can be seen from the <a href="elements/">Elements Page</a>, and more information is included in the core documentation. However below:</p>
+<p>One the major advantages to Liquid Source is its initial group of core packages that come with the system, allowing the developer to save time and effort in figuring out and including
+	base elements again and again. All the packages can be seen from the <a href="elements/">Elements Page</a>, and more information is included in the core documentation. A list of included items is below:</p>
 	
 <strong>Javascript Libraries</strong>
 <ul style="margin-left:20px">
@@ -117,7 +120,6 @@
 <ul style="margin-left:20px">
 	<li>Liquid Source properitary bot protection</li>
 </ul>
-<p>All the packages have full commercial licences associated with them.</p>
 
 <h2>Other Gumf</h2>
 <p>Liquid Source is built in HTML 5 with CSS3, with a respoinsive design in mind. For backwards compatability for these features, and a whole heap of useful features

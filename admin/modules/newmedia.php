@@ -23,23 +23,23 @@ if($mdid != "") {
         </fieldset>
         <fieldset>
             <label>Media Title</label>
-            <input type="text" name="md_title" id="md_title" value="<?php echo $media->md_title; ?>">
+            <input type="text" name="md_title" id="md_title" value="<?php echo $media->title; ?>">
         </fieldset>
         <fieldset>
             <label>Media Alt Text</label>
-            <input type="text" name="md_alttext" id="md_alttext" value="<?php echo $media->md_alttext; ?>">
+            <input type="text" name="md_alttext" id="md_alttext" value="<?php echo $media->alttext; ?>">
         </fieldset>
         <fieldset>
             <label>Media Text</label>
-            <textarea name="md_text" id="md_text"><?php echo $media->md_text; ?></textarea>
+            <textarea name="md_text" id="md_text"><?php echo $media->text; ?></textarea>
         </fieldset>
         <fieldset style="width:48%; float:left; margin-right: 3%;">
             <label>Category</label>
             <select style="width:92%;height: 130px;" id="cid" name="cid[]" multiple>
             	<?php
-	            $arr = ls_m_getCategoryInfo(array('type' => 'media'));
+	            $arr = getCategories(array('type' => 'media'));
 				foreach($arr as $category) {
-					echo showCategoryOption($category,'0',$media->getCid(),'media');
+					echo showCategoryOption($category,'0',$media->categories());
 				}
 	            ?>
             </select>

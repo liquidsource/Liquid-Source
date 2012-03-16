@@ -25,9 +25,9 @@ if($cid != "") {
     </thead> 
     <tbody>
         <?php
-        $arr = ls_m_getCategoryInfo(array("num" => $llimit . "," . $hlimit, "orderby" => $orderby, "orderdir" => $orderdir, "type" => "media"));
-		foreach($arr as $i_category) {
-			echo showCategoryRow($i_category,'','media');
+        $arr = getCategories(array("num" => $llimit . "," . $hlimit, "orderby" => $orderby, "orderdir" => $orderdir, "type" => 'media'));
+		foreach($arr as $cat) {
+			echo showCategoryRow($cat);
 		}
 		?>
     </tbody> 
@@ -37,7 +37,7 @@ if($cid != "") {
 
 <form method="post" action="scripts/action.php?action=newcategory&to=mediacategories&c_type=media&cid=<?php echo $cid; ?>">
 <article class="module width_full">
-<header><h3 class="tabs_involved">Edit / New Post Category</h3></header>
+<header><h3 class="tabs_involved">Edit / New Media Category</h3></header>
 <div class="tab_container">
 
     <table class="tablesorter" cellspacing="0">
@@ -47,14 +47,14 @@ if($cid != "") {
             <select name="c_parent" id="c_parent">
                 <option value="0">Parent</option>
                 <?php
-                $arr = ls_m_getCategoryInfo(array("num" => $llimit . "," . $hlimit, "orderby" => $orderby, "orderdir" => $orderdir, "type" => "media"));
+                $arr = getCategories(array("num" => $llimit . "," . $hlimit, "orderby" => $orderby, "orderdir" => $orderdir, "type" => "media"));
 				foreach($arr as $i_category) {
-					echo showCategoryOption($i_category,'0',$category->c_parent);
+					echo showCategoryOption($i_category,'0',$category->parent);
 				}
                 ?>
             </select>
             </td>
-            <td><input type="text" name="c_name" id="c_name" value="<?php echo $category->c_name; ?>" /></td>
+            <td><input type="text" name="c_name" id="c_name" value="<?php echo $category->name; ?>" /></td>
             <td><input type="submit" value="Edit / New" class="alt_btn" /></td>
         </tr>
     </tbody> 

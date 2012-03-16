@@ -1,7 +1,7 @@
 <?php
 $pid = $_GET['pid'];
 if($pid != "") {
-    $post = new Post($pid);
+    $post = new Post('',$pid);
 } else {
 	$post = new Post();
 }
@@ -12,19 +12,19 @@ if($pid != "") {
     <div class="module_content">
         <fieldset>
             <label>Post Title</label>
-            <input type="text" name="p_title" id="p_title" value="<?php echo $post->p_title; ?>" required />
+            <input type="text" name="p_title" id="p_title" value="<?php echo $post->title; ?>" required />
         </fieldset>
         <fieldset>
             <label>Content</label>
-            <textarea rows="12" name="p_content" id="p_content"><?php echo $post->p_content; ?></textarea>
+            <textarea rows="12" name="p_content" id="p_content"><?php echo $post->content; ?></textarea>
         </fieldset>
         <fieldset style="width:48%; float:left; margin-right: 3%;">
             <label>Category</label>
-            <select style="width:92%;" id="cid" name="cid">
+            <select style="width:92%;height:150px" id="cid" name="cid[]" multiple>
                 <?php
-                $arr = ls_m_getCategoryInfo(array());
+                $arr = getCategories(array());
 				foreach($arr as $category) {
-					echo showCategoryOption($category,'0',$post->getCid());
+					echo showCategoryOption($category,'0',$post->categories());
 				}
                 ?>
             </select>
@@ -36,7 +36,7 @@ if($pid != "") {
             <div class="clear"></div>
             <?php
             $i=0;
-            $meta_data_arr = $post->getMetaDataArray();
+            $meta_data_arr = $post->metaData();
 			if(sizeof($meta_data_arr) > 0) {
 				foreach($meta_data_arr as $arg => $val) {
 				$i++;

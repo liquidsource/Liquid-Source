@@ -1,7 +1,7 @@
 <?php
 $pgid = $_GET['pgid'];
 if($pgid != "") {
-   	$page = new Page($pgid);
+   	$page = new Page('',$pgid);
 	if($page->isdefault) $disabled = " disabled ";
 } else {
 	$page = new Page();
@@ -13,20 +13,20 @@ if($pgid != "") {
     <div class="module_content">
         <fieldset>
             <label>Page Title</label>
-            <input type="text" name="pg_meta_title" id="pg_meta_title" value="<?php echo $page->pg_meta_title; ?>" required />
+            <input type="text" name="pg_meta_title" id="pg_meta_title" value="<?php echo $page->title; ?>" required />
         </fieldset>
         <fieldset>
             <label>Page Slug</label>
-            <input type="text" name="pg_slug" id="pg_slug" value="<?php echo $page->pg_slug; ?>" <?php echo $disabled; ?> />
+            <input type="text" name="pg_slug" id="pg_slug" value="<?php echo $page->slug; ?>" <?php echo $disabled; ?> />
         </fieldset>
-        <input type="hidden" name="init_slug" id="init_slug" value="<?php echo $page->pg_slug; ?>" />
+        <input type="hidden" name="init_slug" id="init_slug" value="<?php echo $page->slug; ?>" />
         
         <fieldset>
             <label>Meta Description</label>
-            <input type="text" name="pg_meta_description" id="pg_meta_description" value="<?php echo $page->pg_meta_description; ?>">
+            <input type="text" name="pg_meta_description" id="pg_meta_description" value="<?php echo $page->meta_description; ?>">
             <div class="clear" style="padding:1px;">&nbsp;</div>
             <label style='width:300px'>Meta Keywords (comma seperated)</label>
-            <input type="text" name="pg_meta_keywords" id="pg_meta_keywords" value="<?php echo $page->pg_meta_keywords; ?>">
+            <input type="text" name="pg_meta_keywords" id="pg_meta_keywords" value="<?php echo $page->meta_keywords; ?>">
         </fieldset>
         <div class="clear"></div>
         
@@ -34,17 +34,17 @@ if($pgid != "") {
         	<label>Page Type</label>
             <div class="clear" style="padding:1px;">&nbsp;</div>
             <label style="width:150px">Text</label>
-            <span class="pg_type"><input type="radio" name="pg_type" id="pg_type" value="tx" onclick="mtypeSelected('tx');" <?php if($page->pg_type == "tx") echo "checked=\"checked\""; ?> required />&nbsp;</span>
+            <span class="pg_type"><input type="radio" name="pg_type" id="pg_type" value="tx" onclick="mtypeSelected('tx');" <?php if($page->type == "tx") echo "checked=\"checked\""; ?> required />&nbsp;</span>
             <div class="clear" style="padding:1px;">&nbsp;</div>
             <label style="width:150px">Bespoke</label>
-            <span class="pg_type"><input type="radio" name="pg_type" id="pg_type" value="bs" onclick="mtypeSelected('bs');" <?php if($page->pg_type == "bs") echo "checked=\"checked\""; ?> required />&nbsp;</span>
+            <span class="pg_type"><input type="radio" name="pg_type" id="pg_type" value="bs" onclick="mtypeSelected('bs');" <?php if($page->type == "bs") echo "checked=\"checked\""; ?> required />&nbsp;</span>
         </fieldset>
         
         
         <fieldset id="options_tx" style="display:none">
             <label>Content</label>
             <div class="clear"></div>
-            <textarea rows="30" name="pg_content" id="pg_content" style="margin-bottom: 20px;width:95%;height:400px"><?php echo $page->pg_content; ?></textarea>
+            <textarea rows="30" name="pg_content" id="pg_content" style="margin-bottom: 20px;width:95%;height:400px"><?php echo $page->content; ?></textarea>
                 
                 
             <div class="clear"></div>
@@ -52,7 +52,7 @@ if($pgid != "") {
             <div class="clear"></div>
             <?php
             $i=0;
-            $meta_data_arr = $page->getMetaDataArray();
+            $meta_data_arr = $page->metaData();
 			if(sizeof($meta_data_arr) > 0) {
 				foreach($meta_data_arr as $arg => $val) {
 				$i++;
@@ -101,5 +101,5 @@ function mtypeSelected(typee) {
         
     }
 }
-<?php if($page->pg_type != "") { ?>mtypeSelected('<?php echo strtolower($page->pg_type); ?>');<?php } ?>
+<?php if($page->type != "") { ?>mtypeSelected('<?php echo strtolower($page->type); ?>');<?php } ?>
 </script>

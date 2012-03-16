@@ -160,7 +160,7 @@ function bottomPage($module) {
     <![endif]-->
     ";
 	
-	if(USING_GOOGLE_MAPS != "") { echo "<script src=\"http://maps.googleapis.com/maps/api/js?key=" . GOOGLE_MAPS_API_KEY . "&sensor=false\"></script>"; }
+	if(GOOGLE_MAPS_API_KEY != "") { echo "<script src=\"http://maps.googleapis.com/maps/api/js?key=" . GOOGLE_MAPS_API_KEY . "&sensor=false\"></script>"; }
 	
 	if(GOOGLE_ANALYTICS_CODE != "") {
 	    echo "
@@ -243,11 +243,10 @@ function getMetaInfo($module,$ret) {
 
 /* The main body of the page is passed through this function. It takes a module as a parameter and ensures that the file exists. */
 function getModuleData($module) {
+	$page = new Page($module);
 	$m_type = "bs";
-	$rs = mq("select pg_type from " . DB_TBL_PAGES . " where pg_slug='$module'");
-	if(mnr($rs) > 0) {
-		$rw = mfa($rs);
-		$m_type = strtolower($rw['pg_type']);
+	if($page->id != "") {
+		$m_type = $page->type;
 	}
 	
 	if($m_type == "bs") {
@@ -267,7 +266,7 @@ function getModuleData($module) {
 }
 
 function getParserJavascript() {
-	$rs = mq("select * from " . DB_TBL_SITE_OPTIONS . " where so_group='Modules' or so_group='API\'s' and so_field_type='bool'");
+	$rs = mq("select * from " . DB_TBL_SITE_OPTIONS . " where (so_group='Modules' or so_group='APIs') and so_field_type='bool'");
 	while($rw = mfa($rs)) {
 		$ret .= "var " . strtolower($rw['so_arg']) . " = " . $rw['so_val'] . ";";
 	}

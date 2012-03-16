@@ -26,16 +26,16 @@ $orderdir = $_SESSION['orderdir'];
     </thead> 
     <tbody> 
         <?php
-        $arr = ls_m_getMediaInfo(array("num" => $llimit . "," . $hlimit, "orderby" => $orderby, "orderdir" => $orderdir));
+        $arr = getMedia(array("num" => $llimit . "," . $hlimit, "orderby" => $orderby, "orderdir" => $orderdir));
 		foreach($arr as $media) {
-			$mdid = $media->mdid;
+			$mdid = $media->id;
 			
 			echo "<tr onclick=\"rowSelect('$mdid');\" id=\"row_$mdid\">
 			 <td><a href=\"?module=newmedia&pgid=$mdid\">$mdid</a></td>
 			 <td>" . $media->getLocation(array('echo' => true, 'lvl' => '../')) . "</td>
-			 <td>" . $media->md_title . "</td>
-			 <td>" . $media->getCategoryName() . "</td>
-			 <td>" . $media->md_dateuploaded . "</td>
+			 <td>" . $media->title . "</td>
+			 <td>" . $media->categoryNames() . "</td>
+			 <td>" . $media->dateuploaded . "</td>
 			 <td>
 			 	<a href=\"?module=newmedia&mdid=$mdid\"><input type=\"image\" src=\"images/icn_edit.png\" title=\"Edit\"></a>
                 <a href=\"scripts/action.php?action=deletemedia&mdid=$mdid&to=editmedia\"><input type=\"image\" src=\"images/icn_trash.png\" title=\"Trash\"></a>

@@ -1,4 +1,5 @@
 /**
+ * Function: submitForm()
  * Function to call when submitting a form.
  * Usage: onsubmit="return submitForm(<form_name>)" on the form tag.
  *  - ie <form onsubmit="return submitForm('register_form')" method="post">

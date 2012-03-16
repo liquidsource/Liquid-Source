@@ -1,7 +1,9 @@
 <?php
 $pid = $_GET['pid'];
 if($pid != "") {
-    $template = new Template($pid);
+    $template = new Template('',$pid);
+} else {
+	$template = new Template();
 }
 ?>
 <form method="post" action="scripts/action.php?action=newtemplate&to=newtemplate&pid=<?php echo $pid; ?>" id="admin_template_frm" onsubmit="return submitForm('admin_template_frm');">
@@ -10,15 +12,15 @@ if($pid != "") {
     <div class="module_content">
         <fieldset>
             <label>Template Name</label>
-            <input type="text" name="p_title" id="p_title" value="<?php echo $template->p_title; ?>" required />
+            <input type="text" name="p_title" id="p_title" value="<?php echo $template->title; ?>" required />
         </fieldset>
         <fieldset>
             <label>Template Slug</label>
-            <input type="text" name="p_slug" id="p_slug" <?php echo $disabled; ?> value="<?php echo $template->p_slug; ?>" />
+            <input type="text" name="p_slug" id="p_slug" <?php echo $disabled; ?> value="<?php echo $template->slug; ?>" />
         </fieldset>
         <fieldset>
             <label>Content</label>
-            <textarea rows="30" name="p_content" id="p_content"><?php echo $template->p_content; ?></textarea>
+            <textarea rows="30" name="p_content" id="p_content"><?php echo $template->content; ?></textarea>
         </fieldset>
         <div class="clear"></div>
     </div>

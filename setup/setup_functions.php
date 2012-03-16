@@ -187,22 +187,23 @@ INSERT INTO `" . DB_TBL_PAGES . "` VALUES(8, 'Edit Pages', 'editpages', NULL, NU
 INSERT INTO `" . DB_TBL_PAGES . "` VALUES(9, 'New Media', 'newmedia', NULL, NULL, 0, 1, '0000-00-00 00:00:00', 'bs', '0000-00-00 00:00:00', '', 1);
 INSERT INTO `" . DB_TBL_PAGES . "` VALUES(10, 'Edit Media', 'editmedia', NULL, NULL, 0, 1, '0000-00-00 00:00:00', 'bs', '0000-00-00 00:00:00', '', 1);
 INSERT INTO `" . DB_TBL_PAGES . "` VALUES(11, 'Media Categories', 'mediacategories', NULL, NULL, 0, 1, '0000-00-00 00:00:00', 'bs', '0000-00-00 00:00:00', '', 1);
-INSERT INTO `" . DB_TBL_PAGES . "` VALUES(12, 'Contact Us', 'contactus', 'des', 'key', 0, 0, '0000-00-00 00:00:00', 'bs', '2012-03-05 15:44:19', '', 1);
-INSERT INTO `" . DB_TBL_PAGES . "` VALUES(13, 'New Email Template', 'newtemplate', NULL, NULL, 0, 1, '0000-00-00 00:00:00', 'bs', '0000-00-00 00:00:00', '', 1);
-INSERT INTO `" . DB_TBL_PAGES . "` VALUES(14, 'Edit Email Templates', 'edittemplates', NULL, NULL, 0, 1, '0000-00-00 00:00:00', 'bs', '0000-00-00 00:00:00', '', 1);
-INSERT INTO `" . DB_TBL_PAGES . "` VALUES(15, 'Home', '', 'This is the generic module setup', 'keyword1,keyword2s', 0, 0, '2012-03-05 17:42:21', 'bs', '2012-03-05 17:42:21', '', 1);
-INSERT INTO `" . DB_TBL_PAGES . "` VALUES(16, 'Edit Links', 'editlinks', NULL, NULL, 0, 1, '0000-00-00 00:00:00', 'bs', '0000-00-00 00:00:00', '', 1);
-INSERT INTO `" . DB_TBL_PAGES . "` VALUES(17, 'Link Categories', 'linkcategories', NULL, NULL, 0, 1, '0000-00-00 00:00:00', 'bs', '0000-00-00 00:00:00', '', 1);
-INSERT INTO `" . DB_TBL_PAGES . "` VALUES(18, 'New Link', 'newlink', NULL, NULL, 0, 1, '0000-00-00 00:00:00', 'bs', '0000-00-00 00:00:00', '', 1);
-INSERT INTO `" . DB_TBL_PAGES . "` VALUES(19, 'About Us', 'aboutus', 'description for about us', 'kw1,kw2,about', 0, 0, '2012-01-30 16:27:21', 'tx', '0000-00-00 00:00:00', '<p>This is the about us page. The text is derived from the backend Page screen.</p>', 1);
-INSERT INTO `" . DB_TBL_PAGES . "` VALUES(20, 'Register', 'register', 'Register des', 'register, site', 0, 0, '2012-02-27 11:16:21', 'bs', '0000-00-00 00:00:00', '', 1);
-INSERT INTO `" . DB_TBL_PAGES . "` VALUES(21, 'Login', 'login', 'Login des', 'login,site', 0, 0, '2012-02-27 12:14:04', 'bs', '0000-00-00 00:00:00', '', 1);
-INSERT INTO `" . DB_TBL_PAGES . "` VALUES(22, 'Site options', 'editsiteoptions', NULL, NULL, 0, 1, '2012-03-05 16:37:04', 'bs', '0000-00-00 00:00:00', '', 1);
+INSERT INTO `" . DB_TBL_PAGES . "` VALUES(12, 'New Email Template', 'newtemplate', NULL, NULL, 0, 1, '0000-00-00 00:00:00', 'bs', '0000-00-00 00:00:00', '', 1);
+INSERT INTO `" . DB_TBL_PAGES . "` VALUES(13, 'Edit Email Templates', 'edittemplates', NULL, NULL, 0, 1, '0000-00-00 00:00:00', 'bs', '0000-00-00 00:00:00', '', 1);
+INSERT INTO `" . DB_TBL_PAGES . "` VALUES(14, 'Edit Links', 'editlinks', NULL, NULL, 0, 1, '0000-00-00 00:00:00', 'bs', '0000-00-00 00:00:00', '', 1);
+INSERT INTO `" . DB_TBL_PAGES . "` VALUES(15, 'Link Categories', 'linkcategories', NULL, NULL, 0, 1, '0000-00-00 00:00:00', 'bs', '0000-00-00 00:00:00', '', 1);
+INSERT INTO `" . DB_TBL_PAGES . "` VALUES(16, 'New Link', 'newlink', NULL, NULL, 0, 1, '0000-00-00 00:00:00', 'bs', '0000-00-00 00:00:00', '', 1);
+INSERT INTO `" . DB_TBL_PAGES . "` VALUES(17, 'Site options', 'editsiteoptions', NULL, NULL, 0, 1, '2012-03-05 16:37:04', 'bs', '0000-00-00 00:00:00', '', 1);
+INSERT INTO `" . DB_TBL_PAGES . "` VALUES(18, 'About Us', 'aboutus', 'About us description', 'kw1,kw2,about', 0, 0, '2012-01-30 16:27:21', 'tx', '0000-00-00 00:00:00', '<p>This is the about us page. The text is derived from the backend Page screen.</p>', 1);
+INSERT INTO `" . DB_TBL_PAGES . "` VALUES(19, 'Register', 'register', 'Register description', 'kw1,kw2,register', 0, 0, '2012-02-27 11:16:21', 'bs', '0000-00-00 00:00:00', '', 1);
+INSERT INTO `" . DB_TBL_PAGES . "` VALUES(20, 'Login', 'login', 'Login description', 'kw1,kw2,login', 0, 0, '2012-02-27 12:14:04', 'bs', '0000-00-00 00:00:00', '', 1);
+INSERT INTO `" . DB_TBL_PAGES . "` VALUES(21, 'Contact Us', 'contactus', 'des', 'key', 0, 0, '0000-00-00 00:00:00', 'bs', '2012-03-05 15:44:19', '', 1);
+INSERT INTO `" . DB_TBL_PAGES . "` VALUES(22, 'Pages', 'pages', 'Pages description', 'kw1,kw2,pages', 0, 0, '2012-02-27 12:14:04', 'bs', '0000-00-00 00:00:00', '', 1);
+INSERT INTO `" . DB_TBL_PAGES . "` VALUES(23, 'Posts', 'posts', 'Posts description', 'kw1,kw2,posts', 0, 0, '2012-02-27 12:14:04', 'bs', '0000-00-00 00:00:00', '', 1);
 
 INSERT INTO `" . DB_TBL_POSTS . "` VALUES(1, 'Registration', 'registration', '<p>This is what gets sent out to new registrants</p>\r\n<p>[r_username]</p>\r\n<p>[r_email]</p>\r\n<p>[r_password]</p>\r\n<p>[r_fname]</p>\r\n<p>[r_lname]</p>\r\n<p>[tel]</p>', NULL, 1, 'template', 'en', '2012-02-28 13:10:53');
 INSERT INTO `" . DB_TBL_POSTS . "` VALUES(2, 'Forgot Password', 'forgot-password', '<p>This is what gets sent out to people who forget their password</p>\r\n<p>[password]</p>\r\n<p>[mp_fname]</p>\r\n<p>[mp_lname]</p>\r\n<p>[uname]</p>', NULL, 1, 'template', 'en', '0000-00-00 00:00:00');
 
-INSERT INTO `" . DB_TBL_SITE_OPTIONS . "` VALUES(1, 'GOOGLE_MAPS_API_KEY', 'AIzaSyCeFju_W41SnogvXDmFFHinp63yKs9DMME', '0000-00-00 00:00:00', 'define', 0, 'API''s', '');
+INSERT INTO `" . DB_TBL_SITE_OPTIONS . "` VALUES(1, 'GOOGLE_MAPS_API_KEY', 'AIzaSyCeFju_W41SnogvXDmFFHinp63yKs9DMME', '0000-00-00 00:00:00', 'define', 0, 'APIs', '');
 INSERT INTO `" . DB_TBL_SITE_OPTIONS . "` VALUES(2, 'GOOGLE_ANALYTICS_CODE', 'UA-xxxxxxxx-x', '0000-00-00 00:00:00', 'define', 0, 'SEO', '');
 INSERT INTO `" . DB_TBL_SITE_OPTIONS . "` VALUES(3, 'EM_CONTACT_ADDRESS', 'contact@thiscompany.com', '0000-00-00 00:00:00', 'define', 0, 'Email', '');
 INSERT INTO `" . DB_TBL_SITE_OPTIONS . "` VALUES(4, 'EM_FEED_ADDRESS', 'webmaster@thiscompany.com', '0000-00-00 00:00:00', 'define', 0, 'Feeds', '');
@@ -236,8 +237,8 @@ INSERT INTO `" . DB_TBL_SITE_OPTIONS . "` VALUES(31, 'GOOGLE_SITE_VERIFICATION_K
 INSERT INTO `" . DB_TBL_SITE_OPTIONS . "` VALUES(32, 'MS_VALIDATE_KEY', '', '0000-00-00 00:00:00', 'define', 0, 'SEO', '');
 INSERT INTO `" . DB_TBL_SITE_OPTIONS . "` VALUES(33, 'RSS_LOCATION', 'feeds/rss.xml', '0000-00-00 00:00:00', 'define', 0, 'Feeds', '');
 INSERT INTO `" . DB_TBL_SITE_OPTIONS . "` VALUES(34, 'SITEMAP_LOCATION', 'sitemap.xml', '0000-00-00 00:00:00', 'define', 0, 'Feeds', '');
-INSERT INTO `" . DB_TBL_SITE_OPTIONS . "` VALUES(35, 'USE_GOOGLE_MAPS', 'true', '0000-00-00 00:00:00', 'define', 0, 'API''s', 'bool');
-INSERT INTO `" . DB_TBL_SITE_OPTIONS . "` VALUES(36, 'USE_FORM_PARSER', 'true', '0000-00-00 00:00:00', 'define', 0, 'Modules', 'bool');
+INSERT INTO `" . DB_TBL_SITE_OPTIONS . "` VALUES(35, 'USE_FORM_PARSER', 'true', '0000-00-00 00:00:00', 'define', 0, 'Modules', 'bool');
+INSERT INTO `" . DB_TBL_SITE_OPTIONS . "` VALUES(36, 'USE_GOOGLE_MAPS', 'true', '0000-00-00 00:00:00', 'define', 0, 'APIs', 'bool');
 INSERT INTO `" . DB_TBL_SITE_OPTIONS . "` VALUES(37, 'USE_TABLE_PARSER', 'true', '0000-00-00 00:00:00', 'define', 0, 'Modules', 'bool');
 INSERT INTO `" . DB_TBL_SITE_OPTIONS . "` VALUES(38, 'USE_TOOLTIPS', 'true', '0000-00-00 00:00:00', 'define', 0, 'Modules', 'bool');
 INSERT INTO `" . DB_TBL_SITE_OPTIONS . "` VALUES(39, 'USE_SHADOWBOX', 'true', '0000-00-00 00:00:00', 'define', 0, 'Modules', 'bool');

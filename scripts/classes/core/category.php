@@ -8,12 +8,12 @@ class Category {
 			$rs = mq("select * from " . DB_TBL_CATEGORIES . " where cid='$cid'");
 			if(mnr($rs) > 0) {
 				$rw = mfa($rs);
-				$this->data['cid'] = $rw['cid'];
-				$this->data['c_name'] = stripslashes($rw['c_name']);
-				$this->data['c_parent'] = $rw['c_parent'];
-				$this->data['c_type'] = $rw['c_type'];
+				$this->data['id'] = $rw['cid'];
+				$this->data['name'] = stripslashes($rw['c_name']);
+				$this->data['parent'] = $rw['c_parent'];
+				$this->data['type'] = $rw['c_type'];
 				
-				$rs = mq("select * from " . DB_TBL_CATEGORIES . " where c_parent='" . $this->data['cid'] . "'");
+				$rs = mq("select * from " . DB_TBL_CATEGORIES . " where c_parent='" . $this->data['id'] . "'");
 				while($rw = mfa($rs)) {
 					$children[] = new Category($rw['cid']);
 				}
@@ -22,6 +22,8 @@ class Category {
 		}
 	}
 	public function __get($arg) {
+		$m = "get_$arg";
+		if(method_exists($this, $m)) return $this->$m();
         if (isset($this->data[$arg])) {
             return $this->data[$arg];
         }
@@ -33,14 +35,14 @@ class Category {
             $this->data[$arg] = $val;
         	$val = mres($val);
 			try {
-				$rs = mq("update " . DB_TBL_CATEGORIES . " set $arg='$val' where cid='" . $this->data['cid'] . "'");
+				$rs = mq("update " . DB_TBL_CATEGORIES . " set $arg='$val' where cid='" . $this->data['id'] . "'");
 			} catch(Exception $e) { }
         }
     }
 	
 	public function updateCategory($post_array,$c_type='post') {
 		foreach($post_array as $arg => $val) { $$arg = mres($val); }
-		$cid = $this->data['cid'];
+		$cid = $this->data['id'];
 		
 		
 	    if($c_parent == "") { $c_parent = '0'; }
@@ -56,7 +58,7 @@ class Category {
 		return $cid;
 	}
 	public function deleteCategory() {
-		$cid = $this->data['cid'];
+		$cid = $this->data['id'];
 		if($cid > 0) {
             $rs = mq("delete from " . DB_TBL_CATEGORY_LINK . " where cid='$cid'");
             $rs = mq("update " . DB_TBL_CATEGORIES . " set c_parent='0' where c_parent='$cid'");

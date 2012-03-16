@@ -2,8 +2,8 @@
 class Template extends Post {
 	
 	/* PUBLIC FUNCTIONS */
-	public function __construct($slug=NULL) {
-		parent::__construct($slug);
+	public function __construct($slug=NULL,$pid=NULL) {
+		parent::__construct($slug,$pid);
 	}
 	
 	public function updateTemplate($post_array) {

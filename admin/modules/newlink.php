@@ -12,19 +12,19 @@ if($lid != "") {
     <div class="module_content">
         <fieldset>
             <label>Link Text</label>
-            <input type="text" name="l_text" id="l_text" value="<?php echo $link->l_text; ?>" />
+            <input type="text" name="l_text" id="l_text" value="<?php echo $link->text; ?>" />
         </fieldset>
         <fieldset>
             <label>Http Link</label>
-            <input type="text" name="l_link" id="l_link" value="<?php echo $link->l_link; ?>" required />
+            <input type="text" name="l_link" id="l_link" value="<?php echo $link->link; ?>" required />
         </fieldset>
         <fieldset style="width:48%; float:left; margin-right: 3%;">
             <label>Category</label>
-            <select style="width:92%;" id="cid" name="cid">
+            <select style="width:92%;height:130px" id="cid" name="cid[]" multiple>
             <?php
-            $arr = ls_m_getCategoryInfo(array('type' => 'link'));
+            $arr = getCategories(array('type' => 'link'));
 			foreach($arr as $category) {
-				echo showCategoryOption($category,'0',$link->getCid(),'link');
+				echo showCategoryOption($category,'0',$link->categories());
 			}
             ?>
             </select>
@@ -36,7 +36,7 @@ if($lid != "") {
             <div class="clear"></div>
             <?php
             $i=0;
-            $meta_data_arr = $link->getMetaDataArray();
+            $meta_data_arr = $link->metaData();
 			if(sizeof($meta_data_arr) > 0) {
 				foreach($meta_data_arr as $arg => $val) {
 				$i++;

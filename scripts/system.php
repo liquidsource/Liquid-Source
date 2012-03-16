@@ -4,6 +4,7 @@ if ( !defined('INCLUDE_WEB_ROOT') ) define('INCLUDE_WEB_ROOT', dirname(__FILE__)
 include(INCLUDE_WEB_ROOT . "scripts/config/site_config.php");
 
 /* Classes */
+include(INCLUDE_WEB_ROOT . "scripts/classes/core/liquid_source.php");
 include(INCLUDE_WEB_ROOT . "scripts/classes/core/member.php");
 include(INCLUDE_WEB_ROOT . "scripts/classes/core/page.php");
 include(INCLUDE_WEB_ROOT . "scripts/classes/core/post.php");
@@ -20,4 +21,7 @@ include(INCLUDE_WEB_ROOT . "scripts/core/useful.php");
 
 /* Your project specific php functions */
 include(INCLUDE_WEB_ROOT . "scripts/general.php");
+
+global $settingup;
+if(!$settingup) { define('MODULE', getModule($_GET['module'])); }
 ?>

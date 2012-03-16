@@ -8,6 +8,13 @@ $(document).ready(function() {
     /* Data tables  - http://datatables.net/ */
     if(use_table_parser) {
 	    $('.dataTable').dataTable({
+	        "bPaginate": true,
+	        "bLengthChange": true,
+	        "bFilter": true,
+	        "bSort": true,
+	        "bInfo": true,
+	        "bAutoWidth": true,
+	        "iDisplayLength": 5
 			/*
 			 "bProcessing": true,
 	        "bServerSide": true,

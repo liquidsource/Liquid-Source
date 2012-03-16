@@ -1,5 +1,7 @@
+<p>This is an example text page.</p>
+<hr />
 <?php
-$page = new Page('',$module);
-echo "<h1>" . $page->pg_title . "</h1>";
-echo $page->pg_content;
+$page = new Page(MODULE);
+echo "<h1>" . $page->title . "</h1>";
+echo $page->content;
 ?>

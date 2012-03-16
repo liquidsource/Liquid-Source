@@ -27,15 +27,15 @@ $orderdir = $_SESSION['orderdir'];
         </thead> 
         <tbody> 
             <?php
-            $arr = ls_m_getPostInfo(array("num" => $llimit . "," . $hlimit, "orderby" => $orderby, "orderdir" => $orderdir));
+            $arr = getPosts(array("num" => $llimit . "," . $hlimit, "orderby" => $orderby, "orderdir" => $orderdir));
 			foreach($arr as $post) {
-				$pid = $post->pid;
+				$pid = $post->id;
 				
 				echo "<tr onclick=\"rowSelect('$pid');\" id=\"row_$pid\">
 				 <td><a href=\"?module=newpost&pid=$pid\">$pid</a></td>
-				 <td>" . $post->p_title . "</td>
-				 <td>" . $post->getCategoryName() . "</td>
-				 <td>" . $post->p_createdate . "</td>
+				 <td>" . $post->title . "</td>
+				 <td>" . $post->categoryNames() . "</td>
+				 <td>" . $post->createdate . "</td>
 				 <td>
 				 	<a href=\"?module=newpost&pid=$pid\"><input type=\"image\" src=\"images/icn_edit.png\" title=\"Edit\"></a>
                     <a href=\"scripts/action.php?action=deletepost&pid=$pid&to=editposts\"><input type=\"image\" src=\"images/icn_trash.png\" title=\"Trash\"></a>

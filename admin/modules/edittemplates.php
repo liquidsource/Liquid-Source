@@ -27,15 +27,15 @@ $orderdir = $_SESSION['orderdir'];
         </thead> 
         <tbody> 
             <?php
-            $arr = ls_m_getTemplateInfo(array("num" => $llimit . "," . $hlimit, "orderby" => $orderby, "orderdir" => $orderdir));
+            $arr = getTemplates(array("num" => $llimit . "," . $hlimit, "orderby" => $orderby, "orderdir" => $orderdir));
 			foreach($arr as $template) {
-				$pid = $template->pid;
+				$pid = $template->id;
 				
 				echo "<tr onclick=\"rowSelect('$pid');\" id=\"row_$pid\">
 				 <td><a href=\"?module=newtemplate&pid=$pid\">$pid</a></td>
-				 <td>" . $template->p_title . "</td>
-				 <td>" . $template->p_slug . "</td>
-				 <td>" . $template->p_createdate . "</td>
+				 <td>" . $template->title . "</td>
+				 <td>" . $template->slug . "</td>
+				 <td>" . $template->createdate . "</td>
 				 <td>
 				 	<a href=\"?module=newtemplate&pid=$pid\"><input type=\"image\" src=\"images/icn_edit.png\" title=\"Edit\"></a>
                     <a href=\"scripts/action.php?action=deletetemplate&pid=$pid&to=edittemplates\"><input type=\"image\" src=\"images/icn_trash.png\" title=\"Trash\"></a>

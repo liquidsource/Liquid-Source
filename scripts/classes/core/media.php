@@ -8,20 +8,22 @@ class Media {
 			$rs = mq("select * from " . DB_TBL_MEDIA . " where mdid='$mdid'");
 			if(mnr($rs) > 0) {
 				$rw = mfa($rs);
-				$this->data['mdid'] = $rw['mdid'];
-				$this->data['md_title'] = $rw['md_title'];
-				$this->data['md_alttext'] = stripslashes($rw['md_alttext']);
-				$this->data['md_text'] = stripslashes($rw['md_text']);
-				$this->data['md_folder'] = $rw['md_folder'];
-				$this->data['md_filename'] = $rw['md_filename'];
-				$this->data['md_dateuploaded'] = $rw['md_dateuploaded'];
-				$this->data['md_type'] = $rw['md_type'];
-				$this->data['md_filesize'] = $rw['md_filesize'];
-				$this->data['md_active'] = $rw['md_active'];
+				$this->data['id'] = $rw['mdid'];
+				$this->data['title'] = $rw['md_title'];
+				$this->data['alttext'] = stripslashes($rw['md_alttext']);
+				$this->data['text'] = stripslashes($rw['md_text']);
+				$this->data['folder'] = $rw['md_folder'];
+				$this->data['filename'] = $rw['md_filename'];
+				$this->data['dateuploaded'] = $rw['md_dateuploaded'];
+				$this->data['type'] = $rw['md_type'];
+				$this->data['filesize'] = $rw['md_filesize'];
+				$this->data['active'] = $rw['md_active'];
 			}
 		}
 	}
 	public function __get($arg) {
+		$m = "get_$arg";
+		if(method_exists($this, $m)) return $this->$m();
         if (isset($this->data[$arg])) {
             return $this->data[$arg];
         }
@@ -33,7 +35,7 @@ class Media {
             $this->data[$arg] = $val;
         	$val = mres($val);
 			try {
-				$rs = mq("update " . DB_TBL_MEDIA . " set $arg='$val' where mdid='" . $this->data['mdid'] . "'");
+				$rs = mq("update " . DB_TBL_MEDIA . " set $arg='$val' where mdid='" . $this->data['id'] . "'");
 			} catch(Exception $e) { }
         }
     }
@@ -42,7 +44,7 @@ class Media {
 		foreach($post_array as $arg => $val) { $$arg = mres($val); }
 		$datetime = date("Y-m-d H:i:s");
 		
-		$mdid = $this->data['mdid'];
+		$mdid = $this->data['id'];
 	    if($mdid == "") {
 	        $rs = mq("insert into " . DB_TBL_MEDIA . " (md_title,md_alttext,md_text,md_dateuploaded) values ('$md_title','$md_alttext','$md_text','$datetime')");
 	        $mdid = miid();
@@ -77,12 +79,9 @@ class Media {
 	    }
 	   	
 	   	
-	    $rs = mq("delete from " . DB_TBL_CATEGORY_LINK . " where uid='$mdid' and l_type='media'");
-	    if($post_array['cid'] != "") {
-	        foreach($post_array['cid'] as $cid) {
-	        	updateCategoryLink($cid, $mdid, 'media',true);
-	        }
-	    }
+	   if(sizeof($post_array['cid']) > 0) {
+			updateCategoryLink($post_array['cid'],$mdid,'media');
+		}
 		
 		$_SESSION['_mtype'] = "S";
 		$_SESSION['_msg'] = "newmedia";
@@ -90,13 +89,19 @@ class Media {
 	}
 	function getCid() {
 		if($this->mdid != "") {
-			return getCategoryId($this->data['mdid'],'media');
+			return getCategoryId($this->data['id'],'media');
 		}
 	}
-	public function getCategoryName() {
-		if($this->mdid != "") {
-			return getCategoryName($this->data['mdid'],'media');
+	public function categories() {
+		if($this->data['id'] != "") {
+			return getCategoryArray($this->data['id'],'media');
 		}
+	}
+	public function categoryNames() {
+		return getCategoryNames($this->data['id'],'media',',');
+	}
+	public function inCategory($catids) {
+		return inCategory($catids,$this->id,'media');
 	}
 
 	/**
@@ -120,7 +125,7 @@ class Media {
 		if($style != "") { $x_style = "style=\"$style\""; }
 		if($class != "") { $x_class = "class=\"$class\""; }
 		$location = $lvl . $location;
-		$alt = $this->data['md_alttext'];
+		$alt = $this->data['alttext'];
 		
 		$img = "<img src=\"$location\" $x_style $xclass alt=\"$alt\" />";
 		
@@ -128,8 +133,8 @@ class Media {
 	}
 
 	public function deleteMedia() {
-		if($this->data['mdid'] != NULL) {
-			$rs = mq("update " . DB_TBL_MEDIA . " set md_active='0' where mdid='" . $this->data['mdid'] . "'");
+		if($this->data['id'] != NULL) {
+			$rs = mq("update " . DB_TBL_MEDIA . " set md_active='0' where mdid='" . $this->data['id'] . "'");
 			$_SESSION['_mtype'] = "W";
 			$_SESSION['_msg'] = "deletedmedia";
 		}
@@ -140,7 +145,7 @@ class Media {
 	}
 	
 	private function location() {
-		return $this->data['md_folder'] . $this->data['md_filename'];
+		return $this->data['folder'] . $this->data['filename'];
 	}
 	
 }

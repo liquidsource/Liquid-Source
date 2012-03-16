@@ -82,37 +82,4 @@ function getRealIpAddr() {
     else { $ip=$_SERVER['REMOTE_ADDR']; }
     return $ip;
 }
-function md5_of_dir($folder) {
-	$dircontent = scandir($folder);
-	$ret='';
-	foreach($dircontent as $filename) {
-		if ($filename != '.' && $filename != '..') {
-			if (filemtime($folder.$filename) === false) return false;
-			$ret.=date("YmdHis", filemtime($folder.$filename)).$filename;
-		}
-	}
-	return md5($ret);
-}
-function delete_old_md5s($folder) {
-	$olddate=time() - 60;
-	$dircontent = scandir($folder);
-	foreach($dircontent as $filename) {
-		if (strlen($filename)==36 && filemtime($folder.$filename)<$olddate) {
-			unlink($folder.$filename);
-    	}
-	}
-}
-function checkBotFromUserAgent() {
-	$bot_list = array("Teoma", "alexa", "froogle", "Gigabot", "inktomi","looksmart", "URL_Spider_SQL", "Firefly", "NationalDirectory",
-    "Ask Jeeves", "TECNOSEEK", "InfoSeek", "WebFindBot", "girafabot","crawler", "www.galaxy.com", "Googlebot", "Scooter", "Slurp",
-    "msnbot", "appie", "FAST", "WebBug", "Spade", "ZyBorg", "rabaz","Baiduspider", "Feedfetcher-Google", "TechnoratiSnoop", "Rankivabot",
-    "Mediapartners-Google", "Sogou web spider", "WebAlta Crawler","Spider","msnbot","AdsBot","bitlybot","Twitterbot","bingbot","YandexBot","LinkedInBot",
-    "spider","Birubot","TweetmemeBot", "Exabot", "Showyoubot", "SkimWordsBot", "MLBot","SemrushBot"
-    );
-    foreach($bot_list as $bot) {
-        if(strpos($_SERVER['HTTP_USER_AGENT'],$bot) > 0 || strpos($_SERVER['HTTP_USER_AGENT'],$bot) === 0) { return true; }
-    }
-    return false;
-}
-
 ?>

@@ -57,17 +57,17 @@ function showCategoryRow($category,$lvl=0,$type='post') {
 	$ret = "";
 	$dots = "";
 	for($i=0;$i<$lvl;$i++) { $dots .= " -- "; }
-	$cid = $category->cid;
+	$cid = $category->id;
 	$ret .= "
 	<tr>
-        <td>$cid</td>
-        <td>" . $dots . $category->c_name . "</td>
+        <td>$dots $cid</td>
+        <td>" . $dots . $category->name . "</td>
         <td>
             <a href=\"?module=" . $type . "categories&cid=$cid\"><input type=\"image\" src=\"images/icn_edit.png\" title=\"Edit\"></a>
             <a href=\"scripts/action.php?action=deletecategory&cid=$cid&to=" . $type . "categories&c_type=$type\"><input type=\"image\" src=\"images/icn_trash.png\" title=\"Trash\"></a>
         </td> 
     </tr>";
-    if(!empty($category->children)) {
+    if($category->children) {
     	$lvl++;
     	foreach($category->children as $child_category) {
     		$ret .= showCategoryRow($child_category,$lvl,$type);
@@ -75,29 +75,36 @@ function showCategoryRow($category,$lvl=0,$type='post') {
 	}
 	return $ret;
 }
-function updateCategoryLink($cid,$uid,$l_type,$forceInsert=false) {
-	$rs = mq("select * from category_link where uid='$uid' and l_type='$l_type'");
-    if(mnr($rs) > 0 && !$forceInsert) {
-        $rsi = mq("update category_link set cid='$cid' where uid='$uid' and l_type='$l_type'");
-    } else {
-        $rsi = mq("insert into category_link (uid,cid,l_type) values ('$uid','$cid','$l_type')");
-    }
+function updateCategoryLink($cids,$uid,$l_type) {
+	if(!is_array($cids)) {
+		$cids[] = $cids;
+	}
+	
+	foreach($cids as $cid) {
+		$rs = mq("select * from category_link where uid='$uid' and l_type='$l_type'");
+	    if(mnr($rs) > 0) {
+	        $rsi = mq("update " . DB_TBL_CATEGORY_LINK . " set cid='$cid' where uid='$uid' and l_type='$l_type'");
+	    } else {
+	        $rsi = mq("insert into " . DB_TBL_CATEGORY_LINK . " (uid,cid,l_type) values ('$uid','$cid','$l_type')");
+	    }
+	}
 }
 function showCategoryOption($category,$lvl=0,$chosen_uid) {
 	$dots = "";
 	for($i=0;$i<$lvl;$i++) { $dots .= "-  "; }
-	$cid = $category->cid;
+	$cid = $category->id;
 	$ret .= "<option value=\"$cid\"";
 	
 	if(is_array($chosen_uid)) {
-		foreach($chosen_uid as $chuid) {
+		foreach($chosen_uid as $cat) {
+			$chuid = $cat->id;
 			if($cid == $chuid) { $ret .= " selected "; }
 		}
 	} else {
 		if($cid == $chosen_uid) { $ret .= " selected "; }
 	}
-	$ret .= ">" . $dots . $category->c_name . "</option>";
-    if(!empty($category->children)) {
+	$ret .= ">" . $dots . $category->name . "</option>";
+    if($category->children) {
     	$lvl++;
     	foreach($category->children as $child_category) {
     		$ret .= showCategoryOption($child_category,$lvl,$chosen_uid);

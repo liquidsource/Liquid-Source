@@ -26,6 +26,7 @@ $orderdir = $_SESSION['orderdir'];
     <thead> 
         <tr> 
             <th <?php echo tableSorter('mid'); ?>> mid</th> 
+            <th <?php echo tableSorter('m_username'); ?>> Username</th> 
             <th <?php echo tableSorter('mp_fname'); ?>> Name</th> 
             <th <?php echo tableSorter('m_email'); ?>> Email</th> 
             <th <?php echo tableSorter('m_createdate'); ?>> Created On</th> 
@@ -34,19 +35,20 @@ $orderdir = $_SESSION['orderdir'];
     </thead> 
     <tbody>
         <?php
-        $arr = ls_m_getMemberInfo(array("num" => $llimit . "," . $hlimit, "orderby" => $orderby, "orderdir" => $orderdir, "m_type" => $m_type));
+        $arr = getMembers(array("num" => $llimit . "," . $hlimit, "orderby" => $orderby, "orderdir" => $orderdir, "m_type" => $m_type));
 		foreach($arr as $member) {
-			$mid = $member->mid;
+			$mid = $member->id;
 			
 			echo "<tr onclick=\"rowSelect('$mid');\" id=\"row_$mid\">
 			 <td><a href=\"?module=newusert&mid=$mid\">$mid</a></td>
-			 <td>" . $member->mp_fname . "</td>
-			 <td>" . $member->m_email . "</td>
-			 <td>" . $member->m_createdate . "</td>
+			 <td>" . $member->username . "</td>
+			 <td>" . $member->fname . "</td>
+			 <td>" . $member->email . "</td>
+			 <td>" . $member->createdate . "</td>
 			 <td>
 			 	<a href=\"?module=newuser&mid=$mid\"><input type=\"image\" src=\"images/icn_edit.png\" title=\"Edit\"></a>
 			 	";
-			if($member->m_protected == '0') {
+			if($member->protected == '0') {
             echo "<a href=\"scripts/action.php?action=deleteuser&mid=$mid&to=editusers\"><input type=\"image\" src=\"images/icn_trash.png\" title=\"Trash\"></a>";
 			}
 			echo "

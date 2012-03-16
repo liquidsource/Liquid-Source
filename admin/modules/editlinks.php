@@ -26,14 +26,14 @@ $orderdir = $_SESSION['orderdir'];
     </thead> 
     <tbody> 
         <?php
-        $arr = ls_m_getLinkInfo(array("num" => $llimit . "," . $hlimit, "orderby" => $orderby, "orderdir" => $orderdir));
+        $arr = getLinks(array("num" => $llimit . "," . $hlimit, "orderby" => $orderby, "orderdir" => $orderdir));
 		foreach($arr as  $link) {
-			$lid = $link->lid;
+			$lid = $link->id;
 			
 			echo "<tr onclick=\"rowSelect('$lid');\" id=\"row_$lid\">
 			 <td><a href=\"?module=newlink&lid=$lid\">$lid</a></td>
-			 <td>" . $link->l_text . "</td>
-			 <td>" . $link->l_link . "</td>
+			 <td>" . $link->text . "</td>
+			 <td>" . $link->link . "</td>
 			 <td>
 			 	<a href=\"?module=newlink&lid=$lid\"><input type=\"image\" src=\"images/icn_edit.png\" title=\"Edit\"></a>
                 <a href=\"scripts/action.php?action=deletelink&lid=$lid&to=editlinks\"><input type=\"image\" src=\"images/icn_trash.png\" title=\"Trash\"></a>

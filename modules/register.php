@@ -1,3 +1,5 @@
+<p>This is an example bespoke page.</p>
+<hr />
 <?php if(Member::isLoggedin()) { ?><h4 class='alert alert_warning'>Please <a href="scripts/action.php?action=logout">logout</a> to view this page.</h4><?php } else { ?>
 
 <h1>Register</h1>

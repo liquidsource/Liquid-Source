@@ -8,48 +8,50 @@ class Member {
 			$rs = mq("select * from " . DB_TBL_MEMBERS . " m inner join " . DB_TBL_MEMBER_PROFILE . " p on m.mid = p.mid where m.mid='$mid'");
 			if(mnr($rs) > 0) {
 				$rw = mfa($rs);
-				$this->data['mid'] = $mid;
-				$this->data['m_username'] = stripslashes($rw['m_username']);
-				$this->data['m_hash'] = $rw['m_hash'];
-				$this->data['m_type'] = $rw['m_type'];
-				$this->data['m_email'] = $rw['m_email'];
-				$this->data['m_active'] = $rw['m_active'];
-				$this->data['m_lastlogin'] = $rw['m_lastlogin'];
-				$this->data['m_createdate'] = $rw['m_createdate'];
-				$this->data['m_protected'] = $rw['m_protected'];
-				$this->data['mp_fname'] = stripslashes($rw['mp_fname']);
-				$this->data['mp_lname'] = stripslashes($rw['mp_lname']);
+				$this->data['id'] = $mid;
+				$this->data['username'] = stripslashes($rw['m_username']);
+				$this->data['hash'] = $rw['m_hash'];
+				$this->data['type'] = $rw['m_type'];
+				$this->data['email'] = $rw['m_email'];
+				$this->data['active'] = $rw['m_active'];
+				$this->data['lastlogin'] = $rw['m_lastlogin'];
+				$this->data['createdate'] = $rw['m_createdate'];
+				$this->data['protected'] = $rw['m_protected'];
+				$this->data['fname'] = stripslashes($rw['mp_fname']);
+				$this->data['lname'] = stripslashes($rw['mp_lname']);
 				
 				$this->setMemberFullName();
 			}
 		}
 	}
 	public function __get($arg) {
+		$m = "get_$arg";
+		if(method_exists($this, $m)) return $this->$m();
         if (isset($this->data[$arg])) {
             return $this->data[$arg];
         }
     }
 
     public function __set($arg, $val) {
-        if ($arg == "mid") { return; }
+        if ($arg == "id") { return; }
 		
         if (isset($this->data[$arg])) {
             $this->data[$arg] = $val;
         	$val = mres($val);
 			try {
-				$rs = mq("update " . DB_TBL_MEMBERS . " set $arg='$val' where mid='" . $this->data['mid'] . "'");
+				$rs = mq("update " . DB_TBL_MEMBERS . " set $arg='$val' where mid='" . $this->data['id'] . "'");
 			} catch(Exception $e) { }
         }
     }
 	public function setCurrentUserIntoSession() {
-		$_SESSION['mid'] = $this->data['mid'];
+		$_SESSION['mid'] = $this->data['id'];
         $_SESSION['loggedin'] = true;
-        $_SESSION['m_type'] = $this->data['m_type'];
+        $_SESSION['m_type'] = $this->data['type'];
 		$this->setMemberFullName();
 	}
 	public function sendUserRegistrationEmail() {
 		$member_array = $this->createUserArray();
-    	$email = new Email('registration',$data,$this->data['m_email'],"Welcome to $companyName");
+    	$email = new Email('registration',$data,$this->data['email'],"Welcome to $companyName");
     	$success = $email->sendEmail();
         if($success) {
             $_SESSION['_msg'] = "welcome";
@@ -58,7 +60,7 @@ class Member {
         }
 	}
 	public function updateUser($post_array,$m_type='U') {
-		$mid = $this->data['mid'];
+		$mid = $this->data['id'];
 		foreach($post_array as $arg => $val) { $$arg = mres($val); }
 		
 		$success = false;
@@ -66,16 +68,16 @@ class Member {
 	        if($m_password != "") {
 	            $hash = $this->createUserHash($m_email,$m_password);
 	            $mic[] = "m_hash='$hash',";
-				$this->data['m_password'] = $m_password;
-				$this->data['m_hash'] = $hash;
+				$this->data['password'] = $m_password;
+				$this->data['hash'] = $hash;
 	        }
 			if($m_email != "") {
 		        $rw = mgr("select count(mid) as n from " . DB_TBL_MEMBERS . " where m_email='$m_email' and mid <> '$mid'");
-		        if($rw['n'] == 0) { $mic[] = "m_email='$m_email',"; $this->data['m_email'] = $m_email; }
+		        if($rw['n'] == 0) { $mic[] = "m_email='$m_email',"; $this->data['email'] = $m_email; }
 			}
 			if($m_username != "") {
 		        $rw = mgr("select count(mid) as n from " . DB_TBL_MEMBERS . " where m_username='$m_username' and mid <> '$mid'");
-		        if($rw['n'] == 0) { $mic[] = "m_username='$m_username',"; $this->data['m_username'] = $m_username; }
+		        if($rw['n'] == 0) { $mic[] = "m_username='$m_username',"; $this->data['username'] = $m_username; }
 			}
 			
 			if($m_type != "") { $mic[] = "m_type='$m_type'"; $this->data['>m_type'] = $m_type; }
@@ -86,8 +88,8 @@ class Member {
 			}
 			
 			
-			if($mp_fname != NULL) { $mpic[] = "mp_fname='$mp_fname'"; $this->data['mp_fname'] = $mp_fname; }
-			if($mp_lname != NULL) { $mpic[] = "mp_lname='$mp_lname'"; $this->data['mp_lname'] = $mp_lname; }
+			if($mp_fname != NULL) { $mpic[] = "mp_fname='$mp_fname'"; $this->data['fname'] = $mp_fname; }
+			if($mp_lname != NULL) { $mpic[] = "mp_lname='$mp_lname'"; $this->data['lname'] = $mp_lname; }
 			$this->setMemberFullName();
 			
 			if(sizeof($mpic) > 0) {
@@ -142,9 +144,9 @@ class Member {
 		return $success;
 	}
 	public function sendForgotPassword() {
-		$mid = $this->data['mid'];
+		$mid = $this->data['id'];
         $pswd = generatePassword(9);
-		$hash = $this->createUserHash($this->data['m_email'], $pswd);
+		$hash = $this->createUserHash($this->data['email'], $pswd);
         $rsu = mq("update " . DB_TBL_MEMBERS . " set m_hash='$hash' where mid='$mid'");
         
 		$member_array = $this->createUserArray();
@@ -167,19 +169,19 @@ class Member {
 	}
 	public function deleteMember() {
 		log_me('DLM');
-		$mid = $this->data['mid'];
+		$mid = $this->data['id'];
 		$rs = mq("update " . DB_TBL_MEMBERS . " set m_active='0' where mid='$mid'");
 		$_SESSION['_mtype'] = "W";
 		$_SESSION['_msg'] = "deletedmember";
 	}
     public function changePassword($newPassword) {
-    	$hash = $this->createUser($this->data['m_type'],$this->data['m_email']);
-		if($this->data['mid'] > 0) {
-			$rsu = mq("update " . DB_TBL_MEMBERS . " set m_hash='$hash' where mid='" . $this->data['mid'] . "'");
+    	$hash = $this->createUser($this->data['type'],$this->data['email']);
+		if($this->data['id'] > 0) {
+			$rsu = mq("update " . DB_TBL_MEMBERS . " set m_hash='$hash' where mid='" . $this->data['id'] . "'");
 		}
     }
 	public function removeUser() {
-		$mid = $this->data['mid'];
+		$mid = $this->data['id'];
 		log_me('RMM','Removing member with ID: ' . $mid);
 		if($mid > 0) {
 			$rs = mq("delete from " . DB_TBL_MEMBERS . " where mid='$mid'");
@@ -216,7 +218,7 @@ class Member {
 	/* PROECTED FUNCTIONS */
 	protected function createUser($post_array,$m_type) {
 		$success = false;
-		$mid = $this->data['mid'];
+		$mid = $this->data['id'];
 		if($mid == "") {
 			foreach($post_array as $arg => $val) { $$arg = mres($val); }
 			
@@ -255,16 +257,16 @@ class Member {
 			        $mid = miid();
 			        $rs = mq("insert into " . DB_TBL_MEMBER_PROFILE . " (mid,mp_fname,mp_lname) values  ('$mid','$mp_fname','$mp_lname')");
 					
-					$this->data['mid'] = $mid;
-			        $this->data['m_username'] = $m_username;
-			        $this->data['m_type'] = $m_type;
-			        $this->data['m_email'] = $m_email;
-			        $this->data['m_active'] = '1';
-			        $this->data['m_lastlogin'] = $datetime;
-			        $this->data['m_protected'] = 0;
-			        $this->data['m_password'] = $m_password;
-			        $this->data['mp_fname'] = $mp_fname;
-			        $this->data['mp_lname'] = $mp_lname;
+					$this->data['id'] = $mid;
+			        $this->data['username'] = $m_username;
+			        $this->data['type'] = $m_type;
+			        $this->data['email'] = $m_email;
+			        $this->data['active'] = '1';
+			        $this->data['lastlogin'] = $datetime;
+			        $this->data['protected'] = 0;
+			        $this->data['password'] = $m_password;
+			        $this->data['fname'] = $mp_fname;
+			        $this->data['lname'] = $mp_lname;
 					$this->setMemberFullName();
 					$_SESSION['_mtype'] = "S";
 					$_SESSION['_msg'] = "newmember";
@@ -295,8 +297,8 @@ class Member {
 		return $hash;
 	}
 	private function setMemberFullName() {
-		$this->data['mp_fullname'] = $this->data['mp_fname'] . " " . $this->data['mp_lname'];
-		$_SESSION['userFullName_' . $mid] = $this->data['mp_fullname'];
+		$this->data['fullname'] = $this->data['fname'] . " " . $this->data['lname'];
+		$_SESSION['userFullName_' . $this->data['id']] = $this->data['fullname'];
 	}
 }
 ?>

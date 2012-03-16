@@ -29,17 +29,17 @@ $orderdir = $_SESSION['orderdir'];
         </thead> 
         <tbody> 
             <?php
-            $arr = ls_m_getPageInfo(array("num" => $llimit . "," . $hlimit, "orderby" => $orderby, "orderdir" => $orderdir));
+            $arr = getPages(array("num" => $llimit . "," . $hlimit, "orderby" => $orderby, "orderdir" => $orderdir));
 			foreach($arr as $page) {
-				$pgid = $page->pgid;
+				$pgid = $page->id;
 				
 				echo "<tr onclick=\"rowSelect('$pgid');\" id=\"row_$pgid\">
 				<td><a href=\"?module=newpage&pgid=$pgid\">$pgid</a></td>
-				<td>" . $page->pg_meta_title . "</td>
-				<td>" . $page->pg_type_eng . "</td>
-				<td>" . $page->pg_slug . "</td>
-				<td>" . $page->pg_meta_description . " ... </td>
-				<td>" . $page->pg_createdate . "</td>
+				<td>" . $page->title . "</td>
+				<td>" . $page->type_eng . "</td>
+				<td>" . $page->slug . "</td>
+				<td>" . $page->meta_description . " ... </td>
+				<td>" . $page->createdate . "</td>
 				<td>
 		 		<a href=\"?module=newpage&pgid=$pgid\"><input type=\"image\" src=\"images/icn_edit.png\" title=\"Edit\"></a>";
                     if($page->isdefault == 0) {

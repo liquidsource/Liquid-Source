@@ -1,3 +1,5 @@
+<p>This is an example bespoke page.</p>
+<hr />
 <h1 class="main_h1">Contact Us</h1>
 <p>This is an example contact page..</p>
 <form method="post" action="scripts/action.php?action=contactus&to=contactus" id="contact_frm" name="contact_frm" onSubmit="return submitForm('contact_frm');">

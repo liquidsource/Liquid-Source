@@ -21,7 +21,7 @@ switch ($action) {
         break;
     case "logout":
        	Member::logout();
-        $to = "home";
+        $to = "home/";
         break;
     case "register":
 		$aBot = checkFormBot(array('timecheck' => '2'));

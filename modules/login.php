@@ -1,5 +1,6 @@
+<p>This is an example bespoke page.</p>
+<hr />
 <?php if(Member::isLoggedin()) { ?><h4 class='alert alert_warning'>Please <a href="scripts/action.php?action=logout">logout</a> to view this page.</h4><?php } else { ?>
-	
 <h1>Login</h1>
 <p>This is an example login page for members.</p>
 <form method="post" action="scripts/action.php?action=login&to=account" autocomplete="off" id="login_frm" style="margin-bottom: 20px;" onsubmit="return submitForm('login_frm')">
