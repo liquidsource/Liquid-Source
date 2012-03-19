@@ -25,7 +25,7 @@ include(INCLUDE_WEB_ROOT . "scripts/core/database.php");
 include(INCLUDE_WEB_ROOT . "scripts/core/dbconnex.php");
 if(!defined('REDIRECT_ROOT_PATH')) define('REDIRECT_ROOT_PATH',"//" . $_SERVER['HTTP_HOST'] . BASE_HREF);
 
-$site_tables = array('alert_warnings','categories','category_link','links','log_shortcodes','media','members','member_profile','meta_data','pages','posts','site_log','site_options');
+$site_tables = array('alert_warnings','categories','category_link','links','log_shortcodes','media','members','member_profile','member_profile_arguments','meta_data','pages','posts','site_log','site_options');
 foreach($site_tables as $tbl) { if(!defined(TABLE_PREFIX . $tbl)) define('DB_TBL_' . strtoupper($tbl), TABLE_PREFIX . $tbl); }
 
 if($settingup != "true") {

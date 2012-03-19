@@ -21,6 +21,9 @@ if($mid != "") {
         </fieldset>
         
         <fieldset>
+            <label style="width:150px">Email</label>
+            <input type="email" name="m_email" id="m_email" value="<?php echo $member->email; ?>" style="width:300px" required>
+            <div class="clear" style="padding:1px;">&nbsp;</div>
             <label style="width:150px">Username</label>
             <input type="text" name="m_username" id="m_username" value="<?php echo $member->username; ?>" style="width:300px" <?php echo $disabled; ?> required>
             <div class="clear" style="padding:1px;">&nbsp;</div>
@@ -29,14 +32,14 @@ if($mid != "") {
         </fieldset>
         
         <fieldset>
-            <label style="width:150px">Email</label>
-            <input type="email" name="m_email" id="m_email" value="<?php echo $member->email; ?>" style="width:300px" required>
+        	<?php
+        	$mem_arr = Member::getMemberProfileArray();
+			foreach($mem_arr as $arg => $val) {
+			?>
             <div class="clear" style="padding:1px;">&nbsp;</div>
-            <label style="width:150px">First Name</label>
-            <input type="text" name="mp_fname" id="mp_fname" value="<?php echo $member->fname; ?>" style="width:300px">
-            <div class="clear" style="padding:1px;">&nbsp;</div>
-            <label style="width:150px">Last Name</label>
-            <input type="text" name="mp_lname" id="mp_lname" value="<?php echo $member->lname; ?>" style="width:300px">
+            <label style="width:150px"><?php echo $val[1]; ?></label>
+            <input type="text" name="mp_<?php echo $val[0]; ?>" id="mp_<?php echo $val[0]; ?>" value="<?php echo $member->$val[0]; ?>" style="width:300px" />
+            <?php } ?>
         </fieldset>
     </div>
     <footer>

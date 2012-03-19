@@ -55,13 +55,13 @@ class LS {
 	public static function members($arr=array()) {
 		extract($arr);
 	    if($num != "") { $limit = $num; } else { $limit = " 0,1000"; }
-		if($orderby == "") { $orderby = "m.mid"; }
+		if($orderby == "") { $orderby = "mid"; }
 		if($orderdir == "") { $orderdir = "asc"; }
 		if($m_type == "") { $m_type = "U"; }
 		if($active == "") { $wc .= " and m_active='1' "; } else { $wc .= " and m_active='$active' "; }
 		
 	    $ret_arr = array();
-	    $rs = mq("select m.mid from " . DB_TBL_MEMBERS . " m inner join " . DB_TBL_MEMBER_PROFILE . " p on m.mid = p.mid where m_type='$m_type' $wc order by $orderby $orderdir limit $limit");
+	    $rs = mq("select mid from " . DB_TBL_MEMBERS . " where m_type='$m_type' $wc order by $orderby $orderdir limit $limit");
 	    while($rw = mfa($rs)) {
 			$ret = new Member($rw['mid']);
 			if($ret != "") $ret_arr[] = $ret;

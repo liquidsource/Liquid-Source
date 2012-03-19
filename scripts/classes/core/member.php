@@ -1,11 +1,15 @@
 <?php
+/**
+ * Member class, controls adding, editing and controlling access to member variables
+ */
+
 class Member {
     private $data, $m_hash, $m_password;
 	
 	/* PUBLIC FUNCTIONS */
 	public function __construct($mid=NULL) {
 		if($mid != "") {
-			$rs = mq("select * from " . DB_TBL_MEMBERS . " m inner join " . DB_TBL_MEMBER_PROFILE . " p on m.mid = p.mid where m.mid='$mid'");
+			$rs = mq("select * from " . DB_TBL_MEMBERS . " where mid='$mid'");
 			if(mnr($rs) > 0) {
 				$rw = mfa($rs);
 				$this->data['id'] = $mid;
@@ -17,10 +21,11 @@ class Member {
 				$this->data['lastlogin'] = $rw['m_lastlogin'];
 				$this->data['createdate'] = $rw['m_createdate'];
 				$this->data['protected'] = $rw['m_protected'];
-				$this->data['fname'] = stripslashes($rw['mp_fname']);
-				$this->data['lname'] = stripslashes($rw['mp_lname']);
-				
-				$this->setMemberFullName();
+			}
+			
+			$rs = mq("select * from " . DB_TBL_MEMBER_PROFILE . " p inner join " . DB_TBL_MEMBER_PROFILE_ARGUMENTS . " a on p.mpa_sc = a.mpa_sc where mid='$mid'");
+			while($rw = mfa($rs)) {
+				$this->data[$rw['mpa_sc']] = stripslashes($rw['mp_val']);
 			}
 		}
 	}
@@ -33,25 +38,28 @@ class Member {
     }
 
     public function __set($arg, $val) {
-        if ($arg == "id") { return; }
+        if ($arg == "mid") { return; }
 		
         if (isset($this->data[$arg])) {
-            $this->data[$arg] = $val;
         	$val = mres($val);
-			try {
+			
+			$rs = mq("SELECT * FROM information_schema.COLUMNS WHERE TABLE_NAME = 'ls_members' AND COLUMN_NAME = '$arg'");
+            $this->data[$arg] = $val;
+			if(mnr($rs) > 0) {
 				$rs = mq("update " . DB_TBL_MEMBERS . " set $arg='$val' where mid='" . $this->data['id'] . "'");
-			} catch(Exception $e) { }
+			} else {
+				insertUpdateMembrProfile($arg,$val);
+			}
         }
     }
 	public function setCurrentUserIntoSession() {
 		$_SESSION['mid'] = $this->data['id'];
         $_SESSION['loggedin'] = true;
         $_SESSION['m_type'] = $this->data['type'];
-		$this->setMemberFullName();
 	}
 	public function sendUserRegistrationEmail() {
 		$member_array = $this->createUserArray();
-    	$email = new Email('registration',$data,$this->data['email'],"Welcome to $companyName");
+    	$email = new Email('registration',$member_array,$this->data['email'],"Welcome to $companyName");
     	$success = $email->sendEmail();
         if($success) {
             $_SESSION['_msg'] = "welcome";
@@ -63,7 +71,6 @@ class Member {
 		$mid = $this->data['id'];
 		foreach($post_array as $arg => $val) { $$arg = mres($val); }
 		
-		$success = false;
 		if($mid != "") {
 	        if($m_password != "") {
 	            $hash = $this->createUserHash($m_email,$m_password);
@@ -87,18 +94,8 @@ class Member {
 	        	$rs = mq("update " . DB_TBL_MEMBERS . " set $mic_x where mid='$mid'");
 			}
 			
+			$this->updateMemberProfile($mid,$post_array);
 			
-			if($mp_fname != NULL) { $mpic[] = "mp_fname='$mp_fname'"; $this->data['fname'] = $mp_fname; }
-			if($mp_lname != NULL) { $mpic[] = "mp_lname='$mp_lname'"; $this->data['lname'] = $mp_lname; }
-			$this->setMemberFullName();
-			
-			if(sizeof($mpic) > 0) {
-				foreach($mpic as $val) { $mpic_x .= $val . ", "; }
-				$mpic_x = substr($mpic_x,0,-2);
-	        	$rs = mq("update " . DB_TBL_MEMBER_PROFILE . " set $mpic_x where mid='$mid'");
-			}
-			
-		    $success = true;
 			$_SESSION['_mtype'] = "S";
 			$_SESSION['_msg'] = "newmember";
 		} else {
@@ -113,8 +110,8 @@ class Member {
 	        if(mnr($rs) == 1) {
 	            $rw = mfa($rs);
 	            if($this->isCorrectPassword($p,$rw['m_hash'])) {
-	            	foreach($_SESSION as $arg => $var) { unset($_SESSION[$arg]); }
 					$success = true;
+	            	foreach($_SESSION as $arg => $var) { unset($_SESSION[$arg]); }
 	                $_SESSION['mid'] = $rw['mid'];
 	                $_SESSION['loggedin'] = true;
 	                $_SESSION['m_type'] = $m_type;
@@ -129,6 +126,7 @@ class Member {
 	    }
 		
 		if(!$success) {
+			$success = false;
 			log_me('LGF');
 			$_SESSION['mid'] = "";
 			$_SESSION['loggedin'] = false;
@@ -150,21 +148,13 @@ class Member {
         $rsu = mq("update " . DB_TBL_MEMBERS . " set m_hash='$hash' where mid='$mid'");
         
 		$member_array = $this->createUserArray();
-		
-		
-		$member_array = $this->createUserArray();
-    	$email = new Email('forgot-password',$member_array,$this->m_email,"Welcome to $companyName");
+    	$email = new Email('forgot-password',$member_array,$this->m_email,"$companyName Forgotten Password");
     	$success = $email->sendEmail();
         if($success) {
         	
 		} else {
 			
 		}
-        	
-        $msg = composeEmail('forgot-password',$member_array);
-        if($msg != "") { sendEmail($this->data['email'],$msg,"$companyName Forgotten Password");  }
-        $_SESSION['_mtype'] = "W";
-        $_SESSION['_msg'] = "sentreminder";
 		log_me('FGS');
 	}
 	public function deleteMember() {
@@ -214,6 +204,17 @@ class Member {
 		if($_SESSION['mid'] == "" || $_SESSION['loggedin'] != '1' || $_SESSION['m_type'] != "A") { return false; }
 		return true;
 	}
+	public static function getMemberProfileArray() {
+		$i = 0;
+		$arr = array();
+		$rs = mq("select * from " . DB_TBL_MEMBER_PROFILE_ARGUMENTS);
+		while($rw = mfa($rs)) {
+			$arr[$i][0] = $rw['mpa_sc'];
+			$arr[$i][1] = $rw['mpa_english'];
+			$i++;
+		}
+		return $arr;
+	}
 	
 	/* PROECTED FUNCTIONS */
 	protected function createUser($post_array,$m_type) {
@@ -255,7 +256,6 @@ class Member {
 					$hash = $this->createUserHash($m_email,$m_password);
 			        $rs = mq("insert into " . DB_TBL_MEMBERS . " (m_username,m_type,m_hash,m_email,m_active,m_lastlogin) values ('$m_username','$m_type','$hash','$m_email','1','$datetime')");
 			        $mid = miid();
-			        $rs = mq("insert into " . DB_TBL_MEMBER_PROFILE . " (mid,mp_fname,mp_lname) values  ('$mid','$mp_fname','$mp_lname')");
 					
 					$this->data['id'] = $mid;
 			        $this->data['username'] = $m_username;
@@ -265,9 +265,9 @@ class Member {
 			        $this->data['lastlogin'] = $datetime;
 			        $this->data['protected'] = 0;
 			        $this->data['password'] = $m_password;
-			        $this->data['fname'] = $mp_fname;
-			        $this->data['lname'] = $mp_lname;
-					$this->setMemberFullName();
+					
+					$this->updateMemberProfile($mid,$post_array);
+					
 					$_SESSION['_mtype'] = "S";
 					$_SESSION['_msg'] = "newmember";
 				}
@@ -280,7 +280,26 @@ class Member {
 	}
 	
 	/* PRIVATE FUNCTIONS */
-	public function isCorrectPassword($pswd,$_hash) {
+	private function updateMemberProfile($mid,$post_array) {
+		foreach($post_array as $arg => $val) { $$arg = mres($val); }
+		$arr = $this->getMemberProfileArray();
+		foreach($arr as $arg) {
+			$post_field = "mp_" . $arg[0];
+			if($$post_field != NULL) {
+				$this->insertUpdateMemberProfile($arg[0],$$post_field);
+			}
+		}
+	}
+	private function insertUpdateMemberProfile($arg,$val) {
+		$mpid = $this->userHasProfileArgument($arg);
+		if($mpid > 0) {
+			$rs = mq("update " . DB_TBL_MEMBER_PROFILE . " set mp_val='$val' where mpid='$mpid'");
+		} else {
+			$rs = mq("insert into " . DB_TBL_MEMBER_PROFILE . " (mid,mpa_sc,mp_val) values ('$mid','$arg','$val')");
+		}
+		$this->data[$arg] = $val;
+	}
+	private function isCorrectPassword($pswd,$_hash) {
 		$salt = substr($_hash, 0, 64);
 	    $hash = $salt . $pswd;
 	    
@@ -296,9 +315,13 @@ class Member {
 	    $hash = $salt . $hash;
 		return $hash;
 	}
-	private function setMemberFullName() {
-		$this->data['fullname'] = $this->data['fname'] . " " . $this->data['lname'];
-		$_SESSION['userFullName_' . $this->data['id']] = $this->data['fullname'];
+	private function userHasProfileArgument($arg) {
+		$rs = mq("select mpid from " . DB_TBL_MEMBER_PROFILE . " where mpa_sc='$arg'");
+		if(mnr($rs) > 0) {
+			$rw = mfa($rs);
+			return $rw['mpid'];
+		}
+		return 0;
 	}
 }
 ?>

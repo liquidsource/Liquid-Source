@@ -27,7 +27,6 @@ $orderdir = $_SESSION['orderdir'];
         <tr> 
             <th <?php echo tableSorter('mid'); ?>> mid</th> 
             <th <?php echo tableSorter('m_username'); ?>> Username</th> 
-            <th <?php echo tableSorter('mp_fname'); ?>> Name</th> 
             <th <?php echo tableSorter('m_email'); ?>> Email</th> 
             <th <?php echo tableSorter('m_createdate'); ?>> Created On</th> 
             <th> Actions</th> 
@@ -42,7 +41,6 @@ $orderdir = $_SESSION['orderdir'];
 			echo "<tr onclick=\"rowSelect('$mid');\" id=\"row_$mid\">
 			 <td><a href=\"?module=newusert&mid=$mid\">$mid</a></td>
 			 <td>" . $member->username . "</td>
-			 <td>" . $member->fname . "</td>
 			 <td>" . $member->email . "</td>
 			 <td>" . $member->createdate . "</td>
 			 <td>

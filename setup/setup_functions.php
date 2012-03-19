@@ -68,14 +68,24 @@ function setup_database($posty) {
 			  PRIMARY KEY (`mid`)
 			) ENGINE=MyISAM  DEFAULT CHARSET=utf8;
 			
+
+
 			CREATE TABLE `" . DB_TBL_MEMBER_PROFILE . "` (
 			  `mpid` int(11) NOT NULL AUTO_INCREMENT,
-			  `mp_fname` varchar(500) DEFAULT NULL,
-			  `mp_lname` varchar(500) DEFAULT NULL,
-			  `mid` int(11) DEFAULT NULL,
-			  PRIMARY KEY (`mpid`),
-			  KEY `mid` (`mid`)
-			) ENGINE=MyISAM  DEFAULT CHARSET=utf8 ;
+			  `mid` int(11) NOT NULL,
+			  `mpa_sc` varchar(50) NOT NULL,
+			  `mp_val` varchar(1000) NOT NULL,
+			  PRIMARY KEY (`mpid`)
+			) ENGINE=InnoDB DEFAULT CHARSET=latin1 AUTO_INCREMENT=1 ;
+
+
+			CREATE TABLE `" . DB_TBL_MEMBER_PROFILE_ARGUMENTS . "` (
+			  `mpaid` int(11) NOT NULL AUTO_INCREMENT,
+			  `mpa_sc` varchar(50) NOT NULL,
+			  `mpa_english` varchar(100) NOT NULL,
+			  PRIMARY KEY (`mpaid`)
+			) ENGINE=InnoDB  DEFAULT CHARSET=latin1 AUTO_INCREMENT=3 ;
+			
 			
 			CREATE TABLE `" . DB_TBL_META_DATA . "` (
 			  `mdid` int(11) NOT NULL AUTO_INCREMENT,
@@ -246,6 +256,9 @@ INSERT INTO `" . DB_TBL_SITE_OPTIONS . "` VALUES(40, 'USE_FLEX_SLIDER', 'true', 
 INSERT INTO `" . DB_TBL_SITE_OPTIONS . "` VALUES(41, 'USE_BX_SLIDER', 'true', '0000-00-00 00:00:00', 'define', 0, 'Modules', 'bool');
 INSERT INTO `" . DB_TBL_SITE_OPTIONS . "` VALUES(42, 'LIQUID_SOURCE_VERSION', '1.0.0', '0000-00-00 00:00:00', 'define', 0, '', '');
 INSERT INTO `" . DB_TBL_SITE_OPTIONS . "` VALUES(43, 'FORCE_RECREATE', 'true', '0000-00-00 00:00:00', 'define', 0, '', 'bool');
+
+INSERT INTO `" . DB_TBL_MEMBER_PROFILE_ARGUMENTS . "` VALUES(1, 'fname', 'Member first name');
+INSERT INTO `" . DB_TBL_MEMBER_PROFILE_ARGUMENTS . "` VALUES(2, 'lname', 'Member last name');
 		";
 		
 		$sqls = explode(';',$create_sql);
