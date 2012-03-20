@@ -43,7 +43,7 @@ class Member {
         if (isset($this->data[$arg])) {
         	$val = mres($val);
 			
-			$rs = mq("SELECT * FROM information_schema.COLUMNS WHERE TABLE_NAME = 'ls_members' AND COLUMN_NAME = '$arg'");
+			$rs = mq("SELECT * FROM information_schema.COLUMNS WHERE TABLE_NAME = '" . DB_TBL_MEMBERS . "' AND COLUMN_NAME = '$arg'");
             $this->data[$arg] = $val;
 			if(mnr($rs) > 0) {
 				$rs = mq("update " . DB_TBL_MEMBERS . " set $arg='$val' where mid='" . $this->data['id'] . "'");

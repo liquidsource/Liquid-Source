@@ -26,7 +26,7 @@
 	<hr />
 	
 	<h4>Shadowbox</h4>
-	<a href="images/icons/facebook.png" rel="shadowbox">Images</a><br />
+	<a href="images/slider/toystory.jpg" rel="shadowbox">Images</a><br />
 	<a href="http://www.makemeacocktail.com" rel="shadowbox" title="Make me a Cocktail">Website</a><br />
 	<a href="http://vimeo.com/moogaloop.swf?clip_id=1039366" rel="shadowbox">Vimeo</a><br />
 	<a href="http://www.youtube.com/v/lSnWhsmlGec&hl=en&fs=1&rel=0&autoplay=1" rel="shadowbox">Youtube</a><br />
@@ -236,7 +236,7 @@
 
 
 	<h4>Buttons</h4>
-	<button>Button</button>
+	<button>Button</button><br />
 	<a class="button" href="">A.button</a><br />
 	<button disabled="disabled">(disabled)</button><br />
 	<button type="submit">Submit</button>
@@ -245,7 +245,7 @@
 	<hr />
 	
 
-<h4>Forms</h4>
+<h4>Forms Elements</h4>
 
 
 	<form>
@@ -298,17 +298,20 @@
 	<input id="file1" type="file" />
 	
 	<hr />
+	<label for="textarea1">TextArea</label>
+	<textarea id="textarea1" placeholder="Placeholder Text"></textarea>
+	
+	<hr />
+	<h4>Alert boxes</h4>
 	<h4 class='alert alert_info'>Alert info</h4>
 	<h4 class='alert alert_warning'>Alert warning</h4>
 	<h4 class='alert alert_error'>Alert error</h4>
 	<h4 class='alert alert_success'>Alert success</h4>
 	
-	<hr />
-	<label for="textarea1">TextArea</label>
-	<textarea id="textarea1" placeholder="Placeholder Text"></textarea>
+
 	
 	<hr />
-	<label for="Share">Share</label>
+	<h4>Share</h4>
 	<g:plusone size="tall"></g:plusone>
 	<script type="IN/Share" data-url="<?php echo curPageUrl(); ?>" data-counter="top"></script>
 	<a href="https://twitter.com/share" class="twitter-share-button" data-via="<?php echo TWITTER_NAME; ?>" data-count="vertical" data-text="">Tweet</a>
@@ -316,11 +319,11 @@
 	<a href="http://pinterest.com/pin/create/button/" class="pin-it-button" count-layout="vertical">Pin It</a>
 	
 	<hr />
-	<label for="comments">Map</label><br />
+	<h4>Google Maps</h4>
 	<div id="map_canvas" style="width:100%;height:200px"></div>
 	
 	<hr />
-	<label for="comments">Commenting</label><br />
+	<h4>Commenting</h4><br />
 	<strong>These won't work unless you signup for the relevant services.</strong><br />
 	<strong>Livefyre - <a href="http://www.livefyre.com">link</a></strong>
 		<!-- START: Livefyre Embed -->

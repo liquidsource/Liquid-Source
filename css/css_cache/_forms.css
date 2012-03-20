@@ -6,40 +6,17 @@
   font-style:normal;
 }
 fieldset { margin-bottom:10px; }
-input[type=submit], input[type=button], button {
-  -webkit-border-radius:5px;
-  -moz-border-radius:5px;
-  border-radius:5px;
-  border:none;
-  padding:5px 10px;
-  font-weight:bold;
-  color:#ffffff;
-  cursor:pointer;
-  text-shadow:1px 1px 1px #999999;
-  background:#0093cb;
-  height:35px;
-  font-size:1em;
-  border:1px solid #3079ed !important;
-  background:#4b8df8;
-  background:-webkit-linear-gradient(top,#4c8ffd,#4787ed);
-  background:-moz-linear-gradient(top,#4c8ffd,#4787ed);
-  background:-ms-linear-gradient(top,#4c8ffd,#4787ed);
-  background:-o-linear-gradient(top,#4c8ffd,#4787ed);
-  -webkit-transition:border .20s;
-  -moz-transition:border .20s;
-  -o-transition:border .20s;
-  transition:border .20s;
-}
-input[type=submit]:Hover:not([disabled]), input[type=button]:Hover:not([disabled]), button:Hover:not([disabled]) {
-  border:1px solid #2f5bb7 !important;
-  background:#3f83f1;
-  background:-webkit-linear-gradient(top,#4d90fe,#357ae8);
-  background:-moz-linear-gradient(top,#4d90fe,#357ae8);
-  background:-ms-linear-gradient(top,#4d90fe,#357ae8);
-  background:-o-linear-gradient(top,#4d90fe,#357ae8);
+label {
+  width:150px;
+  margin-bottom:5px;
+  cursor:text;
 }
 input[disabled] { color:#dddddd; }
 input[disabled], select[disabled], textarea[disabled] { background-color:#dddddd; }
+input:focus, select:focus, textarea:focus { border:1px solid #f57f20; }
+input:hover, select:hover, textarea:hover { border:1px solid #ffd915 !important; }
+input[disabled]:Hover { border:1px solid #cccccc !important; }
+input[type=button]:focus, input[type=button]:hover, input[type=submit]:focus, input[type=submit]:hover { border:none; }
 input[type=text], input[type=password], input[type=email], select, textarea {
   padding:3px 10px;
   color:#666666;
@@ -57,11 +34,43 @@ textarea {
   margin-bottom:20px;
   height:80px;
 }
-label {
-  width:150px;
-  margin-bottom:5px;
-  cursor:text;
+input[type=submit], input[type=button], button, .button {
+  border:none;
+  padding:5px 10px;
+  font-weight:bold;
+  color:#ffffff;
+  cursor:pointer;
+  text-shadow:1px 1px 1px #999999;
+  background:#0093cb;
+  height:35px;
+  font-size:1em;
+  border:1px solid #3079ed !important;
+  background:#4b8df8;
+  -webkit-border-radius:5px;
+  -moz-border-radius:5px;
+  border-radius:5px;
+  -webkit-transition:border 0.20s ease-in-out;
+  -moz-transition:border 0.20s ease-in-out;
+  -o-transition:border 0.20s ease-in-out;
+  transition:border 0.20s ease-in-out;
+  background:#4c8ffd;
+  background:-webkit-gradient(linear,0 0,0 100%,from(#4c8ffd),color-stop(100%,#4787ed));
+  background:-moz-linear-gradient(top,#4c8ffd,#4787ed 100%);
+  background:-o-linear-gradient(top,#4c8ffd,#4787ed 100%);
+  background:linear-gradient(top,#4c8ffd,#4787ed 100%);
 }
-input:focus, select:focus, textarea:focus { border:1px solid #f57f20; }
-input:hover, select:hover, textarea:hover { border:1px solid #ffd915; }
-input[type=button]:focus, input[type=button]:hover, input[type=submit]:focus, input[type=submit]:hover { border:none; }
+a.button {
+  display:inline-block;
+  color:#ffffff;
+  height:auto;
+}
+a.button:Hover { text-decoration:none; }
+input[type=submit]:Hover:not([disabled]), input[type=button]:Hover:not([disabled]), button:Hover:not([disabled]), .button:Hover:not([disabled]) {
+  border:1px solid #2f5bb7 !important;
+  background:#3f83f1;
+  background:#4d90fe;
+  background:-webkit-gradient(linear,0 0,0 100%,from(#4d90fe),color-stop(100%,#357ae8));
+  background:-moz-linear-gradient(top,#4d90fe,#357ae8 100%);
+  background:-o-linear-gradient(top,#4d90fe,#357ae8 100%);
+  background:linear-gradient(top,#4d90fe,#357ae8 100%);
+}

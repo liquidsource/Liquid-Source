@@ -27,11 +27,12 @@ class Link {
         if ($arg == "lid") { return; }
 		
         if (isset($this->data[$arg])) {
-            $this->data[$arg] = $val;
         	$val = mres($val);
-			try {
+        	$rs = mq("SELECT * FROM information_schema.COLUMNS WHERE TABLE_NAME = '" . DB_TBL_LINKS . "' AND COLUMN_NAME = '$arg'");
+            $this->data[$arg] = $val;
+			if(mnr($rs) > 0) {
 				$rs = mq("update " . DB_TBL_LINKS . " set $arg='$val' where lid='" . $this->data['id'] . "'");
-			} catch(Exception $e) { }
+			}
         }
     }
 	

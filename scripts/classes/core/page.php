@@ -79,11 +79,12 @@ class Page {
         if ($arg == "pgid") { return; }
 		
         if (isset($this->data[$arg])) {
-            $this->data[$arg] = $val;
         	$val = mres($val);
-			try {
+        	$rs = mq("SELECT * FROM information_schema.COLUMNS WHERE TABLE_NAME = '" . DB_TBL_PAGES . "' AND COLUMN_NAME = '$arg'");
+            $this->data[$arg] = $val;
+			if(mnr($rs) > 0) {
 				$rs = mq("update " . DB_TBL_PAGES . " set $arg='$val' where pgid='" . $this->data['id'] . "'");
-			} catch(Exception $e) { }
+			}
         }
     }
 	

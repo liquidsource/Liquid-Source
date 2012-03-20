@@ -68,11 +68,12 @@ class Post {
         if ($arg == "pid") { return; }
 		
         if (isset($this->data[$arg])) {
-            $this->data[$arg] = $val;
         	$val = mres($val);
-			try {
+        	$rs = mq("SELECT * FROM information_schema.COLUMNS WHERE TABLE_NAME = '" . DB_TBL_POSTS . "' AND COLUMN_NAME = '$arg'");
+            $this->data[$arg] = $val;
+			if(mnr($rs) > 0) {
 				$rs = mq("update " . DB_TBL_POSTS . " set $arg='$val' where pid='" . $this->data['id'] . "'");
-			} catch(Exception $e) { }
+			}
         }
     }
 	
@@ -82,8 +83,8 @@ class Post {
 			return getCategoryArray($this->data['id'],'post');
 		}
 	}
-	public function categoryNames() {
-		return getCategoryNames($this->data['id'],'post',',');
+	public function categoryNames($seperator=",") {
+		return getCategoryNames($this->data['id'],'post',$seperator);
 	}
 	public function inCategory($catids) {
 		return inCategory($catids,$this->id,'post');
@@ -113,6 +114,16 @@ class Post {
 			$rs = mq("update " . DB_TBL_POSTS . " set p_active='0' where pid='" . $this->data['id'] . "'");
 			$_SESSION['_mtype'] = "W";
 			$_SESSION['_msg'] = "deletedpost";
+		}
+	}
+	
+	public function nextPost($arr=array()) {
+		extract($arr);
+		if($category_id != NULL) {
+			
+		}
+		if($date != NULL) {
+			
 		}
 	}
 }
