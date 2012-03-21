@@ -95,13 +95,13 @@ function strToSlug($str,$module=NULL,$uid=NULL){
 	if(!empty($module)) {
 		switch ($module) {
 			case "page":
-				$rs = mq("select pg_slug from " . DB_TBL_PAGES . " where pg_slug='$str' and pgid <> '$uid'");
+				$rs = mq("select pg_slug from " . DB_TBL_PAGES . " where pg_slug='$str' and pgid <> '$uid' and p_parent='0'");
 				if(mnr($rs) > 0) {
 					return strToSlug($str . rand(0,100),$module,$uid);
 				}
 				break;
 			case "post":
-				$rs = mq("select p_slug from " . DB_TBL_POSTS . " where p_slug='$str' and pid <> '$uid'");
+				$rs = mq("select p_slug from " . DB_TBL_POSTS . " where p_slug='$str' and pid <> '$uid' and p_parent='0'");
 				if(mnr($rs) > 0) {
 					return strToSlug($str . rand(0,100),$module,$uid);
 				}

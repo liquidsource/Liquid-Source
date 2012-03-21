@@ -107,9 +107,11 @@ function setup_database($posty) {
 			  `isAdmin` int(11) DEFAULT NULL,
 			  `pg_createdate` timestamp NOT NULL DEFAULT CURRENT_TIMESTAMP,
 			  `pg_type` char(2) NOT NULL,
-			  `pg_updatedate` datetime NOT NULL,
 			  `pg_content` longtext NOT NULL,
 			  `pg_active` int(1) NOT NULL,
+			  `pg_parent` int(11) NOT NULL,
+			  `pg_posttype` varchar(20) NOT NULL DEFAULT 'published',
+			  `pg_origposttype` varchar(20) NOT NULL,
 			  PRIMARY KEY (`pgid`),
 			  KEY `mod_slug` (`pg_slug`)
 			) ENGINE=MyISAM  DEFAULT CHARSET=utf8 ;
@@ -123,7 +125,9 @@ function setup_database($posty) {
 			  `p_active` int(11) DEFAULT '1',
 			  `p_type` varchar(10) DEFAULT NULL,
 			  `p_lang` varchar(3) DEFAULT 'en',
-			  `p_updatedate` datetime NOT NULL,
+			  `p_posttype` varchar(20) NOT NULL DEFAULT 'published',
+			  `p_parent` int(11) NOT NULL,
+			  `p_origposttype` varchar(20) NOT NULL,
 			  PRIMARY KEY (`pid`),
 			  KEY `p_slug` (`p_slug`),
 			  KEY `p_active` (`p_active`),

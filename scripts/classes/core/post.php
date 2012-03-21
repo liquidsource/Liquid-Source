@@ -7,17 +7,18 @@ class Post {
 		if($p_slug != NULL) { $wc = "p_slug='$p_slug' "; }
 		if($pid != NULL) { $wc = "pid='$pid' "; }
 		if($wc != "") {
-			$rs = mq("select * from " . DB_TBL_POSTS . " where $wc");
+			$rs = mq("select * from " . DB_TBL_POSTS . " where $wc and p_posttype != 'inherit'");
 			if(mnr($rs) > 0) {
 				$rw = mfa($rs);
 				$this->data['id'] = $rw['pid'];
 				$this->data['title'] = stripslashes($rw['p_title']);
 				$this->data['slug'] = $rw['p_slug'];
 				$this->data['createdate'] = $rw['p_createdate'];
-				$this->data['updatedate'] = $rw['p_updatedate'];
 				$this->data['content'] = stripslashes($rw['p_content']);
 				$this->data['active'] = $rw['p_active'];
 				$this->data['type'] = $rw['p_type'];
+				$this->data['posttype'] = $rw['p_posttype'];
+				$this->data['lang'] = $rw['p_lang'];
 			}
 		}
 	}
@@ -25,18 +26,33 @@ class Post {
 		foreach($post_array as $arg => $val) { $$arg = mres($val); }
 		$datetime = date("Y-m-d H:i:s");
 		
-	    if($p_slug != "") {  $sluggy = $p_slug; } else { $sluggy = $p_title; }
-	    if($sluggy != "") { $p_slug = strToSlug($sluggy,$p_type,$this->data['id']); }
+	    if($this->data['slug'] != "") {  $sluggy = $this->data['slug']; } else { $sluggy = $p_title; }
+	    if($sluggy != "") { $p_slug = strToSlug($sluggy,$this->data['type'],$this->data['id']); }
 		
 	    if($this->data['id'] != "") {
 	    	$pid = $this->data['id'];
+			
+	    	$rs = mq("insert into " . DB_TBL_POSTS . " (p_title,p_content,p_slug,p_type,p_createdate,p_active,p_posttype,p_parent,p_origposttype) values (
+	    	'" . $this->data['title'] . "',
+	    	'" . $this->data['content'] . "',
+	    	'" . $p_slug . "',
+	    	'" . $this->data['type'] . "',
+	    	'" . $this->data['createdate'] . "',
+	    	'0',
+	    	'inherit',
+	    	'$pid',
+	    	'" . $this->data['posttype'] . "'
+	    	)");
+			
 	    	$u_arr = array('p_title','p_content','p_slug');
 			foreach($u_arr as $val) {
 				if($$val != NULL) { $uc_x .= $val . "='" . $$val . "', "; }
 			}
-	        $rs = mq("update " . DB_TBL_POSTS . " set $uc_x p_updatedate='$datetime' where pid='$pid'");
+			if($uc_x != "") $uc_x = substr($uc_x,0,-2);
+	        $rs = mq("update " . DB_TBL_POSTS . " set $uc_x, p_createdate='$datetime' where pid='$pid'");
+			
 		} else {
-	        $rs = mq("insert into " . DB_TBL_POSTS . " (p_title,p_content,p_slug,p_type,p_updatedate) values ('$p_title','$p_content','$p_slug','$p_type','$datetime')");
+	        $rs = mq("insert into " . DB_TBL_POSTS . " (p_title,p_content,p_slug,p_type,p_createdate) values ('$p_title','$p_content','$p_slug','$p_type','$datetime')");
 	        $pid = miid();
 			$this->data['id'] = $pid;
 		}
@@ -92,13 +108,13 @@ class Post {
 	public function theShort($size=50) {
 		return mb_substr($this->data['content'],0,$size);
 	}
-	public function updatedDate() {
-		return $this->updateDate;
-	}
-	public function publishedDate() {
+	public function updateddDate() {
 		return $this->createDate;
 	}
-	
+	public function publishedDate() {
+		$rw = mfa(mq("select min(p_createdate) as pub_date where p_slug='" . $this->data['slug'] . "'"));
+		return $rw['pub_date'];
+	}
 	public function metaData() {
 		if($this->data['id'] != "") {
 			return getMetaData($this->data['id'],$this->data['type']);
