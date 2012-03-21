@@ -385,7 +385,7 @@ margin: 8px 20px;
 .module {
 border: 1px solid #9BA0AF;
 width: 100%;
-margin: 20px 3% 0 3%;
+margin: 20px 3% 20px 3%;
 margin-top: 20px;
 -webkit-border-radius: 5px;
 -moz-border-radius: 5px;
@@ -607,7 +607,7 @@ input[type=submit]:hover, input[type=button]:hover {
 color: #333333;
 }
 
-input[type=submit].alt_btn {
+input[type=submit].alt_btn, input[type=button].alt_btn {
 background: #D0D1D4 url(../images/btn_submit_2.png) repeat-x;
 border: 1px solid#30B0C8;
 -webkit-box-shadow: 0 1px 0 #fff;
@@ -624,11 +624,11 @@ text-shadow: 0 1px 0 #6CDCF9;
 cursor: pointer;
 }
 
-input[type=submit].alt_btn:hover {
+input[type=submit].alt_btn:hover, input[type=button].alt_btn:hover {
 color: #001217;
 }
 
-input[type=submit].btn_post_message {
+input[type=submit].btn_post_message, input[type=button].btn_post_message {
 background: #D0D1D4 url(../images/post_message.png) no-repeat;
 display: block;
 width: 37px;
@@ -638,7 +638,7 @@ cursor: pointer;
 text-indent: -5000px;
 }
 
-input[type=submit].btn_post_message:hover {
+input[type=submit].btn_post_message:hover, input[type=button].btn_post_message:hover {
 background-position: 0 -24px;
 }
 
@@ -907,3 +907,6 @@ select.search_input { width: 145px !important; }
 #media_listing img { max-width: 100px; max-height: 50px; }
 
 .dnone { display:none; }
+
+tr.posttype_draft { background-color: #eee; }
+tr.posttype_draft td { color: #666; }

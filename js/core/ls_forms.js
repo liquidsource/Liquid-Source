@@ -9,7 +9,7 @@
  *   Four example forms that come with the base install are included below. You can safely remove these if the forms are not used.
  */
 function submitForm(frmName) {
-    overallFail = false;
+    ls_overallFormSubmitFail = false;
     switch(frmName) {
         case "login_frm":
             failed = checkBlank('username');

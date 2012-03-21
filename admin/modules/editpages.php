@@ -20,6 +20,7 @@ $orderdir = $_SESSION['orderdir'];
             <tr> 
                 <th <?php echo tableSorter('pgid'); ?>> pgid</th>
                 <th <?php echo tableSorter('pg_title'); ?>> Page Title</th>
+                <th <?php echo tableSorter('pg_posttype'); ?>> Page State</th>
                 <th <?php echo tableSorter('pg_type'); ?>> Page Type</th> 
                 <th <?php echo tableSorter('pg_slug'); ?>> Page Slug</th>
                 <th <?php echo tableSorter('pg_meta_description'); ?>> Meta Description</th>
@@ -29,13 +30,15 @@ $orderdir = $_SESSION['orderdir'];
         </thead> 
         <tbody> 
             <?php
-            $arr = getPages(array("num" => $llimit . "," . $hlimit, "orderby" => $orderby, "orderdir" => $orderdir));
+            $arr = getPages(array("num" => $llimit . "," . $hlimit, "orderby" => $orderby, "orderdir" => $orderdir, "state" => 'all'));
 			foreach($arr as $page) {
 				$pgid = $page->id;
+				$posttype = $page->posttype;
 				
-				echo "<tr onclick=\"rowSelect('$pgid');\" id=\"row_$pgid\">
+				echo "<tr onclick=\"rowSelect('$pgid');\" id=\"row_$pgid\" class=\"posttype_$posttype\">
 				<td><a href=\"?module=newpage&pgid=$pgid\">$pgid</a></td>
-				<td>" . $page->title . "</td>
+				<td><strong>" . $page->title . "</strong></td>
+				<td>" . $posttype . "</td>
 				<td>" . $page->type_eng . "</td>
 				<td>" . $page->slug . "</td>
 				<td>" . $page->meta_description . " ... </td>
@@ -56,7 +59,7 @@ $orderdir = $_SESSION['orderdir'];
     <div class="paging">
     <?php
     $pagenum = ($llimit / $hlimit) + 1;
-	$arr = getPages(array());
+	$arr = getPages(array("state" => 'all'));
     $numrows = sizeof($arr);
     if($numrows > $hlimit) {
         $numpages = ceil($numrows / $hlimit);

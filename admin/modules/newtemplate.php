@@ -26,7 +26,19 @@ if($pid != "") {
     </div>
     <footer>
         <div class="submit_link">
-            <input type="submit" value="Save" class="alt_btn">
+            <strong>Save Options:</strong> &nbsp; &nbsp;
+        	<?php if($template->posttype == "") { ?>
+        		<input type="button" value="Save as Draft" onclick="ls_admin_saveForm('p','draft','admin_template_frm')" /> &nbsp;
+            	<input type="button" value="Publish" class="alt_btn" onclick="ls_admin_saveForm('p','published','admin_template_frm')" />
+            <?php } ?>
+            <?php if($template->posttype == "draft") { ?>
+        		<input type="button" value="Update Draft" onclick="ls_admin_saveForm('p','draft','admin_template_frm')" /> &nbsp;
+            	<input type="button" value="Publish" class="alt_btn" onclick="ls_admin_saveForm('p','published','admin_template_frm')" />
+            <?php } ?>
+            <?php if($template->posttype == "published") { ?>
+            	<input type="button" value="Update Published" class="alt_btn" onclick="ls_admin_saveForm('p','published','admin_template_frm')" />
+            <?php } ?>
+            <input type="hidden" name="p_posttype" id="p_posttype" value="<?php echo $template->posttype; ?>" />
         </div>
     </footer>
 </article>

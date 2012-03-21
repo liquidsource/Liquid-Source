@@ -14,9 +14,17 @@ class LS {
 		if($orderby == "") { $orderby = "pid"; }
 		if($orderdir == "") { $orderdir = "asc"; }
 		if($active == "") { $wc .= " and p_active='1' "; } else { $wc .= " and p_active='$active' "; }
+		if($state == "") { $wc .= " and p_posttype='published' "; } else {
+			switch($state) {
+				case "draft":
+					$wc .= " and p_posttype == 'draft' "; break;
+				case "published":
+					$wc .= " and p_posttype == 'published' "; break;
+			}	
+		}
 		
 	    $ret_arr = array();
-	    $rs = mq("select pid from " . DB_TBL_POSTS . " $jc where p_type='post' $wc order by $orderby $orderdir limit $limit");
+	    $rs = mq("select pid from " . DB_TBL_POSTS . " $jc where p_type='post' $wc and p_posttype != 'inherit' order by $orderby $orderdir limit $limit");
 	    while($rw = mfa($rs)) {
 			$ret = new Post('',$rw['pid']);
 			if($ret != "") $ret_arr[] = $ret;
@@ -29,9 +37,17 @@ class LS {
 		if($orderby == "") { $orderby = "pid"; }
 		if($orderdir == "") { $orderdir = "asc"; }
 		if($active == "") { $wc .= " and p_active='1' "; } else { $wc .= " and p_active='$active' "; }
+		if($state == "") { $wc .= " and p_posttype='published' "; } else {
+			switch($state) {
+				case "draft":
+					$wc .= " and p_posttype == 'draft' "; break;
+				case "published":
+					$wc .= " and p_posttype == 'published' "; break;
+			}	
+		}
 		
 	    $ret_arr = array();
-	    $rs = mq("select pid from " . DB_TBL_POSTS . " where p_type='template' $wc order by $orderby $orderdir limit $limit");
+	    $rs = mq("select pid from " . DB_TBL_POSTS . " where p_type='template' $wc and p_posttype != 'inherit' order by $orderby $orderdir limit $limit");
 	    while($rw = mfa($rs)) {
 			$ret = new Template('',$rw['pid']);
 			if($ret != "") $ret_arr[] = $ret;
@@ -44,8 +60,17 @@ class LS {
 		if($orderby == "") { $orderby = "pgid"; }
 		if($orderdir == "") { $orderdir = "asc"; }
 		if($active == "") { $wc .= " and pg_active='1' "; } else { $wc .= " and pg_active='$active' "; }
+		if($state == "") { $wc .= " and pg_posttype='published' "; } else {
+			switch($state) {
+				case "draft":
+					$wc .= " and pg_posttype = 'draft' "; break;
+				case "published":
+					$wc .= " and pg_posttype = 'published' "; break;
+			}	
+		}
+		
 	    $ret_arr = array();
-	    $rs = mq("select pgid from " . DB_TBL_PAGES . " where isAdmin=0 $wc order by $orderby $orderdir limit $limit");
+	    $rs = mq("select pgid from " . DB_TBL_PAGES . " where isAdmin=0 $wc and pg_posttype != 'inherit' order by $orderby $orderdir limit $limit");
 	    while($rw = mfa($rs)) {
 			$ret = new Page('',$rw['pgid']);
 			if($ret != "") $ret_arr[] = $ret;

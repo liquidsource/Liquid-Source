@@ -62,10 +62,22 @@ if($pid != "") {
     </div>
     <footer>
         <div class="submit_link">
-            <input type="submit" value="Publish" class="alt_btn">
+            <strong>Save Options:</strong> &nbsp; &nbsp;
+        	<?php if($post->posttype == "") { ?>
+        		<input type="button" value="Save as Draft" onclick="ls_admin_saveForm('p','draft','admin_post_frm')" /> &nbsp;
+            	<input type="button" value="Publish" class="alt_btn" onclick="ls_admin_saveForm('p','published','admin_post_frm')" />
+            <?php } ?>
+            <?php if($post->posttype == "draft") { ?>
+        		<input type="button" value="Update Draft" onclick="ls_admin_saveForm('p,'draft','admin_post_frm')" /> &nbsp;
+            	<input type="button" value="Publish" class="alt_btn" onclick="ls_admin_saveForm('p','published','admin_post_frm')" />
+            <?php } ?>
+            <?php if($post->posttype == "published") { ?>
+            	<input type="button" value="Update Published" class="alt_btn" onclick="ls_admin_saveForm('p','published','admin_post_frm')" />
+            <?php } ?>
+            <input type="hidden" name="p_posttype" id="p_posttype" value="<?php echo $post->posttype; ?>" />
         </div>
     </footer>
-</article><!-- end of post new article -->
+</article>
 </form>
 <script type="text/javascript" >
 tinyMCE.init({

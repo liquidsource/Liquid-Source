@@ -7,7 +7,7 @@ class Page {
 		if($pg_slug != NULL) { $wc = "pg_slug='$pg_slug' "; }
 		if($pgid != NULL) { $wc = "pgid='$pgid' "; }
 		if($wc != "") { 
-			$rs = mq("select * from " . DB_TBL_PAGES . " where $wc");
+			$rs = mq("select * from " . DB_TBL_PAGES . " where $wc and pg_posttype != 'inherit'");
 			if(mnr($rs) > 0) {
 				$rw = mfa($rs);
 				$this->data['id'] = $rw['pgid'];
@@ -63,14 +63,14 @@ class Page {
 			
 			
 			
-	    	$u_arr = array('pg_meta_title','pg_slug','pg_meta_description','pg_meta_keywords','pg_type','pg_content');
+	    	$u_arr = array('pg_meta_title','pg_slug','pg_meta_description','pg_meta_keywords','pg_type','pg_content','pg_posttype');
 			foreach($u_arr as $val) {
 				if($$val != NULL) { $uc_x .= $val . "='" . $$val . "', "; }
 			}
 			if($uc_x != "") $uc_x = substr($uc_x,0,-2);
 			$rs = mq("update " . DB_TBL_PAGES . " set $uc_x, pg_createdate='$datetime' where pgid='$pgid'");
 	    } else {
-	    	$rs = mq("insert into " . DB_TBL_PAGES . " (pg_meta_title,pg_slug,pg_meta_description,pg_meta_keywords,pg_type,pg_content,isAdmin,pg_active) values ('$pg_meta_title','$pg_slug','$pg_meta_description','$pg_meta_keywords','$pg_type','$pg_content','0','1')");
+	    	$rs = mq("insert into " . DB_TBL_PAGES . " (pg_meta_title,pg_slug,pg_meta_description,pg_meta_keywords,pg_type,pg_content,isAdmin,pg_active,pg_posttype) values ('$pg_meta_title','$pg_slug','$pg_meta_description','$pg_meta_keywords','$pg_type','$pg_content','0','1','$pg_posttype')");
 	        $pgid = miid();
 			$this->data['id'] = $pgid;
 	    }

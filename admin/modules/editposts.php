@@ -20,6 +20,7 @@ $orderdir = $_SESSION['orderdir'];
             <tr> 
                 <th <?php echo tableSorter('pid'); ?>> pid</th> 
                 <th <?php echo tableSorter('p_title'); ?>> Post Title</th> 
+                <th <?php echo tableSorter('p_posttype'); ?>> Post State</th>
                 <th <?php echo tableSorter('c_name'); ?>> Category</th> 
                 <th <?php echo tableSorter('p_createdate'); ?>> Created On</th> 
                 <th> Actions</th> 
@@ -27,13 +28,15 @@ $orderdir = $_SESSION['orderdir'];
         </thead> 
         <tbody> 
             <?php
-            $arr = getPosts(array("num" => $llimit . "," . $hlimit, "orderby" => $orderby, "orderdir" => $orderdir));
+            $arr = getPosts(array("num" => $llimit . "," . $hlimit, "orderby" => $orderby, "orderdir" => $orderdir, "state" => 'all'));
 			foreach($arr as $post) {
 				$pid = $post->id;
+				$posttype = $post->posttype;
 				
-				echo "<tr onclick=\"rowSelect('$pid');\" id=\"row_$pid\">
+				echo "<tr onclick=\"rowSelect('$pid');\" id=\"row_$pid\" class=\"posttype_$posttype\">
 				 <td><a href=\"?module=newpost&pid=$pid\">$pid</a></td>
-				 <td>" . $post->title . "</td>
+				 <td><strong>" . $post->title . "</strong></td>
+				<td>" . $posttype . "</td>
 				 <td>" . $post->categoryNames() . "</td>
 				 <td>" . $post->createdate . "</td>
 				 <td>
@@ -49,7 +52,7 @@ $orderdir = $_SESSION['orderdir'];
         <div class="paging">
         <?php
 	    $pagenum = ($llimit / $hlimit) + 1;
-		$arr = getPosts(array());
+		$arr = getPosts(array("state" => 'all'));
 	    $numrows = sizeof($arr);
 	    if($numrows > $hlimit) {
 	        $numpages = ceil($numrows / $hlimit);

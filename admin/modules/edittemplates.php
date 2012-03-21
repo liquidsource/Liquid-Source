@@ -27,7 +27,7 @@ $orderdir = $_SESSION['orderdir'];
         </thead> 
         <tbody> 
             <?php
-            $arr = getTemplates(array("num" => $llimit . "," . $hlimit, "orderby" => $orderby, "orderdir" => $orderdir));
+            $arr = getTemplates(array("num" => $llimit . "," . $hlimit, "orderby" => $orderby, "orderdir" => $orderdir, "state" => 'all'));
 			foreach($arr as $template) {
 				$pid = $template->id;
 				
@@ -49,7 +49,7 @@ $orderdir = $_SESSION['orderdir'];
         <div class="paging">
         <?php
 	    $pagenum = ($llimit / $hlimit) + 1;
-		$arr = getTemplates(array());
+		$arr = getTemplates(array("state" => 'all'));
 	    $numrows = sizeof($arr);
 	    if($numrows > $hlimit) {
 	        $numpages = ceil($numrows / $hlimit);

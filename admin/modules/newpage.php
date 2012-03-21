@@ -32,10 +32,10 @@ if($pgid != "") {
         
         <fieldset>
         	<label>Page Type</label>
-            <div class="clear" style="padding:1px;">&nbsp;</div>
+            <div class="clear" style="padding:1px;font-size:1px;line-height:1px">&nbsp;</div>
             <label style="width:150px">Text</label>
             <span class="pg_type"><input type="radio" name="pg_type" id="pg_type" value="tx" onclick="mtypeSelected('tx');" <?php if($page->type == "tx") echo "checked=\"checked\""; ?> required />&nbsp;</span>
-            <div class="clear" style="padding:1px;">&nbsp;</div>
+            <div class="clear" style="padding:1px;font-size:1px;line-height:1px">&nbsp;</div>
             <label style="width:150px">Bespoke</label>
             <span class="pg_type"><input type="radio" name="pg_type" id="pg_type" value="bs" onclick="mtypeSelected('bs');" <?php if($page->type == "bs") echo "checked=\"checked\""; ?> required />&nbsp;</span>
         </fieldset>
@@ -80,7 +80,19 @@ if($pgid != "") {
     </div>
     <footer>
         <div class="submit_link">
-            <input type="submit" value="Save" class="alt_btn">
+        	<strong>Save Options:</strong> &nbsp; &nbsp;
+        	<?php if($page->posttype == "") { ?>
+        		<input type="button" value="Save as Draft" onclick="ls_admin_saveForm('pg','draft','admin_page_frm')" /> &nbsp;
+            	<input type="button" value="Publish" class="alt_btn" onclick="ls_admin_saveForm('pg','published','admin_page_frm')" />
+            <?php } ?>
+            <?php if($page->posttype == "draft") { ?>
+        		<input type="button" value="Update Draft" onclick="ls_admin_saveForm('pg','draft','admin_page_frm')" /> &nbsp;
+            	<input type="button" value="Publish" class="alt_btn" onclick="ls_admin_saveForm('pg','published','admin_page_frm')" />
+            <?php } ?>
+            <?php if($page->posttype == "published") { ?>
+            	<input type="button" value="Update Published" class="alt_btn" onclick="ls_admin_saveForm('pg','published','admin_page_frm')" />
+            <?php } ?>
+            <input type="hidden" name="pg_posttype" id="pg_posttype" value="<?php echo $page->posttype; ?>" />
         </div>
     </footer>
 </article>

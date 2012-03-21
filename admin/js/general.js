@@ -33,3 +33,7 @@ function selectAll(uids) {
 		}
 	}
 }
+function ls_admin_saveForm(prefix,posttype,frmName) {
+	$('#' + prefix + "_posttype").val(posttype);
+	$('#' + frmName).submit();
+}

@@ -214,8 +214,8 @@ INSERT INTO `" . DB_TBL_PAGES . "` VALUES(21, 'Contact Us', 'contactus', 'des', 
 INSERT INTO `" . DB_TBL_PAGES . "` VALUES(22, 'Pages', 'pages', 'Pages description', 'kw1,kw2,pages', 0, 0, '2012-02-27 12:14:04', 'bs', '', 1,'0','published','');
 INSERT INTO `" . DB_TBL_PAGES . "` VALUES(23, 'Posts', 'posts', 'Posts description', 'kw1,kw2,posts', 0, 0, '2012-02-27 12:14:04', 'bs', '', 1,'0','published','');
 
-INSERT INTO `" . DB_TBL_POSTS . "` VALUES(1, 'Registration', 'registration', '<p>This is what gets sent out to new registrants</p>\r\n<p>[r_username]</p>\r\n<p>[r_email]</p>\r\n<p>[r_password]</p>\r\n<p>[r_fname]</p>\r\n<p>[r_lname]</p>\r\n<p>[tel]</p>', NULL, 1, 'template', 'en', '2012-02-28 13:10:53','0','published','');
-INSERT INTO `" . DB_TBL_POSTS . "` VALUES(2, 'Forgot Password', 'forgot-password', '<p>This is what gets sent out to people who forget their password</p>\r\n<p>[password]</p>\r\n<p>[mp_fname]</p>\r\n<p>[mp_lname]</p>\r\n<p>[uname]</p>', NULL, 1, 'template', 'en', '0000-00-00 00:00:00','0','published','');
+INSERT INTO `" . DB_TBL_POSTS . "` VALUES(1, 'Registration', 'registration', '<p>This is what gets sent out to new registrants</p>\r\n<p>[r_username]</p>\r\n<p>[r_email]</p>\r\n<p>[r_password]</p>\r\n<p>[r_fname]</p>\r\n<p>[r_lname]</p>\r\n<p>[tel]</p>', NULL, 1, 'template', 'en','0','published','');
+INSERT INTO `" . DB_TBL_POSTS . "` VALUES(2, 'Forgot Password', 'forgot-password', '<p>This is what gets sent out to people who forget their password</p>\r\n<p>[password]</p>\r\n<p>[mp_fname]</p>\r\n<p>[mp_lname]</p>\r\n<p>[uname]</p>', NULL, 1, 'template', 'en','0','published','');
 
 INSERT INTO `" . DB_TBL_SITE_OPTIONS . "` VALUES(1, 'GOOGLE_MAPS_API_KEY', 'AIzaSyCeFju_W41SnogvXDmFFHinp63yKs9DMME', '0000-00-00 00:00:00', 'define', 0, 'APIs', '');
 INSERT INTO `" . DB_TBL_SITE_OPTIONS . "` VALUES(2, 'GOOGLE_ANALYTICS_CODE', 'UA-xxxxxxxx-x', '0000-00-00 00:00:00', 'define', 0, 'SEO', '');

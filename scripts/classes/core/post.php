@@ -44,7 +44,7 @@ class Post {
 	    	'" . $this->data['posttype'] . "'
 	    	)");
 			
-	    	$u_arr = array('p_title','p_content','p_slug');
+	    	$u_arr = array('p_title','p_content','p_slug','p_posttype');
 			foreach($u_arr as $val) {
 				if($$val != NULL) { $uc_x .= $val . "='" . $$val . "', "; }
 			}
@@ -52,7 +52,7 @@ class Post {
 	        $rs = mq("update " . DB_TBL_POSTS . " set $uc_x, p_createdate='$datetime' where pid='$pid'");
 			
 		} else {
-	        $rs = mq("insert into " . DB_TBL_POSTS . " (p_title,p_content,p_slug,p_type,p_createdate) values ('$p_title','$p_content','$p_slug','$p_type','$datetime')");
+	        $rs = mq("insert into " . DB_TBL_POSTS . " (p_title,p_content,p_slug,p_type,p_createdate,p_posttype) values ('$p_title','$p_content','$p_slug','$p_type','$datetime','$p_posttype')");
 	        $pid = miid();
 			$this->data['id'] = $pid;
 		}
