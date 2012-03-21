@@ -56,7 +56,7 @@ $orderdir = $_SESSION['orderdir'];
     <div class="paging">
     <?php
     $pagenum = ($llimit / $hlimit) + 1;
-	$arr = ls_m_getPageInfo();
+	$arr = getPages(array());
     $numrows = sizeof($arr);
     if($numrows > $hlimit) {
         $numpages = ceil($numrows / $hlimit);
