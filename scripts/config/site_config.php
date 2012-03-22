@@ -9,13 +9,13 @@ Author: Nick Wilkins
 ********************************************************************* */
 
 /* CONFIGURATION BASE OPTIONS */
-define('BASE_HREF',"/clients/ls_test/");
+define('BASE_HREF',"/liquid_source/");
 
 define('USE_MYSQLI',true);
 define('DB_HOST',"localhost");
-define('DB_NAME',"ls_test");
-define('DB_USER',"ls_test");
-define('DB_PASSWORD',"l3tm31ns");
+define('DB_NAME',"template");
+define('DB_USER',"root");
+define('DB_PASSWORD',"root");
 
 define('TABLE_PREFIX','ls_');
 
@@ -66,7 +66,7 @@ if($settingup != "true") {
 	}
 } else {
 	$failedWriteable = false;
-	if(!is__writable('../css/css_cache/') || !is__writable('../js/js_cache/')  || !is__writable('../uploads/')) { $failedWriteable = true; }
+	if(!is__writable('../uploads/')) { $failedWriteable = true; }
 	
 	$rs = mq("SELECT * FROM " . DB_TBL_SITE_OPTIONS);
 	if ($rs) {

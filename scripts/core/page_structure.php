@@ -69,30 +69,30 @@ function stylesAndJsTop($module) {
 	$css_name_a = md5_of_dir('css/core/');
 	$css_name_b = md5_of_dir('css/packages/');
 	$css_name = md5($css_name_a . $css_name_b);
-	if(!file_exists("css/css_cache/" . $css_name . ".css" ) || FORCE_RECREATE == "1") {
-		delete_old_md5s("css/css_cache/");
+	if(!file_exists("uploads/js_css_cache/" . $css_name . ".css" ) || FORCE_RECREATE == "1") {
+		delete_old_md5s("uploads/js_css_cache/");
 		
 		require 'scripts/classes/lessphp/lessc.inc.php';
 			$less = new lessc('css/core/master.less');
-			file_put_contents('css/css_cache/_master.css', $less->parse());
+			file_put_contents('uploads/js_css_cache/_master.css', $less->parse());
 			$less = new lessc('css/core/forms.less');
-			file_put_contents('css/css_cache/_forms.css', $less->parse());
+			file_put_contents('uploads/js_css_cache/_forms.css', $less->parse());
 			$less = new lessc('css/core/print.less');
-			file_put_contents('css/css_cache/print.css', $less->parse());
+			file_put_contents('uploads/js_css_cache/print.css', $less->parse());
 		
 		$str = file_get_contents("css/core/reset.css");
-		$str .= file_get_contents("css/css_cache/_master.css");
-	    $str .= file_get_contents("css/css_cache/_forms.css");
+		$str .= file_get_contents("uploads/js_css_cache/_master.css");
+	    $str .= file_get_contents("uploads/js_css_cache/_forms.css");
 		if(USE_TABLE_PARSER) { $str .= file_get_contents("css/packages/dataTables.css"); }
 		if(USE_TOOLTIPS) { $str .= file_get_contents("css/packages/tooltips.css"); }
 		if(USE_SHADOWBOX) { $str .= file_get_contents("css/packages/shadowbox.css"); }
 		if(USE_FLEX_SLIDER) { $str .= file_get_contents("css/packages/flexslider.css"); }
 		
-		$fh = fopen("css/css_cache/$css_name.css","w");
+		$fh = fopen("uploads/js_css_cache/$css_name.css","w");
 		fwrite($fh,$str);
 	}
-    echo "<link href=\"css/css_cache/$css_name.css\" rel=\"stylesheet\" type=\"text/css\" media=\"screen\" />\n\r";
-    echo "<link href=\"css/css_cache/print.css\" rel=\"stylesheet\" type=\"text/css\" media=\"print\" />\n\r";
+    echo "<link href=\"uploads/js_css_cache/$css_name.css\" rel=\"stylesheet\" type=\"text/css\" media=\"screen\" />\n\r";
+    echo "<link href=\"uploads/js_css_cache/print.css\" rel=\"stylesheet\" type=\"text/css\" media=\"print\" />\n\r";
 	
 	
     if(USE_TABLE_PARSER) { echo "<link rel=\"stylesheet\" type=\"text/css\" href=\"http://ajax.aspnetcdn.com/ajax/jquery.dataTables/1.8.2/css/jquery.dataTables.css\" />\n\r";}
@@ -130,8 +130,8 @@ function bottomPage($module) {
     ";
 	
 	$js_name = md5_of_dir('js/core/');
-	if(!file_exists("js/js_cache/" . $js_name . ".js") || FORCE_RECREATE == "1") {
-		delete_old_md5s("js/js_cache/");
+	if(!file_exists("uploads/js_css_cache/" . $js_name . ".js") || FORCE_RECREATE == "1") {
+		delete_old_md5s("uploads/js_css_cache/");
 		$str = getParserJavascript();
 		$str .= file_get_contents("js/core/general.js");
 		$str .= file_get_contents("js/core/ls_forms.js");
@@ -142,12 +142,12 @@ function bottomPage($module) {
 		include_once("scripts/classes/core/js_minify.php");
 		$js = JSMin::minify($str);
 		
-		$fh = fopen("js/js_cache/$js_name.js","w");
+		$fh = fopen("uploads/js_css_cache/$js_name.js","w");
 		fwrite($fh,$js);
 		
 		$rs = mq("update " . DB_TBL_SITE_OPTIONS . " set so_val='false' where so_arg='FORCE_RECREATE'");
 	}
-    echo "<script src=\"js/js_cache/$js_name.js\"></script>\n\r";
+    echo "<script src=\"uploads/js_css_cache/$js_name.js\"></script>\n\r";
 	
 	if(USE_BX_SLIDER) { echo "<script src=\"http://bxslider.com/sites/default/files/jquery.bxSlider.min.js\"></script>\n\r"; }
 	if(USE_TABLE_PARSER) { echo "<script src=\"http://ajax.aspnetcdn.com/ajax/jquery.dataTables/1.8.2/jquery.dataTables.min.js\"></script>\n\r"; }
