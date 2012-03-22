@@ -193,7 +193,7 @@ INSERT INTO `" . DB_TBL_ALERT_WARNINGS . "` VALUES(15, 'deletedtemplate', 'Templ
 INSERT INTO `" . DB_TBL_ALERT_WARNINGS . "` VALUES(16, 'missingmember', 'The members username, email or password was missing and the user has not been added.');
 INSERT INTO `" . DB_TBL_ALERT_WARNINGS . "` VALUES(17, 'r_userexists', 'Username already exists. The user has not added');
 INSERT INTO `" . DB_TBL_ALERT_WARNINGS . "` VALUES(18, 'r_emailtaken', 'Email address is already being used by another member. The user has not been added.');
-INSERT INTO `" . DB_TBL_ALERT_WARNINGS . "` VALUES(19, 'loginfail', 'Username / password incorrect);
+INSERT INTO `" . DB_TBL_ALERT_WARNINGS . "` VALUES(19, 'loginfailed', 'Wrong username / password combination.');
 
 INSERT INTO `" . DB_TBL_LOG_SHORTCODES . "` VALUES('ALI', 'Attempt to login');
 INSERT INTO `" . DB_TBL_LOG_SHORTCODES . "` VALUES('DLM', 'Deleted member');

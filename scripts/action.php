@@ -11,7 +11,7 @@ switch ($action) {
         $password = mres($_POST['password']);
 		
         $member = new Member();
-		$success = $member->checkLogin($username,$password,'U','../login/','../account/');
+		$success = $member->checkLogin($username,$password,'U','../login/','../home/');
 		
 		if(!$success) {
 	        $_SESSION['_mtype'] = "E";

@@ -132,7 +132,7 @@ class Member {
 			$_SESSION['loggedin'] = false;
 			$_SESSION['m_type'] = "";
 		    $_SESSION['tried'] = $_SESSION['tried'] + 1;
-		    $_SESSION['_msg'] = "loginfail";
+		    $_SESSION['_msg'] = "loginfailed";
 		    $_SESSION['_mtype'] = "E";
 			if(!$return) {
 			    header("Location: $fail");
