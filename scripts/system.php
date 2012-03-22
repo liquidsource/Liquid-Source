@@ -13,6 +13,7 @@ include(INCLUDE_WEB_ROOT . "scripts/classes/core/media.php");
 include(INCLUDE_WEB_ROOT . "scripts/classes/core/template.php");
 include(INCLUDE_WEB_ROOT . "scripts/classes/core/category.php");
 include(INCLUDE_WEB_ROOT . "scripts/classes/core/email.php");
+include(INCLUDE_WEB_ROOT . "scripts/classes/core/feed.php");
 
 /* System Function Files */
 include(INCLUDE_WEB_ROOT . "scripts/core/base.php");

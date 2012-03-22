@@ -161,7 +161,7 @@ function getCategoryArray($uid,$l_type='post') {
 function getCategoryNames($uid,$l_type='post',$seperator=',') {
 	$cats = getCategoryArray($uid,$l_type);
 	foreach($cats as $cat) {
-		$ret .= $cat->name . $seperator . " ";
+		$ret .= $cat->name . $seperator;
 	}
 	if(strlen($ret) > 0)
 		return substr($ret,0,-2);

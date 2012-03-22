@@ -1,6 +1,6 @@
 <?php
 include("../../scripts/system.php");
-include("scripts/ad_functions.php");
+include("ad_functions.php");
 $userid = getMid();
 
 switch (strtolower($_GET['ajaxcall'])) {

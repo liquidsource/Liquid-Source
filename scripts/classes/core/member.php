@@ -170,7 +170,7 @@ class Member {
 			$rsu = mq("update " . DB_TBL_MEMBERS . " set m_hash='$hash' where mid='" . $this->data['id'] . "'");
 		}
     }
-	public function removeUser() {
+	public function removeMember() {
 		$mid = $this->data['id'];
 		log_me('RMM','Removing member with ID: ' . $mid);
 		if($mid > 0) {
@@ -180,29 +180,14 @@ class Member {
 	}
 	
 	/* STATIC PUBLIC FUNCTIONS */
-	public static function isLoggedin() {
-		if($_SESSION['mid'] == "" || $_SESSION['loggedin'] != '1') { return false; }
+	public static function isLoggedin($m_type='U') {
+		if($_SESSION['mid'] == "" || $_SESSION['loggedin'] != '1' || $_SESSION['m_type'] != $m_type) { return false; }
 		return true;
 	}
 	public static function logout() {
 		log_me('LGO');
 		foreach($_SESSION as $arg => $var) { unset($_SESSION[$arg]); }
         session_destroy();
-	}
-	public static function checkLoggedIn() {
-	    if($_SESSION['mid'] == "" || $_SESSION['loggedin'] != true) {
-		    $_SESSION['_msg'] = "mustbeloggedin";
-		    $_SESSION['_mtype'] = "W";
-		    ?>
-		    NOT ALLOWED HERE
-		    <script type="text/javascript">location.href = "login";</script>
-		    <?php
-		    die;
-	    }
-	}
-	public static function isAdminLoggedIn() {
-		if($_SESSION['mid'] == "" || $_SESSION['loggedin'] != '1' || $_SESSION['m_type'] != "A") { return false; }
-		return true;
 	}
 	public static function getMemberProfileArray() {
 		$i = 0;

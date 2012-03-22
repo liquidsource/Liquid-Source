@@ -1,5 +1,5 @@
 <?php
-class Feeds {
+class Feed {
     private $datetime, $homepage, $title, $subtitle, $feedurl, $feed_email;
 	
 	/* PUBLIC FUNCTIONS */
@@ -11,7 +11,8 @@ class Feeds {
 			$this->feedurl = HOMEPAGE . $filename;
 			$this->feed_email = EM_FEED_ADDRESS;
 			$homepage = HOMEPAGE;
-			if(substr($homepage,0,-1) != "/") $homepage = $homepage ."/";
+			
+			if(substr($homepage,-1,1) != "/") $homepage = $homepage ."/";
 			$this->homepage = $homepage;
 			
 			$fh = fopen($filename,"w");
@@ -72,8 +73,10 @@ class Feeds {
 	                <link rel=\"self\" type=\"application/atom+xml\" href=\"$feedurl\" />";
 	            break;
 		}
+		return $str;
 	}
 	private function getFeedInner($typee,$fh) {
+		$homepage = $this->homepage;
 		/**
 		 * Normally you'd append a loop here to run through all the relevant pages on your site
 		 * Needed in loop:
@@ -95,7 +98,7 @@ class Feeds {
 	        case "sitemap":
 	            $str = "
 				<url>
-		            <loc>" . HOMEPAGE . "</loc>
+		            <loc>" . $homepage . "</loc>
 		            <changefreq>daily</changefreq>
 		            <priority>0.9</priority>
 	           </url>";
@@ -112,7 +115,7 @@ class Feeds {
 	            ";
 				break;
 		}
-		fwrite($fh, $innerstr);
+		fwrite($fh, $str);
 		/*
 		 * loop end
 		 */

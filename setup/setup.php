@@ -1,6 +1,7 @@
 <?php
 $settingup = true;
-global $dbconnexfailed;
+global $dbconnexfailed, $failedWriteable;
+include('setup_functions.php');
 include('../scripts/system.php');
 if($dbconnexfailed || $_GET['error'] == "dbconnection") { $failedDB = true; }
 ?>
@@ -57,6 +58,14 @@ if($dbconnexfailed || $_GET['error'] == "dbconnection") { $failedDB = true; }
 		        <p>We need you to provide the database details in this file to setup Liquid Source. There's
 		        	more information and a walkthrough in the <a href="../../docs/readme.html">ReadMe documentation</a>.</p>
 		        <p> ... <a href="setup.php">ok I've done that, lets try again</a> ...</p>
+	        <?php } elseif($failedWriteable) { ?>
+	        	<p><strong>Oh no!</strong></p>
+	        	<p>You need to allow Liquid Source write access to the following folders to complete setup:</p>
+	        	<code>/css/css_cache/</code><br />
+	        	<code>/js/js_cache/</code><br />
+	        	<code>/uploads/</code>
+	        	<p>One or some of these folders aren't writeable.</p>
+	        	<p> ... <a href="setup.php">ok I've done that, lets try again</a> ...</p>
 	        <?php } else { ?>
 		        <form method="post" action="setup_action.php" onsubmit="return submitForm('ls_setup_form');" name="ls_setup_form" id="ls_setup_form" />
 		        	<input type="hidden" name="setup_from" id="setup_from" value="ls_setup_real" />

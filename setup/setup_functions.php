@@ -1,4 +1,19 @@
 <?php
+function is__writable($path) {
+    if ($path{strlen($path)-1}=='/') // recursively return a temporary file path
+        return is__writable($path.uniqid(mt_rand()).'.tmp');
+    else if (is_dir($path))
+        return is__writable($path.'/'.uniqid(mt_rand()).'.tmp');
+    // check tmp file for read/write capabilities
+    $rm = file_exists($path);
+    $f = @fopen($path, 'a');
+    if ($f===false)
+        return false;
+    fclose($f);
+    if (!$rm)
+        unlink($path);
+    return true;
+}
 function setup_database($posty) {
 	if($posty['setup_from'] == "ls_setup_real") {
 		$create_sql = "
@@ -191,28 +206,11 @@ INSERT INTO `" . DB_TBL_LOG_SHORTCODES . "` VALUES('LGS', 'Login success');
 INSERT INTO `" . DB_TBL_LOG_SHORTCODES . "` VALUES('RMM', 'Member permanently removed');
 
 INSERT INTO `" . DB_TBL_PAGES . "` VALUES(1, 'Home', 'home', 'This is the generic module setup', 'keyword1,keyword2', 1, 0, '0000-00-00 00:00:00', 'bs', '', 1,'0','published','');
-INSERT INTO `" . DB_TBL_PAGES . "` VALUES(2, 'New Post', 'newpost', NULL, NULL, 0, 1, '0000-00-00 00:00:00', 'bs', '', 1,'0','published','');
-INSERT INTO `" . DB_TBL_PAGES . "` VALUES(3, 'New User', 'newuser', NULL, NULL, 0, 1, '0000-00-00 00:00:00', 'bs', '', 1,'0','published','');
-INSERT INTO `" . DB_TBL_PAGES . "` VALUES(4, 'Edit Users', 'editusers', NULL, NULL, 0, 1, '0000-00-00 00:00:00', 'bs', '', 1,'0','published','');
-INSERT INTO `" . DB_TBL_PAGES . "` VALUES(5, 'Post Categories', 'postcategories', NULL, NULL, 0, 1, '0000-00-00 00:00:00', 'bs', '', 1,'0','published','');
-INSERT INTO `" . DB_TBL_PAGES . "` VALUES(6, 'Edit Posts', 'editposts', NULL, NULL, 0, 1, '0000-00-00 00:00:00', 'bs', '', 1,'0','published','');
-INSERT INTO `" . DB_TBL_PAGES . "` VALUES(7, 'New Page', 'newpage', NULL, NULL, 0, 1, '0000-00-00 00:00:00', 'bs', '', 1,'0','published','');
-INSERT INTO `" . DB_TBL_PAGES . "` VALUES(8, 'Edit Pages', 'editpages', NULL, NULL, 0, 1, '0000-00-00 00:00:00', 'bs', '', 1,'0','published','');
-INSERT INTO `" . DB_TBL_PAGES . "` VALUES(9, 'New Media', 'newmedia', NULL, NULL, 0, 1, '0000-00-00 00:00:00', 'bs', '', 1,'0','published','');
-INSERT INTO `" . DB_TBL_PAGES . "` VALUES(10, 'Edit Media', 'editmedia', NULL, NULL, 0, 1, '0000-00-00 00:00:00', 'bs', '', 1,'0','published','');
-INSERT INTO `" . DB_TBL_PAGES . "` VALUES(11, 'Media Categories', 'mediacategories', NULL, NULL, 0, 1, '0000-00-00 00:00:00', 'bs', '', 1,'0','published','');
-INSERT INTO `" . DB_TBL_PAGES . "` VALUES(12, 'New Email Template', 'newtemplate', NULL, NULL, 0, 1, '0000-00-00 00:00:00', 'bs', '', 1,'0','published','');
-INSERT INTO `" . DB_TBL_PAGES . "` VALUES(13, 'Edit Email Templates', 'edittemplates', NULL, NULL, 0, 1, '0000-00-00 00:00:00', 'bs', '', 1,'0','published','');
-INSERT INTO `" . DB_TBL_PAGES . "` VALUES(14, 'Edit Links', 'editlinks', NULL, NULL, 0, 1, '0000-00-00 00:00:00', 'bs', '', 1,'0','published','');
-INSERT INTO `" . DB_TBL_PAGES . "` VALUES(15, 'Link Categories', 'linkcategories', NULL, NULL, 0, 1, '0000-00-00 00:00:00', 'bs', '', 1,'0','published','');
-INSERT INTO `" . DB_TBL_PAGES . "` VALUES(16, 'New Link', 'newlink', NULL, NULL, 0, 1, '0000-00-00 00:00:00', 'bs', '', 1,'0','published','');
-INSERT INTO `" . DB_TBL_PAGES . "` VALUES(17, 'Site options', 'editsiteoptions', NULL, NULL, 0, 1, '2012-03-05 16:37:04', 'bs', '', 1,'0','published','');
-INSERT INTO `" . DB_TBL_PAGES . "` VALUES(18, 'About Us', 'aboutus', 'About us description', 'kw1,kw2,about', 0, 0, '2012-01-30 16:27:21', 'tx', '<p>This is the about us page. The text is derived from the backend Page screen.</p>', 1,'0','published','');
-INSERT INTO `" . DB_TBL_PAGES . "` VALUES(19, 'Register', 'register', 'Register description', 'kw1,kw2,register', 0, 0, '2012-02-27 11:16:21', 'bs', '', 1),'0','published','';
-INSERT INTO `" . DB_TBL_PAGES . "` VALUES(20, 'Login', 'login', 'Login description', 'kw1,kw2,login', 0, 0, '2012-02-27 12:14:04', 'bs', '', 1,'0','published','');
-INSERT INTO `" . DB_TBL_PAGES . "` VALUES(21, 'Contact Us', 'contactus', 'des', 'key', 0, 0, '0000-00-00 00:00:00', 'bs', '', 1,'0','published','');
-INSERT INTO `" . DB_TBL_PAGES . "` VALUES(22, 'Pages', 'pages', 'Pages description', 'kw1,kw2,pages', 0, 0, '2012-02-27 12:14:04', 'bs', '', 1,'0','published','');
-INSERT INTO `" . DB_TBL_PAGES . "` VALUES(23, 'Posts', 'posts', 'Posts description', 'kw1,kw2,posts', 0, 0, '2012-02-27 12:14:04', 'bs', '', 1,'0','published','');
+INSERT INTO `" . DB_TBL_PAGES . "` VALUES(2, 'About Us', 'aboutus', 'About us description', 'kw1,kw2,about', 0, 0, '2012-01-30 16:27:21', 'tx', '<p>This is the about us page. The text is derived from the backend Page screen.</p>', 1,'0','published','');
+INSERT INTO `" . DB_TBL_PAGES . "` VALUES(3, 'Register', 'register', 'Register description', 'kw1,kw2,register', 0, 0, '2012-02-27 11:16:21', 'bs', '', '1','0','published','');
+INSERT INTO `" . DB_TBL_PAGES . "` VALUES(4, 'Login', 'login', 'Login description', 'kw1,kw2,login', 0, 0, '2012-02-27 12:14:04', 'bs', '', 1,'0','published','');
+INSERT INTO `" . DB_TBL_PAGES . "` VALUES(5, 'Contact Us', 'contactus', 'des', 'key', 0, 0, '0000-00-00 00:00:00', 'bs', '', 1,'0','published','');
+INSERT INTO `" . DB_TBL_PAGES . "` VALUES(6, 'Elements', 'elements', 'des', 'key', 0, 0, '0000-00-00 00:00:00', 'bs', '', 1,'0','published','');
 
 INSERT INTO `" . DB_TBL_POSTS . "` VALUES(1, 'Registration', 'registration', '<p>This is what gets sent out to new registrants</p>\r\n<p>[r_username]</p>\r\n<p>[r_email]</p>\r\n<p>[r_password]</p>\r\n<p>[r_fname]</p>\r\n<p>[r_lname]</p>\r\n<p>[tel]</p>', NULL, 1, 'template', 'en','0','published','');
 INSERT INTO `" . DB_TBL_POSTS . "` VALUES(2, 'Forgot Password', 'forgot-password', '<p>This is what gets sent out to people who forget their password</p>\r\n<p>[password]</p>\r\n<p>[mp_fname]</p>\r\n<p>[mp_lname]</p>\r\n<p>[uname]</p>', NULL, 1, 'template', 'en','0','published','');

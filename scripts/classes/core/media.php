@@ -99,25 +99,11 @@ class Media {
 		}
 	}
 	public function categoryNames() {
-		return getCategoryNames($this->data['id'],'media',',');
+		return getCategoryNames($this->data['id'],'media',', ');
 	}
 	public function inCategory($catids) {
 		return inCategory($catids,$this->id,'media');
 	}
-
-	/**
-	 * Returns the location of a media item, or prints it out to screen 
-	 *
-	 * @param options
-	 *   An array of options:
-	 * 	 - echo (default false): To echo out img tag with source
-	 *   - style: style to include in the style argument
-	 *   - class: class to include in the class argument
-	 *   - lvl: level of root folder compared to current loation
-	 *
-	 * @return
-	 *   string with image loation, or img tag
-	 */
 	public function getLocation($options) {
 		$location = $this->location();
 		
@@ -139,6 +125,11 @@ class Media {
 			$_SESSION['_mtype'] = "W";
 			$_SESSION['_msg'] = "deletedmedia";
 		}
+	}
+	public function removeMedia($lvl) {
+		$this->deleteMediaFile($vl);
+		$rs = mq("delete from " . DB_TBL_MEDIA . " mdid='" . $this->data['id'] . "'");
+		$rs = mq("delete from " . DB_TBL_CATEGORY_LINK . " where iid='" . $this->data['id'] . "' and l_type='media'");
 	}
 	private function deleteMediaFile($lvl) {
 		$file = $this->location();

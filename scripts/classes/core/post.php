@@ -99,7 +99,7 @@ class Post {
 			return getCategoryArray($this->data['id'],'post');
 		}
 	}
-	public function categoryNames($seperator=",") {
+	public function categoryNames($seperator=", ") {
 		return getCategoryNames($this->data['id'],'post',$seperator);
 	}
 	public function inCategory($catids) {
@@ -108,7 +108,7 @@ class Post {
 	public function theShort($size=50) {
 		return mb_substr($this->data['content'],0,$size);
 	}
-	public function updateddDate() {
+	public function updatedDate() {
 		return $this->createDate;
 	}
 	public function publishedDate() {

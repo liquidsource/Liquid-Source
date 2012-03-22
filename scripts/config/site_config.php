@@ -9,13 +9,13 @@ Author: Nick Wilkins
 ********************************************************************* */
 
 /* CONFIGURATION BASE OPTIONS */
-define('BASE_HREF',"/liquid_source/");
+define('BASE_HREF',"/clients/ls_test/");
 
 define('USE_MYSQLI',true);
 define('DB_HOST',"localhost");
-define('DB_NAME',"template");
-define('DB_USER',"root");
-define('DB_PASSWORD',"root");
+define('DB_NAME',"ls_test");
+define('DB_USER',"ls_test");
+define('DB_PASSWORD',"l3tm31ns");
 
 define('TABLE_PREFIX','ls_');
 
@@ -23,7 +23,7 @@ define('TABLE_PREFIX','ls_');
 global $settingup;
 include(INCLUDE_WEB_ROOT . "scripts/core/database.php");
 include(INCLUDE_WEB_ROOT . "scripts/core/dbconnex.php");
-if(!defined('REDIRECT_ROOT_PATH')) define('REDIRECT_ROOT_PATH',"//" . $_SERVER['HTTP_HOST'] . BASE_HREF);
+if(!defined('REDIRECT_ROOT_PATH')) define('REDIRECT_ROOT_PATH',"http://" . $_SERVER['HTTP_HOST'] . BASE_HREF);
 
 $site_tables = array('alert_warnings','categories','category_link','links','log_shortcodes','media','members','member_profile','member_profile_arguments','meta_data','pages','posts','site_log','site_options');
 foreach($site_tables as $tbl) { if(!defined(TABLE_PREFIX . $tbl)) define('DB_TBL_' . strtoupper($tbl), TABLE_PREFIX . $tbl); }
@@ -65,6 +65,9 @@ if($settingup != "true") {
 		if(!defined($arg)) define($arg,$val);
 	}
 } else {
+	$failedWriteable = false;
+	if(!is__writable('../css/css_cache/') || !is__writable('../js/js_cache/')  || !is__writable('../uploads/')) { $failedWriteable = true; }
+	
 	$rs = mq("SELECT * FROM " . DB_TBL_SITE_OPTIONS);
 	if ($rs) {
 		header('Location: ' . REDIRECT_ROOT_PATH);

@@ -1,8 +1,8 @@
 <?php
 $settingup = true;
 global $dbconnexfailed;
-include('../scripts/system.php');
 include('setup_functions.php');
+include('../scripts/system.php');
 ?>
 <!doctype html>
     <html lang="en-gb" class="no-js mod_home">

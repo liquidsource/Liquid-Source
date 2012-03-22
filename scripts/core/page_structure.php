@@ -264,6 +264,7 @@ function getModuleData($module) {
 	}
 }
 
+/* Used to add in which parsers are used to the javascript file, so javascript functions can call on the variables */ 
 function getParserJavascript() {
 	$rs = mq("select * from " . DB_TBL_SITE_OPTIONS . " where (so_group='Modules' or so_group='APIs') and so_field_type='bool'");
 	while($rw = mfa($rs)) {

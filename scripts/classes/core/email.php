@@ -11,9 +11,9 @@ class Email {
 		    if(mnr($rs) > 0) {
 		        $rw = mfa($rs);
 		        $msg = stripslashes($rw['p_content']);
-				$this->$em_message = $msg;
+				$this->em_message = $msg;
 		        foreach($posty as $arg => $val) {  $msg = str_replace("[" . $arg . "]",$val,$msg); }
-				$this->$em_message_formatted = $msg;
+				$this->em_message_formatted = $msg;
 		    }
 			
 			if($to != NULL) $this->em_to = $to;
@@ -24,22 +24,27 @@ class Email {
 	public function setSubject($subj) { $this->em_subject = $subj; }
 	
 	public function sendEmail() {
-		$this->checkMailInjection();
-		$msg_inner = $this->formatEmailMessage();
-	
-		$headers .= "MIME-Version: 1.0\r\n"; 
-		$headers .= "Content-Type: text/HTML; charset=utf8\r\n";
-		$headers = "From: \"". EM_FROM_NAME ."\" <". EM_FROM_EMAIL .">\r\n"; 
-	
-	    $msg = $this->getEmailHead();
-	    $msg .= $this->getEmailBodyHead();
-	    $msg .= $msg_inner;
-	    $msg .= $this->getEmailFooter();
-		$msg .= $this->getEmailBottom();
+		$validator = new EmailAddressValidator;
+		if ($validator->check_email_address($this->em_to)) {
+			$msg_inner = $this->formatEmailMessage();
+			$msg = $this->checkMailInjection($msg_inner);
 		
-	    if($this->em_to != NULL && $this->em_subject != NULL) {
-			mail($this->em_to,'=?UTF-8?B?'.base64_encode($this->em_subject).'?=',$msg,$headers);
-	    }
+			$headers = "MIME-Version: 1.0\r\n"; 
+			$headers .= "Content-Type: text/HTML; charset=utf8\r\n";
+			$headers .= "From: \"". EM_FROM_NAME ."\" <". EM_FROM_EMAIL .">\r\n"; 
+		
+		    $msg = $this->getEmailHead();
+		    $msg .= $this->getEmailBodyHead();
+		    $msg .= $msg_inner;
+		    $msg .= $this->getEmailFooter();
+			$msg .= $this->getEmailBottom();
+			
+		    if($this->em_to != NULL && $this->em_subject != NULL) {
+				mail($this->em_to,'=?UTF-8?B?'.base64_encode($this->em_subject).'?=',$msg,$headers);
+				return true;
+		    }
+		}
+		return false;
 	}
 	public function sendRawEmail($to,$subject,$msg) {
 		$this->em_to = $to;
@@ -115,8 +120,8 @@ class Email {
 	private function getEmailBodyHead() {
 		$str = "<table cellpadding=\"0\" cellspacing=\"0\" border=\"0\" id=\"backgroundTable\">
 			<tr>
-			<td valign=\"top\">
-			<table style='width:" . EM_WIDTH . "' width='" . EM_WIDTH . "'><tr><td style='width:" . EM_WIDTH . "'>
+			<td valign=\"top\" style=\"text-align:center\" align=\"center\">
+			<table style='width:" . EM_WIDTH . "; margin: 0 auto' width='" . EM_WIDTH . "' align=\"center\"><tr><td style='width:" . EM_WIDTH . "'>
 			";
 		return $str;
 	}
@@ -136,7 +141,7 @@ class Email {
 	}
 	
 	private function checkMailInjection($value) { if(eregi("TO:", $value) || eregi("CC:", $value) || eregi("CCO:", $value) || eregi("Content-Type", $value)) exit("ERROR: Code injection attempt denied! Please don't use the following sequences in your message: 'TO:', 'CC:', 'CCO:' or 'Content-Type'.");  }
-	private function str_style_replace($f,$style,$msg) { str_replace($f,$f . " style='$style' ",$msg); }
+	private function str_style_replace($f,$style,$msg) { $msg = str_replace($f,$f . " style='$style' ",$msg); return $msg; }
 }
 
 

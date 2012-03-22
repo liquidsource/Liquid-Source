@@ -109,7 +109,6 @@ class Page {
 			}
         }
     }
-	
 	public function theShort($size=50) {
 		return mb_substr($this->data['content'],0,$size);
 	}
@@ -120,9 +119,6 @@ class Page {
 		$rw = mfa(mq("select min(pg_createdate) as pub_date where pg_slug='" . $this->data['slug'] . "'"));
 		return $rw['pub_date'];
 	}
-	
-	
-	
 	public function metaData() {
 		if($this->data['id'] != "") {
 			return getMetaData($this->data['id'],'page');
@@ -139,6 +135,9 @@ class Page {
 			$_SESSION['_mtype'] = "W";
 			$_SESSION['_msg'] = "deletedpage";
 		}
+	}
+	public function removePage() {
+		$rs = mq("delete from " . DB_TBL_PAGES . " where pgid='" . $this->data['id'] . "'");
 	}
 }
 ?>

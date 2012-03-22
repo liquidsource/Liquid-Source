@@ -5,7 +5,7 @@ include("../scripts/ad_functions.php");
 $action = $_GET['action'];
 $to = $_GET['to'];
 
-if(Member::isAdminLoggedIn()) {
+if(Member::isLoggedin('A')) {
     switch ($action) {
         case "logout":
             Member::logout();
@@ -102,7 +102,7 @@ if(Member::isAdminLoggedIn()) {
         $password = $_POST['m_password'];
 		
 		$member = new Member();
-		$member->checkLogin($m_username,$password,'A','../index.php?module=login','../index.php?module=ad_home');
+		$member->checkLogin($m_username,$password,'A','../index.php?module=login','../index.php?module=home');
 	}
 }
 header("Location: ../index.php?module=login");
