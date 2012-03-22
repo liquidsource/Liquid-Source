@@ -39,10 +39,10 @@ switch ($action) {
 			$post_array = array('m_username' => $r_username, 'm_password' => $r_password, 'm_email' => $r_email, 'mp_fname' => $r_fname, 'mp_lname' => $r_lname);
 	        $mid = $member->updateUser($post_array,'U');
 	        if($mid > 0) {
-	        	$member->sendUserRegistrationEmail();
+	        	//$member->sendUserRegistrationEmail();
 				$member->setCurrentUserIntoSession();
 	        	$_SESSION['_mtype'] = "S";
-				$to = "account";
+				$to = "home";
 	        } else {
 	        	$_SESSION['_mtype'] = "E";
 				$to = "register";
@@ -73,5 +73,6 @@ switch ($action) {
 		}
         break;
 }
+if(substr($to,-1,1) != "/") $to .= "/";
 header("Location: ../$to");
 ?>

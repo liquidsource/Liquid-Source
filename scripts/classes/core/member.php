@@ -271,11 +271,11 @@ class Member {
 		foreach($arr as $arg) {
 			$post_field = "mp_" . $arg[0];
 			if($$post_field != NULL) {
-				$this->insertUpdateMemberProfile($arg[0],$$post_field);
+				$this->insertUpdateMemberProfile($mid,$arg[0],$$post_field);
 			}
 		}
 	}
-	private function insertUpdateMemberProfile($arg,$val) {
+	private function insertUpdateMemberProfile($mid,$arg,$val) {
 		$mpid = $this->userHasProfileArgument($arg);
 		if($mpid > 0) {
 			$rs = mq("update " . DB_TBL_MEMBER_PROFILE . " set mp_val='$val' where mpid='$mpid'");
@@ -300,8 +300,8 @@ class Member {
 	    $hash = $salt . $hash;
 		return $hash;
 	}
-	private function userHasProfileArgument($arg) {
-		$rs = mq("select mpid from " . DB_TBL_MEMBER_PROFILE . " where mpa_sc='$arg'");
+	private function userHasProfileArgument($mid,$arg) {
+		$rs = mq("select mpid from " . DB_TBL_MEMBER_PROFILE . " where mpa_sc='$arg' and mid='$mid'");
 		if(mnr($rs) > 0) {
 			$rw = mfa($rs);
 			return $rw['mpid'];
