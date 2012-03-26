@@ -49,7 +49,7 @@ function formSubmitCheck(frmName) {
    	} else { return false; }
 }
 function checkAdminForms(frmName) {
-    overallFail = false;
+    ls_overallFormSubmitFail = false;
     switch(frmName) {
         case "ls_setup_form":
             failed = checkBlank('admin_username');
@@ -101,6 +101,7 @@ function checkBlank(idn) {
 }
 function checkSame(idn_o, idn_t) {
     if(checkBlank(idn_o) || checkBlank(idn_t)) {
+    	ls_overallFormSubmitFail = true;
         return false;
     } else {
         if($('#' + idn_o).val() != $('#' + idn_t).val()) {

@@ -34,7 +34,7 @@ if($dbconnexfailed || $_GET['error'] == "dbconnection") { $failedDB = true; }
 	    <script src="../js/libs/modernizr-2.0.6.min.js"></script>
 	    <script src="../js/libs/respond.min.js"></script>
 	    <script src="../js/libs/latest_jquery.min.js"></script>
-	    <script src="../js/core/forms.js"></script>
+	    <script src="../js/core/ls_forms.js"></script>
     </head>
 <!--[if lt IE 7 ]> <body class="ie6"> <![endif]--> 
 <!--[if IE 7 ]>    <body class="ie7"> <![endif]--> 
@@ -61,8 +61,6 @@ if($dbconnexfailed || $_GET['error'] == "dbconnection") { $failedDB = true; }
 	        <?php } elseif($failedWriteable) { ?>
 	        	<p><strong>Oh no!</strong></p>
 	        	<p>You need to allow Liquid Source write access to the following folders to complete setup:</p>
-	        	<code>/css/css_cache/</code><br />
-	        	<code>/js/js_cache/</code><br />
 	        	<code>/uploads/</code>
 	        	<p>One or some of these folders aren't writeable.</p>
 	        	<p> ... <a href="setup.php">ok I've done that, lets try again</a> ...</p>
@@ -75,17 +73,17 @@ if($dbconnexfailed || $_GET['error'] == "dbconnection") { $failedDB = true; }
 			        <h2 style="margin:30px 0px 10px">Required Information</h2>
 			        <fieldset>
 			        	<label for="admin_username">Admin username</label>
-			        	<input type="text" name="admin_username" id="admin_username" /><br />
+			        	<input type="text" name="admin_username" id="admin_username" required /><br />
 			        	<i class='sub_info'>Usernames are case sensitive and can only contain alphanumeric characters (A-Z, 0-9) or an underscore.</i>
 			        	
 			        </fieldset>
-			        <fieldset><label for="admin_password">Admin password</label><input type="password" name="admin_password" id="admin_password" /></fieldset>
+			        <fieldset><label for="admin_password">Admin password</label><input type="password" name="admin_password" id="admin_password" required /></fieldset>
 			        <fieldset>
-			        	<label for="admin_password_r">Re-type password</label><input type="password" name="admin_password_r" id="admin_password_r" /><br />
+			        	<label for="admin_password_r">Re-type password</label><input type="password" name="admin_password_r" id="admin_password_r" required /><br />
 			        	<i class='sub_info'>Password are also case sensitive and can only contain alphanumeric characters (A-Z, 0-9) or an underscore.</i>
 			        </fieldset>
 			        <hr />
-			        <fieldset><label for="your_email">Your email</label><input type="email" name="your_email" id="your_email" /></fieldset>
+			        <fieldset><label for="your_email">Your email</label><input type="email" name="your_email" id="your_email" required /></fieldset>
 			        <hr />
 			        <input type="submit" value="Ok lets go" class="bluebtn action" style="margin-top:30px" />
 		        </form>

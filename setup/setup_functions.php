@@ -121,6 +121,7 @@ function setup_database($posty) {
 			  `isDefault` int(11) DEFAULT '0',
 			  `isAdmin` int(11) DEFAULT NULL,
 			  `pg_createdate` timestamp NOT NULL DEFAULT CURRENT_TIMESTAMP,
+			  `pg_publisheddate` datetime NOT NULL,
 			  `pg_type` char(2) NOT NULL,
 			  `pg_content` longtext NOT NULL,
 			  `pg_active` int(1) NOT NULL,
@@ -137,6 +138,7 @@ function setup_database($posty) {
 			  `p_slug` varchar(300) DEFAULT NULL,
 			  `p_content` longtext,
 			  `p_createdate` timestamp NULL DEFAULT CURRENT_TIMESTAMP,
+			  `p_publisheddate` datetime NOT NULL,
 			  `p_active` int(11) DEFAULT '1',
 			  `p_type` varchar(10) DEFAULT NULL,
 			  `p_lang` varchar(3) DEFAULT 'en',
@@ -205,12 +207,12 @@ INSERT INTO `" . DB_TBL_LOG_SHORTCODES . "` VALUES('LGO', 'User logged out');
 INSERT INTO `" . DB_TBL_LOG_SHORTCODES . "` VALUES('LGS', 'Login success');
 INSERT INTO `" . DB_TBL_LOG_SHORTCODES . "` VALUES('RMM', 'Member permanently removed');
 
-INSERT INTO `" . DB_TBL_PAGES . "` VALUES(1, 'Home', 'home', 'This is the generic module setup', 'keyword1,keyword2', 1, 0, '0000-00-00 00:00:00', 'bs', '', 1,'0','published','');
-INSERT INTO `" . DB_TBL_PAGES . "` VALUES(2, 'About Us', 'aboutus', 'About us description', 'kw1,kw2,about', 0, 0, '2012-01-30 16:27:21', 'tx', '<p>This is the about us page. The text is derived from the backend Page screen.</p>', 1,'0','published','');
-INSERT INTO `" . DB_TBL_PAGES . "` VALUES(3, 'Register', 'register', 'Register description', 'kw1,kw2,register', 0, 0, '2012-02-27 11:16:21', 'bs', '', '1','0','published','');
-INSERT INTO `" . DB_TBL_PAGES . "` VALUES(4, 'Login', 'login', 'Login description', 'kw1,kw2,login', 0, 0, '2012-02-27 12:14:04', 'bs', '', 1,'0','published','');
-INSERT INTO `" . DB_TBL_PAGES . "` VALUES(5, 'Contact Us', 'contactus', 'des', 'key', 0, 0, '0000-00-00 00:00:00', 'bs', '', 1,'0','published','');
-INSERT INTO `" . DB_TBL_PAGES . "` VALUES(6, 'Elements', 'elements', 'des', 'key', 0, 0, '0000-00-00 00:00:00', 'bs', '', 1,'0','published','');
+INSERT INTO `" . DB_TBL_PAGES . "` VALUES(1, 'Home', 'home', 'This is the generic module setup', 'keyword1,keyword2', 1, 0, '2012-01-01 00:00:01', '2012-01-01 00:00:01', 'bs', '', 1,'0','published','');
+INSERT INTO `" . DB_TBL_PAGES . "` VALUES(2, 'About Us', 'aboutus', 'About us description', 'kw1,kw2,about', 0, 0, '2012-01-01 00:00:01', '2012-01-01 00:00:01', 'tx', '<p>This is the about us page. The text is derived from the backend Page screen.</p>', 1,'0','published','');
+INSERT INTO `" . DB_TBL_PAGES . "` VALUES(3, 'Register', 'register', 'Register description', 'kw1,kw2,register', 0, 0, '2012-01-01 00:00:01', '2012-01-01 00:00:01', 'bs', '', '1','0','published','');
+INSERT INTO `" . DB_TBL_PAGES . "` VALUES(4, 'Login', 'login', 'Login description', 'kw1,kw2,login', 0, 0, '2012-01-01 00:00:01', '2012-01-01 00:00:01', 'bs', '', 1,'0','published','');
+INSERT INTO `" . DB_TBL_PAGES . "` VALUES(5, 'Contact Us', 'contactus', 'des', 'key', 0, 0, '2012-01-01 00:00:01', '2012-01-01 00:00:01', 'bs', '', 1,'0','published','');
+INSERT INTO `" . DB_TBL_PAGES . "` VALUES(6, 'Elements', 'elements', 'des', 'key', 0, 0, '2012-01-01 00:00:01', '2012-01-01 00:00:01', 'bs', '', 1,'0','published','');
 
 INSERT INTO `" . DB_TBL_POSTS . "` VALUES(1, 'Registration', 'registration', '<p>This is what gets sent out to new registrants</p>\r\n<p>[r_username]</p>\r\n<p>[r_email]</p>\r\n<p>[r_password]</p>\r\n<p>[r_fname]</p>\r\n<p>[r_lname]</p>\r\n<p>[tel]</p>', NULL, 1, 'template', 'en','0','published','');
 INSERT INTO `" . DB_TBL_POSTS . "` VALUES(2, 'Forgot Password', 'forgot-password', '<p>This is what gets sent out to people who forget their password</p>\r\n<p>[password]</p>\r\n<p>[mp_fname]</p>\r\n<p>[mp_lname]</p>\r\n<p>[uname]</p>', NULL, 1, 'template', 'en','0','published','');

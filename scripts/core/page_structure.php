@@ -159,7 +159,7 @@ function bottomPage($module) {
     <![endif]-->
     ";
 	
-	if(GOOGLE_MAPS_API_KEY != "") { echo "<script src=\"http://maps.googleapis.com/maps/api/js?key=" . GOOGLE_MAPS_API_KEY . "&sensor=false\"></script>"; }
+	if(USE_GOOGLE_MAPS != "") { echo "<script src=\"http://maps.googleapis.com/maps/api/js?key=" . GOOGLE_MAPS_API_KEY . "&sensor=false\"></script>"; }
 	
 	if(GOOGLE_ANALYTICS_CODE != "") {
 	    echo "

@@ -19,6 +19,7 @@ class Page {
 				$this->data['isdefault'] = $rw['isDefault'];
 				$this->data['isadmin'] = $rw['isAdmin'];
 				$this->data['createdate'] = $rw['pg_createdate'];
+				$this->data['publisheddate'] = $rw['pg_publisheddate'];
 				$this->data['type'] = $rw['pg_type'];
 				$this->data['posttype'] = $rw['pg_posttype'];
 				$this->data['content'] = stripslashes($rw['pg_content']);
