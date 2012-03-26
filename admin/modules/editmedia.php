@@ -19,7 +19,7 @@ $orderdir = $_SESSION['orderdir'];
             <th <?php echo tableSorter('mdid'); ?>> mdid</th> 
             <th></th> 
             <th <?php echo tableSorter('md_title'); ?>> Media Title</th> 
-            <th <?php echo tableSorter(''); ?>> Media Category</th> 
+            <th> Media Category</th> 
             <th <?php echo tableSorter('md_dateuploaded'); ?>> Created On</th> 
             <th> Actions</th> 
         </tr> 

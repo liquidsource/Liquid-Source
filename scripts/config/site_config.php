@@ -64,6 +64,9 @@ if($settingup != "true") {
 		}
 		if(!defined($arg)) define($arg,$val);
 	}
+	
+	global $curPosts;
+	$curPosts = NULL;
 } else {
 	$failedWriteable = false;
 	if(!is__writable('../uploads/')) { $failedWriteable = true; }

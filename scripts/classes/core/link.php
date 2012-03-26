@@ -48,9 +48,7 @@ class Link {
 			$this->data['id'] = $lid;
 	    }
 		
-		if(sizeof($post_array['cid']) > 0) {
-			updateCategoryLink($post_array['cid'],$lid,'link');
-		}
+		updateCategoryLink($post_array['cid'],$lid,'link');
 	    
 		$i=0;
 		foreach($post_array as $arg => $val) {

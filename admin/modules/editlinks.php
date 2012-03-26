@@ -20,7 +20,8 @@ $orderdir = $_SESSION['orderdir'];
         <tr> 
             <th <?php echo tableSorter('lid'); ?>> lid</th>
             <th <?php echo tableSorter('l_text'); ?>> Link Text</th>
-            <th <?php echo tableSorter('l_link'); ?>> Link</th>
+            <th <?php echo tableSorter('l_link'); ?>> Link Target</th>
+            <th> Category</th>
             <th> Actions</th>
         </tr> 
     </thead> 
@@ -34,6 +35,7 @@ $orderdir = $_SESSION['orderdir'];
 			 <td><a href=\"?module=newlink&lid=$lid\">$lid</a></td>
 			 <td>" . $link->text . "</td>
 			 <td>" . $link->link . "</td>
+			 <td>" . $link->categoryNames() . "</td>
 			 <td>
 			 	<a href=\"?module=newlink&lid=$lid\"><input type=\"image\" src=\"images/icn_edit.png\" title=\"Edit\"></a>
                 <a href=\"scripts/action.php?action=deletelink&lid=$lid&to=editlinks\"><input type=\"image\" src=\"images/icn_trash.png\" title=\"Trash\"></a>

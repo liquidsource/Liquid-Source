@@ -79,10 +79,7 @@ class Media {
 	        }
 	    }
 	   	
-	   	
-	   if(sizeof($post_array['cid']) > 0) {
-			updateCategoryLink($post_array['cid'],$mdid,'media');
-		}
+	   	updateCategoryLink($post_array['cid'],$mdid,'media');
 		
 		$_SESSION['_mtype'] = "S";
 		$_SESSION['_msg'] = "newmedia";

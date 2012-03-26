@@ -1,7 +1,7 @@
 <?php
 $pid = $_GET['pid'];
 if($pid != "") {
-    $template = new Template('',$pid);
+    $template = new Template($pid);
 } else {
 	$template = new Template();
 }

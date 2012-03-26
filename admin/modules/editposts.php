@@ -21,7 +21,7 @@ $orderdir = $_SESSION['orderdir'];
                 <th <?php echo tableSorter('pid'); ?>> pid</th> 
                 <th <?php echo tableSorter('p_title'); ?>> Post Title</th> 
                 <th <?php echo tableSorter('p_posttype'); ?>> Post State</th>
-                <th <?php echo tableSorter('c_name'); ?>> Category</th> 
+                <th> Category</th> 
                 <th <?php echo tableSorter('p_createdate'); ?>> Created On</th> 
                 <th> Actions</th> 
             </tr> 

@@ -82,6 +82,9 @@ class Feed {
 		 * Needed in loop:
 		 * 	i_title, i_details, i_link, atom_id, i_pubdate
 		 * 	example atom_id: tag:yourdomain.com,2006-05-02:/archive/post01
+		 * 
+		 * Also you may need to escape ascii control characters
+		 * $i_details = preg_replace('/[\x00-\x09\x0B\x0C\x0E-\x1F\x7F]/', '', $i_details);
 		 */
 		$str = "";
 		switch($typee) {

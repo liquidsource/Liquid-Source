@@ -81,34 +81,52 @@ function updateCategoryLink($cids,$uid,$l_type) {
 	}
 	
 	foreach($cids as $cid) {
-		$rs = mq("select * from category_link where uid='$uid' and l_type='$l_type'");
+		$rs = mq("select * from " . DB_TBL_CATEGORY_LINK . " where cid='$cid' and uid='$uid' and l_type='$l_type'");
 	    if(mnr($rs) > 0) {
-	        $rsi = mq("update " . DB_TBL_CATEGORY_LINK . " set cid='$cid' where uid='$uid' and l_type='$l_type'");
+	    	
 	    } else {
 	        $rsi = mq("insert into " . DB_TBL_CATEGORY_LINK . " (uid,cid,l_type) values ('$uid','$cid','$l_type')");
 	    }
+		$xsql .= " cid != '$cid' and ";
+	}
+	
+	$rs = mq("select * from " . DB_TBL_CATEGORY_LINK . " where ($xsql 1=1) and l_type='$l_type' and uid='$uid'");
+	while($rw = mfa($rs)) {
+		$rsd = mq("delete from " . DB_TBL_CATEGORY_LINK . " where jcid='" . $rw['jcid'] . "'");
 	}
 }
-function showCategoryOption($category,$lvl=0,$chosen_uid) {
-	$dots = "";
-	for($i=0;$i<$lvl;$i++) { $dots .= "-  "; }
-	$cid = $category->id;
-	$ret .= "<option value=\"$cid\"";
-	
-	if(is_array($chosen_uid)) {
-		foreach($chosen_uid as $cat) {
-			$chuid = $cat->id;
-			if($cid == $chuid) { $ret .= " selected "; }
-		}
-	} else {
-		if($cid == $chosen_uid) { $ret .= " selected "; }
+function showCategoryOption($category,$lvl=0,$cur_category,$hide=false) {
+	if(!is_array($cur_category)) {
+		$chosen_uid = $cur_category->parent;
+		$catid = $cur_category->id;
 	}
-	$ret .= ">" . $dots . $category->name . "</option>";
-    if($category->children) {
-    	$lvl++;
-    	foreach($category->children as $child_category) {
-    		$ret .= showCategoryOption($child_category,$lvl,$chosen_uid);
-    	}
+	
+	
+	$cid = $category->id;
+	if($catid == $cid && $hide) {
+		
+	} else {
+		$dots = "";
+		for($i=0;$i<$lvl;$i++) { $dots .= "-  "; }
+		
+		$ret .= "<option value=\"$cid\"";
+		
+		
+		if(is_array($cur_category)) {
+			foreach($cur_category as $cat) {
+				$chuid = $cat->id;
+				if($cid == $chuid) { $ret .= " selected "; }
+			}
+		} else {
+			if($cid == $cur_category->id) { $ret .= " selected "; }
+		}
+		$ret .= ">" . $dots . $category->name . "</option>";
+	    if($category->children) {
+	    	$lvl++;
+	    	foreach($category->children as $child_category) {
+	    		$ret .= showCategoryOption($child_category,$lvl,$cur_category);
+	    	}
+		}
 	}
 	return $ret;
 }

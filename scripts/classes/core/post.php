@@ -3,8 +3,7 @@ class Post {
     private $data;
 	
 	/* PUBLIC FUNCTIONS */
-	public function __construct($p_slug=NULL,$pid=NULL) {
-		if($p_slug != NULL) { $wc = "p_slug='$p_slug' "; }
+	public function __construct($pid=NULL) {
 		if($pid != NULL) { $wc = "pid='$pid' "; }
 		if($wc != "") {
 			$rs = mq("select * from " . DB_TBL_POSTS . " where $wc and p_posttype != 'inherit'");
@@ -14,6 +13,7 @@ class Post {
 				$this->data['title'] = stripslashes($rw['p_title']);
 				$this->data['slug'] = $rw['p_slug'];
 				$this->data['createdate'] = $rw['p_createdate'];
+				$this->data['publisheddate'] = $rw['p_publisheddate'];
 				$this->data['content'] = stripslashes($rw['p_content']);
 				$this->data['active'] = $rw['p_active'];
 				$this->data['type'] = $rw['p_type'];
@@ -32,12 +32,14 @@ class Post {
 	    if($this->data['id'] != "") {
 	    	$pid = $this->data['id'];
 			
-	    	$rs = mq("insert into " . DB_TBL_POSTS . " (p_title,p_content,p_slug,p_type,p_createdate,p_active,p_posttype,p_parent,p_origposttype) values (
+			
+	    	$rs = mq("insert into " . DB_TBL_POSTS . " (p_title,p_content,p_slug,p_type,p_createdate,p_publisheddate,p_active,p_posttype,p_parent,p_origposttype) values (
 	    	'" . $this->data['title'] . "',
 	    	'" . $this->data['content'] . "',
 	    	'" . $p_slug . "',
 	    	'" . $this->data['type'] . "',
 	    	'" . $this->data['createdate'] . "',
+	    	'" . $this->data['publisheddate'] . "',
 	    	'0',
 	    	'inherit',
 	    	'$pid',
@@ -49,18 +51,20 @@ class Post {
 				if($$val != NULL) { $uc_x .= $val . "='" . $$val . "', "; }
 			}
 			if($uc_x != "") $uc_x = substr($uc_x,0,-2);
+			
+			if($this->data['posttype'] != "published" && $p_posttype == "published") { $uc_x .= ", p_publisheddate='$datetime' "; }
+			
 	        $rs = mq("update " . DB_TBL_POSTS . " set $uc_x, p_createdate='$datetime' where pid='$pid'");
 			
 		} else {
-	        $rs = mq("insert into " . DB_TBL_POSTS . " (p_title,p_content,p_slug,p_type,p_createdate,p_posttype) values ('$p_title','$p_content','$p_slug','$p_type','$datetime','$p_posttype')");
+			if($p_posttype == "published") { $pubDate = $datetime; }
+	        $rs = mq("insert into " . DB_TBL_POSTS . " (p_title,p_content,p_slug,p_type,p_createdate,p_publisheddate,p_posttype) values ('$p_title','$p_content','$p_slug','$p_type','$datetime','$pubDate','$p_posttype')");
 	        $pid = miid();
 			$this->data['id'] = $pid;
 		}
 		$this->data['type'] = $p_type;
 		
-		if(sizeof($post_array['cid']) > 0) {
-			updateCategoryLink($post_array['cid'],$pid,$p_type);
-		}
+		updateCategoryLink($post_array['cid'],$pid,$p_type);
 		
 		$i=0;
 		foreach($post_array as $arg => $val) {
@@ -112,8 +116,7 @@ class Post {
 		return $this->createDate;
 	}
 	public function publishedDate() {
-		$rw = mfa(mq("select min(p_createdate) as pub_date where p_slug='" . $this->data['slug'] . "'"));
-		return $rw['pub_date'];
+		return $this->data['publisheddate'];
 	}
 	public function metaData() {
 		if($this->data['id'] != "") {
@@ -134,13 +137,41 @@ class Post {
 	}
 	
 	public function nextPost($arr=array()) {
+		return $this->prevNext('asc',$arr);
+	}
+	public function prevPost($arr=array()) {
+		return $this->prevNext('desc',$arr);
+	}
+	private function prevNext($ascdesc,$arr=array()) {
 		extract($arr);
 		if($category_id != NULL) {
-			
+			$i_cat = $category_id;
+			$icats = explode(",",$i_cat);
+			$xsql = " and pid in (select uid from " . DB_TBL_CATEGORY_LINK . " where l_type='post' and (";
+			foreach($icats as $catid) {
+				$xsql .= " cid='$catid' or ";
+			}
+			$xsql .= " 1=0))";
 		}
-		if($date != NULL) {
-			
+		
+		$curPostDate = $this->publishedDate();
+		global $curPosts;
+		if($curPosts != NULL) {
+			$xsql .= " and pid in (";
+			foreach($curPosts as $post) {
+				$xsql .= $post->id . ",";
+			}
+			$xsql .= "0)";
 		}
+		
+		$lowhigh = "<";
+		if($ascdesc == "asc") { $lowhigh = ">"; }
+		
+		$rs = mq("select pid from " . DB_TBL_POSTS . " where p_publisheddate $lowhigh '$curPostDate' and p_posttype='published' $xsql order by p_createdate " . $ascdesc . " limit 0,1");
+		$rw = mfa($rs);
+		$retPost = new Post($rw['pid']);
+		
+		return $retPost;		
 	}
 }
 ?>

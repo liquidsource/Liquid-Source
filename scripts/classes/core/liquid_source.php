@@ -26,9 +26,11 @@ class LS {
 	    $ret_arr = array();
 	    $rs = mq("select pid from " . DB_TBL_POSTS . " $jc where p_type='post' $wc and p_posttype != 'inherit' order by $orderby $orderdir limit $limit");
 	    while($rw = mfa($rs)) {
-			$ret = new Post('',$rw['pid']);
+			$ret = new Post($rw['pid']);
 			if($ret != "") $ret_arr[] = $ret;
 	    }
+		global $curPosts;
+		$curPosts = $ret_arr;
 	    return $ret_arr;
 	}
 	public static function templates($arr=array()) {
@@ -49,7 +51,7 @@ class LS {
 	    $ret_arr = array();
 	    $rs = mq("select pid from " . DB_TBL_POSTS . " where p_type='template' $wc and p_posttype != 'inherit' order by $orderby $orderdir limit $limit");
 	    while($rw = mfa($rs)) {
-			$ret = new Template('',$rw['pid']);
+			$ret = new Template($rw['pid']);
 			if($ret != "") $ret_arr[] = $ret;
 	    }
 	    return $ret_arr;

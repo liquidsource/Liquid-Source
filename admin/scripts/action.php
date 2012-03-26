@@ -23,22 +23,22 @@ if(Member::isLoggedin('A')) {
             $to = "editpages";
             break;
         case "newpost":
-			$post = new Post('',$_GET['pid']);
+			$post = new Post($_GET['pid']);
 			$pid = $post->updatePost($_POST);
         	$to = "newpost&pid=$pid";
             break;
         case "deletepost":
-			$post = new Post('',$_GET['pid']);
+			$post = new Post($_GET['pid']);
 			$post->deletePost();
-            $to = "editpost";
+            $to = "editposts";
             break;
         case "newtemplate":
-			$template = new Template('',$_GET['pid']);
+			$template = new Template($_GET['pid']);
 			$pid = $template->updateTemplate($_POST);
         	$to = "newtemplate&pid=$pid";
             break;
         case "deletetemplate":
-			$template = new Template('',$_GET['pid']);
+			$template = new Template($_GET['pid']);
 			$template->deleteTemplate();
             $to = "edittemplates";
             break;
