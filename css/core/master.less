@@ -11,7 +11,7 @@ Author: Nick Wilkins
 
 
 /* Base style definition for font on the site. Everything else inherits from here */
-html { font-family: 'Open Sans', sans-serif, arial, verdana; color: @textColor; font-size: 1em; line-height:1.5; }
+html { font-family: @fontFamily; color: @textColor; line-height:1.5; }
 
 /* Base Typography */
 p { margin: 1em 0px; line-height:1.5 }
@@ -30,7 +30,7 @@ h5 { font-size: @h1headerSize - 0.8em; }
 h6 { font-size: @h1headerSize - 1em; }
 
 /* Body */
-body { font-size: 10pt;  }
+body { font-size: 80% }
 
 /* Core Sections */
 header { background: #eee; }
@@ -38,12 +38,7 @@ header { background: #eee; }
 footer { background: #999; border-top: 2px solid #888; border-bottom:2px solid #333; }
 
 /* Header */
-#top_header {
-  height: 70px;
-  padding-top:5px;
-  width: 100%;
-  background: #222222;
-}
+#top_header { height: 70px; padding-top:5px; width: 100%; background: #222222; }
 
 /* Footer */
 footer {
@@ -76,6 +71,8 @@ h4.alert_warning { background: #F5F3BA url(../../images/icons/icn_alert_warning.
 h4.alert_error { background: #F3D9D9 url(../../images/icons/icn_alert_error.png); }
 h4.alert_success { background: #E2F6C5 url(../../images/icons/icn_alert_success.png); }
 
+
+/* Media Queries */
 @media only screen and (min-width: 1300px) and (max-width: 1600px) {
   .wrap { width: 1280px; }
 }

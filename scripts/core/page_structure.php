@@ -67,8 +67,9 @@ function topPage($module) {
 function stylesAndJsTop($module) {
 	/* This checks if any css (or less) files have changed and creates a new minified css file if needed */
 	$css_name_a = md5_of_dir('css/core/');
-	$css_name_b = md5_of_dir('css/packages/');
-	$css_name = md5($css_name_a . $css_name_b);
+	$css_name_b = md5_of_dir('css/core/less_incs/');
+	$css_name_c = md5_of_dir('css/packages/');
+	$css_name = md5($css_name_a . $css_name_b . $css_name_c);
 	if(!file_exists("uploads/js_css_cache/" . $css_name . ".css" ) || FORCE_RECREATE == "1") {
 		delete_old_md5s("uploads/js_css_cache/");
 		

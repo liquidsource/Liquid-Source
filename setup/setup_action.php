@@ -63,7 +63,7 @@ include('../scripts/system.php');
 	        </p>
 			<fieldset style="margin-top:20px">
 				<input type="button" value="Go to the homepage" onclick="location.href='<?php echo BASE_HREF; ?>index.php'" /> &nbsp;
-				<input type="button" value="Log into admin" onclick="location.href='<?php echo BASE_HREF; ?>admin/index.php?module=ad_home'" />
+				<input type="button" value="Log into admin" onclick="location.href='<?php echo BASE_HREF; ?>admin/index.php'" />
 				</fieldset>
         </div>
     </div>

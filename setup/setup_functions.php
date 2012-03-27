@@ -209,9 +209,9 @@ INSERT INTO `" . DB_TBL_LOG_SHORTCODES . "` VALUES('RMM', 'Member permanently re
 
 INSERT INTO `" . DB_TBL_PAGES . "` VALUES(1, 'Home', 'home', 'This is the generic module setup', 'keyword1,keyword2', 1, 0, '2012-01-01 00:00:01', '2012-01-01 00:00:01', 'bs', '', 1,'0','published','');
 INSERT INTO `" . DB_TBL_PAGES . "` VALUES(2, 'About Us', 'aboutus', 'About us description', 'kw1,kw2,about', 0, 0, '2012-01-01 00:00:01', '2012-01-01 00:00:01', 'tx', '<p>This is the about us page. The text is derived from the backend Page screen.</p>', 1,'0','published','');
-INSERT INTO `" . DB_TBL_PAGES . "` VALUES(3, 'Register', 'register', 'Register description', 'kw1,kw2,register', 0, 0, '2012-01-01 00:00:01', '2012-01-01 00:00:01', 'bs', '', '1','0','published','');
-INSERT INTO `" . DB_TBL_PAGES . "` VALUES(4, 'Login', 'login', 'Login description', 'kw1,kw2,login', 0, 0, '2012-01-01 00:00:01', '2012-01-01 00:00:01', 'bs', '', 1,'0','published','');
-INSERT INTO `" . DB_TBL_PAGES . "` VALUES(5, 'Contact Us', 'contactus', 'des', 'key', 0, 0, '2012-01-01 00:00:01', '2012-01-01 00:00:01', 'bs', '', 1,'0','published','');
+INSERT INTO `" . DB_TBL_PAGES . "` VALUES(3, 'Register', 'ex_register', 'Register description', 'kw1,kw2,register', 0, 0, '2012-01-01 00:00:01', '2012-01-01 00:00:01', 'bs', '', '1','0','published','');
+INSERT INTO `" . DB_TBL_PAGES . "` VALUES(4, 'Login', 'ex_login', 'Login description', 'kw1,kw2,login', 0, 0, '2012-01-01 00:00:01', '2012-01-01 00:00:01', 'bs', '', 1,'0','published','');
+INSERT INTO `" . DB_TBL_PAGES . "` VALUES(5, 'Contact Us', 'ex_contactus', 'des', 'key', 0, 0, '2012-01-01 00:00:01', '2012-01-01 00:00:01', 'bs', '', 1,'0','published','');
 INSERT INTO `" . DB_TBL_PAGES . "` VALUES(6, 'Elements', 'elements', 'des', 'key', 0, 0, '2012-01-01 00:00:01', '2012-01-01 00:00:01', 'bs', '', 1,'0','published','');
 
 INSERT INTO `" . DB_TBL_POSTS . "` VALUES(1, 'Registration', 'registration', '<p>This is what gets sent out to new registrants</p>\r\n<p>[r_username]</p>\r\n<p>[r_email]</p>\r\n<p>[r_password]</p>\r\n<p>[r_fname]</p>\r\n<p>[r_lname]</p>\r\n<p>[tel]</p>', NULL, 1, 'template', 'en','0','published','');
@@ -260,6 +260,7 @@ INSERT INTO `" . DB_TBL_SITE_OPTIONS . "` VALUES(40, 'USE_FLEX_SLIDER', 'true', 
 INSERT INTO `" . DB_TBL_SITE_OPTIONS . "` VALUES(41, 'USE_BX_SLIDER', 'true', '0000-00-00 00:00:00', 'define', 0, 'Modules', 'bool');
 INSERT INTO `" . DB_TBL_SITE_OPTIONS . "` VALUES(42, 'LIQUID_SOURCE_VERSION', '1.0.0', '0000-00-00 00:00:00', 'define', 0, '', '');
 INSERT INTO `" . DB_TBL_SITE_OPTIONS . "` VALUES(43, 'FORCE_RECREATE', 'true', '0000-00-00 00:00:00', 'define', 0, '', 'bool');
+INSERT INTO `" . DB_TBL_SITE_OPTIONS . "` VALUES(44, 'LINKEDIN_PAGE_URL', '', '0000-00-00 00:00:00', 'define', 0, 'Social', '');
 
 INSERT INTO `" . DB_TBL_MEMBER_PROFILE_ARGUMENTS . "` VALUES(1, 'fname', 'Member first name');
 INSERT INTO `" . DB_TBL_MEMBER_PROFILE_ARGUMENTS . "` VALUES(2, 'lname', 'Member last name');

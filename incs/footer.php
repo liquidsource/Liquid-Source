@@ -10,9 +10,9 @@
     <div class="f_right">
         <ul class="group">
             <li><a href="<?php echo FACEBOOK_PAGE_URL; ?>"><img src="images/icons/facebook.png" alt="facebook" /></a></li>
-            <li><a href="<?php echo TWITTER_PAGE_URL; ?>"><img src="images/icons/twitter.png" alt="twitter" /></a></li>
-            <li><a href="<?php echo FACEBOOK_PAGE_ID; ?>"><img src="images/icons/linkedin.png" alt="linkedin" /></a></li>
-            <li><a href="<?php echo GOOGLE_PLUS_PAGE_URL; ?>"><img src="images/icons/gplus.png" alt="google plus" /></a></li>
+            <li><a href="http://www.twitter.com/<?php echo TWITTER_NAME; ?>"><img src="images/icons/twitter.png" alt="twitter" /></a></li>
+            <li><a href="<?php echo LINKEDIN_PAGE_URL; ?>"><img src="images/icons/linkedin.png" alt="linkedin" /></a></li>
+            <li><a href="https://plus.google.com/b/<?php echo GOOGLE_PLUS_PAGE_ID; ?>/"><img src="images/icons/gplus.png" alt="google plus" /></a></li>
         </ul>
     </div>
 </div>
