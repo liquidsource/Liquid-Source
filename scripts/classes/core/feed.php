@@ -81,7 +81,6 @@ class Feed {
 		 * Normally you'd append a loop here to run through all the relevant pages on your site
 		 * Needed in loop:
 		 * 	i_title, i_details, i_link, atom_id, i_pubdate
-		 * 	example atom_id: tag:yourdomain.com,2006-05-02:/archive/post01
 		 * 
 		 * Also you may need to escape ascii control characters
 		 * $i_details = preg_replace('/[\x00-\x09\x0B\x0C\x0E-\x1F\x7F]/', '', $i_details);
@@ -107,12 +106,16 @@ class Feed {
 	           </url>";
 	            break;
 			case "atom":
+				/*
+				 *  example atom updated date: 2012-12-13T18:30:02Z
+		 		 * 	example atom_id: tag:yourdomain.com,2006-05-02:/archive/post01
+				 */
 				$str = "
 	            <entry>
 					<title><![CDATA[$i_title]]</title>
 				    <link href=\"" . $homepage . "$i_link\" />
 				    <id>$atom_id</id>
-				    <updated>2003-12-13T18:30:02Z</updated>
+				    <updated>$atom_pubdate</updated>
 				    <summary type=\"html\"><![CDATA[$i_details]]></summary>
 	            </entry>
 	            ";

@@ -7,7 +7,7 @@ class LS {
 	public static function posts($arr=array()) {
 	    extract($arr);
 	    if($num != "") { $limit = $num; } else { $limit = " 0,1000"; }
-	    if($cid != "") {
+	    if($category_id != "") {
 	        $jc = " inner join " . DB_TBL_CATEGROY_LINK . " c on posts.pid = c.uid ";
 	        $wc = " and c.l_type='post' and cid='$cid' ";
 	    }
@@ -22,6 +22,9 @@ class LS {
 					$wc .= " and p_posttype == 'published' "; break;
 			}	
 		}
+		if($datefrom != "") { $wc .= " and p_publisheddate >= '$datefrom' "; }
+		if($dateto != "") { $wc .= " and p_publisheddate <= '$datefrom' "; }
+		if($content != "") { $wc .= " and p_content like '%$content%' "; }
 		
 	    $ret_arr = array();
 	    $rs = mq("select pid from " . DB_TBL_POSTS . " $jc where p_type='post' $wc and p_posttype != 'inherit' order by $orderby $orderdir limit $limit");
