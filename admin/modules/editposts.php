@@ -19,7 +19,8 @@ $orderdir = $_SESSION['orderdir'];
         <thead> 
             <tr> 
                 <th <?php echo tableSorter('pid'); ?>> pid</th> 
-                <th <?php echo tableSorter('p_title'); ?>> Post Title</th> 
+                <th <?php echo tableSorter('p_title'); ?>> Post Title</th>
+                <th <?php echo tableSorter('p_posttype'); ?>> Post State</th>
                 <th <?php echo tableSorter('p_posttype'); ?>> Post State</th>
                 <th> Category</th> 
                 <th <?php echo tableSorter('p_createdate'); ?>> Created On</th> 
@@ -36,7 +37,8 @@ $orderdir = $_SESSION['orderdir'];
 				echo "<tr onclick=\"rowSelect('$pid');\" id=\"row_$pid\" class=\"posttype_$posttype\">
 				 <td><a href=\"?module=newpost&pid=$pid\">$pid</a></td>
 				 <td><strong>" . $post->title . "</strong></td>
-				<td>" . $posttype . "</td>
+				 <td>" . $post->posttype . "</td>
+				 <td>" . $posttype . "</td>
 				 <td>" . $post->categoryNames() . "</td>
 				 <td>" . $post->createdate . "</td>
 				 <td>

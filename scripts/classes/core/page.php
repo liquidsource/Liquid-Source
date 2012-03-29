@@ -31,7 +31,7 @@ class Page {
 	}
 	public function updatePage($post_array) {
 		foreach($post_array as $arg => $val) { $$arg = mres($val); }
-		$datetime = date("Y:m:d H:i:s");
+		$datetime = date("Y-m-d H:i:s");
 		
 		if($this->data['isdefault'] == '1') {
 			$pg_slug = $this->data['slug'];
@@ -48,13 +48,14 @@ class Page {
 				$rs = mq("update " . DB_TBL_PAGES . " set pg_slug='$sluggy' where pg_parent='$pgid'");
 			}
 			
-	    	$rs = mq("insert into " . DB_TBL_PAGES . " (pg_meta_title,pg_slug,pg_meta_description,pg_meta_keywords,pg_type,pg_content,isAdmin,pg_active,pg_parent,pg_posttype,pg_origposttype) values (
+	    	$rs = mq("insert into " . DB_TBL_PAGES . " (pg_meta_title,pg_slug,pg_meta_description,pg_meta_keywords,pg_type,pg_content,pg_publisheddate,isAdmin,pg_active,pg_parent,pg_posttype,pg_origposttype) values (
 	    	'" . $this->data['meta_title'] . "',
 	    	'" . $pg_slug . "',
 	    	'" . $this->data['meta_description'] . "',
 	    	'" . $this->data['meta_keywords'] . "',
 	    	'" . $this->data['type'] . "',
 	    	'" . $this->data['content'] . "',
+	    	'" . $this->data['publisheddate'] . "',
 	    	'0',
 	    	'0',
 	    	'$pgid',
@@ -69,9 +70,26 @@ class Page {
 				if($$val != NULL) { $uc_x .= $val . "='" . $$val . "', "; }
 			}
 			if($uc_x != "") $uc_x = substr($uc_x,0,-2);
+			
+			if($pg_posttype == "published") { 
+				if($pg_publisheddate != $this->data['publisheddate']) {
+					$pub_datetime = date("Y-m-d H:i:s",strtotime($pg_publisheddate));
+				} else {
+					$pub_datetime = $this->data['publisheddate'];
+				}
+				$uc_x .= ", pg_publisheddate='$pub_datetime' ";
+			}
+			
 			$rs = mq("update " . DB_TBL_PAGES . " set $uc_x, pg_createdate='$datetime' where pgid='$pgid'");
 	    } else {
-	    	$rs = mq("insert into " . DB_TBL_PAGES . " (pg_meta_title,pg_slug,pg_meta_description,pg_meta_keywords,pg_type,pg_content,isAdmin,pg_active,pg_posttype) values ('$pg_meta_title','$pg_slug','$pg_meta_description','$pg_meta_keywords','$pg_type','$pg_content','0','1','$pg_posttype')");
+	    	if($pg_posttype == "published") {
+				if($pg_publisheddate != "") {
+					$pubDate = date("Y-m-d H:i:s",strtotime($pg_publisheddate));
+				} else {
+					$pubDate = $datetime;
+				}
+			}
+	    	$rs = mq("insert into " . DB_TBL_PAGES . " (pg_meta_title,pg_slug,pg_meta_description,pg_meta_keywords,pg_type,pg_content,pg_publisheddate,isAdmin,pg_active,pg_posttype) values ('$pg_meta_title','$pg_slug','$pg_meta_description','$pg_meta_keywords','$pg_type','$pg_content','$pubDate','0','1','$pg_posttype')");
 	        $pgid = miid();
 			$this->data['id'] = $pgid;
 	    }

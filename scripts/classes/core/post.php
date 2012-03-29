@@ -6,6 +6,7 @@ class Post {
 	public function __construct($pid=NULL) {
 		if($pid != NULL) { $wc = "pid='$pid' "; }
 		if($wc != "") {
+			if(!Member::isLoggedin('A')) { $wc .= " and p_publisheddate >= '" . date('Y-m-d H:i:s') . "' "; }
 			$rs = mq("select * from " . DB_TBL_POSTS . " where $wc and p_posttype != 'inherit'");
 			if(mnr($rs) > 0) {
 				$rw = mfa($rs);
@@ -32,7 +33,6 @@ class Post {
 	    if($this->data['id'] != "") {
 	    	$pid = $this->data['id'];
 			
-			
 	    	$rs = mq("insert into " . DB_TBL_POSTS . " (p_title,p_content,p_slug,p_type,p_createdate,p_publisheddate,p_active,p_posttype,p_parent,p_origposttype) values (
 	    	'" . $this->data['title'] . "',
 	    	'" . $this->data['content'] . "',
@@ -52,12 +52,23 @@ class Post {
 			}
 			if($uc_x != "") $uc_x = substr($uc_x,0,-2);
 			
-			if($this->data['posttype'] != "published" && $p_posttype == "published") { $uc_x .= ", p_publisheddate='$datetime' "; }
-			
+			if($p_posttype == "published") { 
+				if($p_publisheddate != $this->data['publisheddate']) {
+					$pub_datetime = date("Y-m-d H:i:s",strtotime($p_publisheddate));
+				} else {
+					$pub_datetime = $this->data['publisheddate'];
+				}
+				$uc_x .= ", p_publisheddate='$pub_datetime' ";
+			}
 	        $rs = mq("update " . DB_TBL_POSTS . " set $uc_x, p_createdate='$datetime' where pid='$pid'");
-			
 		} else {
-			if($p_posttype == "published") { $pubDate = $datetime; }
+			if($p_posttype == "published") {
+				if($p_publisheddate != "") {
+					$pubDate = date("Y-m-d H:i:s",strtotime($p_publisheddate));
+				} else {
+					$pubDate = $datetime;
+				}
+			}
 	        $rs = mq("insert into " . DB_TBL_POSTS . " (p_title,p_content,p_slug,p_type,p_createdate,p_publisheddate,p_posttype) values ('$p_title','$p_content','$p_slug','$p_type','$datetime','$pubDate','$p_posttype')");
 	        $pid = miid();
 			$this->data['id'] = $pid;

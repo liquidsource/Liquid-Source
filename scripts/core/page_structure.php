@@ -25,7 +25,7 @@ function topPage($module) {
         <meta name=\"description\" content=\"" . $description . "\" />
         <meta name=\"keywords\" content=\"" . $keywords . "\" />
         
-        <meta name=\"google-site-verification\" content=\"" . GOOGLE_SITE_VERIFIECTION_KEY . "\" />
+        <meta name=\"google-site-verification\" content=\"" . GOOGLE_SITE_VERIFICATION_KEY . "\" />
         <meta name=\"msvalidate.01\" content=\"" . MS_VALIDATE_KEY . "\" />
         
         <meta name=\"author\" content=\"Nick Wilkins, Squashed Newt Ltd\" />

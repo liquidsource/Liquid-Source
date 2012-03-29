@@ -3,6 +3,9 @@ $pgid = $_GET['pgid'];
 if($pgid != "") {
    	$page = new Page('',$pgid);
 	if($page->isdefault) $disabled = " disabled ";
+	if($page->posttype == "published") {
+		$pg_publisheddate = date("d-m-Y H:i",strtotime($page->publisheddate));
+	}
 } else {
 	$page = new Page();
 }
@@ -80,6 +83,11 @@ if($pgid != "") {
     </div>
     <footer>
         <div class="submit_link">
+        	<strong>Schedule Publish At:</strong> &nbsp;
+            <input type="text" class="timepicker" id="pg_publisheddate" name="pg_publisheddate" style="width:150px" value="<?php echo $pg_publisheddate; ?>" />
+            <input type="button" value="Schedule" class="alt_btn" onclick="ls_admin_saveForm('pg','published','admin_page_frm')" />
+            &nbsp; &nbsp; &nbsp; or
+            
         	<strong>Save Options:</strong> &nbsp; &nbsp;
         	<?php if($page->posttype == "") { ?>
         		<input type="button" value="Save as Draft" onclick="ls_admin_saveForm('pg','draft','admin_page_frm')" /> &nbsp;
@@ -97,6 +105,36 @@ if($pgid != "") {
     </footer>
 </article>
 </form>
+
+<article class="module width_full">
+	<header><h3>Page Information</h3></header>
+    <div class="module_content">
+    	<fieldset>
+    		<label style="width:150px">Page ID</label>
+		    	<div style="margin-top:6px"><?php echo $pgid; ?></div>
+		    	<div class="clear small">&nbsp;</div>
+    		<label style="width:150px">Page Slug</label>
+		    	<div style="margin-top:6px"><?php echo $page->slug; ?></div>
+		    	<div class="clear small">&nbsp;</div>
+	    	<label style="width:150px">Type</label>
+		    	<div style="margin-top:6px">Page</div>
+		    	<div class="clear small">&nbsp;</div>
+	    	<label style="width:150px">State</label>
+		    	<div style="margin-top:6px"><?php echo $page->posttype; ?></div>
+		    	<div class="clear small">&nbsp;</div>
+	    	<?php if($page->posttype == "published") { ?>
+	    	<label style="width:150px">Live on Site</label>
+		    	<div style="margin-top:6px">
+		    	<?php
+		    	if(strtotime($page->publisheddate) <= time()) { echo "Live &nbsp; &nbsp; (Since - <i>" . date("D jS M Y @ H:i",strtotime($page->publisheddate)) . "</i>)"; }
+				else { echo "Scheduled for the future &nbsp; &nbsp; (Live on  - <i>" . date("D jS M Y @ H:i",strtotime($page->publisheddate)) . "</i>)"; }
+		    	?>
+		    	</div>
+		    	<div class="clear small">&nbsp;</div>
+	    	<?php } ?>
+    	</fieldset>
+    </div>
+</article>
 
 <script>
 tinyMCE.init({

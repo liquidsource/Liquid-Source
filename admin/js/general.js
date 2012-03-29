@@ -1,9 +1,11 @@
-$(function(){
-    $('.column').equalHeight();
-});
 
 $(function() {
-    $( ".datepicker" ).datepicker({
+    $(".timepicker").datetimepicker({
+        dateFormat: 'dd-mm-yy'
+    });
+});
+$(function() {
+    $(".datepicker").datepicker({
         dateFormat: 'dd-mm-yy'
     });
 });
