@@ -2,6 +2,7 @@
 $settingup = true;
 global $dbconnexfailed;
 include('setup_functions.php');
+include('setup_niche.php');
 include('../scripts/system.php');
 ?>
 <!doctype html>

@@ -272,13 +272,13 @@ INSERT INTO `" . DB_TBL_MEMBER_PROFILE_ARGUMENTS . "` VALUES(2, 'lname', 'Member
 		foreach($sqls as $sql) {
 			$rs = mq($sql);
 		}
-		echo "<p><h4 class='alert alert_success'>Tables created succesfully</h4></p>";
+		echo "<p><h4 class='alert alert_success'>Core tables created succesfully</h4></p>";
 		
 		$sqls = explode(';',$insert_sql);
 		foreach($sqls as $sql) {
 			$rs = mq($sql);
 		}
-		echo "<p><h4 class='alert alert_success'>Base tables populated succesfully</h4></p>";
+		echo "<p><h4 class='alert alert_success'>Core tables populated succesfully</h4></p>";
 		
 		$mem_password = $posty['admin_password_r'];
 		$mem_username = $posty['admin_username'];
@@ -289,6 +289,8 @@ INSERT INTO `" . DB_TBL_MEMBER_PROFILE_ARGUMENTS . "` VALUES(2, 'lname', 'Member
 		$mem_hash = $member->updateUser($post_array,'A');
 		
 		echo "<p><h4 class='alert alert_success'>Admin user created succesfully</h4></p>";
+		
+		setupLiquidNiche();
 	} else {
 		echo "Fatal error";
 		die;
