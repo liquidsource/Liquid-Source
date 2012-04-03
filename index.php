@@ -20,5 +20,5 @@ topPage(MODULE);
 
 <?php
 /* And now echo out all the JS and closing body and html tags */
-bottomPage($module);
+bottomPage(MODULE);
 ?>

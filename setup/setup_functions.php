@@ -76,6 +76,7 @@ function setup_database($posty) {
 			  `m_hash` varchar(256) DEFAULT NULL,
 			  `m_createdate` timestamp NOT NULL DEFAULT CURRENT_TIMESTAMP,
 			  `m_type` char(2) NOT NULL,
+  			  `m_level` int(11) NOT NULL DEFAULT '1',
 			  `m_email` varchar(500) DEFAULT NULL,
 			  `m_active` int(11) DEFAULT '1',
 			  `m_lastlogin` datetime DEFAULT NULL,
@@ -261,6 +262,7 @@ INSERT INTO `" . DB_TBL_SITE_OPTIONS . "` VALUES(41, 'USE_BX_SLIDER', 'true', '0
 INSERT INTO `" . DB_TBL_SITE_OPTIONS . "` VALUES(42, 'LIQUID_SOURCE_VERSION', '1.0.0', '0000-00-00 00:00:00', 'define', 0, '', '');
 INSERT INTO `" . DB_TBL_SITE_OPTIONS . "` VALUES(43, 'FORCE_RECREATE', 'true', '0000-00-00 00:00:00', 'define', 0, '', 'bool');
 INSERT INTO `" . DB_TBL_SITE_OPTIONS . "` VALUES(44, 'LINKEDIN_PAGE_URL', '', '0000-00-00 00:00:00', 'define', 0, 'Social', '');
+INSERT INTO `" . DB_TBL_SITE_OPTIONS . "` VALUES(45, 'SITE_AUTHOR', '', '0000-00-00 00:00:00', 'define', 0, 'SEO', '');
 
 INSERT INTO `" . DB_TBL_MEMBER_PROFILE_ARGUMENTS . "` VALUES(1, 'fname', 'Member first name');
 INSERT INTO `" . DB_TBL_MEMBER_PROFILE_ARGUMENTS . "` VALUES(2, 'lname', 'Member last name');
@@ -283,7 +285,7 @@ INSERT INTO `" . DB_TBL_MEMBER_PROFILE_ARGUMENTS . "` VALUES(2, 'lname', 'Member
 		$mem_email = $posty['your_email'];
 		
 		$member = new Member();
-		$post_array = array('m_username' => $mem_username, 'm_password' => $mem_password, 'm_email' => $mem_email, 'mp_fname' => "Base", 'mp_lname' => "Admin");
+		$post_array = array('m_username' => $mem_username, 'm_password' => $mem_password, 'm_email' => $mem_email, 'm_level' => '10', 'mp_fname' => "Base", 'mp_lname' => "Admin");
 		$mem_hash = $member->updateUser($post_array,'A');
 		
 		echo "<p><h4 class='alert alert_success'>Admin user created succesfully</h4></p>";

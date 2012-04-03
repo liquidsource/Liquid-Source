@@ -28,7 +28,7 @@ function topPage($module) {
         <meta name=\"google-site-verification\" content=\"" . GOOGLE_SITE_VERIFICATION_KEY . "\" />
         <meta name=\"msvalidate.01\" content=\"" . MS_VALIDATE_KEY . "\" />
         
-        <meta name=\"author\" content=\"Nick Wilkins, Squashed Newt Ltd\" />
+        <meta name=\"author\" content=\"" . SITE_AUTHOR . "\" />
         <meta name=\"language\" content=\"en-gb\" />
 		<meta name=\"Copyright\" content=\"Copyright " . COMPANY_NAME . " " . date("Y") . ". All Rights Reserved.\" />
 		
@@ -40,7 +40,7 @@ function topPage($module) {
 		<meta name=\"DC.title\" content=\"" . PROJECT_NAME . "\" />
 		<meta name=\"DC.subject\" content=\"" . PROJECT_ABOUT . "\" />
         <meta name=\"DC.langugae\" content=\"en-gb\" />
-		<meta name=\"DC.creator\" content=\"Nick Wilkins, Squashed Newt Ltd\" />
+		<meta name=\"DC.creator\" content=\"" . SITE_AUTHOR . "\" />
 		
 		<meta itemprop=\"name\" content=\"" . $title . "\" />
 		<meta itemprop=\"description\" content=\"" . $description . "\" />

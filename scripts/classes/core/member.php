@@ -40,17 +40,17 @@ class Member {
     public function __set($arg, $val) {
         if ($arg == "mid") { return; }
 		
-        if (isset($this->data[$arg])) {
-        	$val = mres($val);
-			
-			$rs = mq("SELECT * FROM information_schema.COLUMNS WHERE TABLE_NAME = '" . DB_TBL_MEMBERS . "' AND COLUMN_NAME = '$arg'");
-            $this->data[$arg] = $val;
-			if(mnr($rs) > 0) {
-				$rs = mq("update " . DB_TBL_MEMBERS . " set $arg='$val' where mid='" . $this->data['id'] . "'");
-			} else {
-				insertUpdateMembrProfile($arg,$val);
-			}
-        }
+        $val = mres($val);
+		$rs = mq("SELECT * FROM information_schema.COLUMNS WHERE TABLE_NAME = '" . DB_TBL_MEMBERS . "' AND COLUMN_NAME = '$arg'");
+		
+		$data_arg = str_replace("m_","",$arg);
+		$data_arg = str_replace("mp_","",$arg);
+        $this->data[$data_arg] = $val;
+		if(mnr($rs) > 0) {
+			$rs = mq("update " . DB_TBL_MEMBERS . " set $arg='$val' where mid='" . $this->data['id'] . "'");
+		} else {
+			insertUpdateMembrProfile($arg,$val);
+		}
     }
 	public function setCurrentUserIntoSession() {
 		$_SESSION['mid'] = $this->data['id'];
@@ -87,7 +87,8 @@ class Member {
 		        if($rw['n'] == 0) { $mic[] = "m_username='$m_username',"; $this->data['username'] = $m_username; }
 			}
 			
-			if($m_type != "") { $mic[] = "m_type='$m_type'"; $this->data['>m_type'] = $m_type; }
+			if($m_type != "") { $mic[] = "m_type='$m_type'"; $this->data['>type'] = $m_type; }
+			if($m_level != "") { $mic[] = "m_level='$m_level'"; $this->data['level'] = $m_level; }
 			
 			if(sizeof($mic) > 0) {
 				foreach($mic as $val) { $mic_x .= $val; }
@@ -112,6 +113,8 @@ class Member {
 	            if($this->isCorrectPassword($p,$rw['m_hash'])) {
 					$success = true;
 	            	foreach($_SESSION as $arg => $var) { unset($_SESSION[$arg]); }
+					$datetime = date("Y-m-d H:i:s");
+					$rsu = mq("update " . DB_TBL_MEMBERS . " set m_lastlogin='$datetime' where mid='" . $rw['mid'] . "'");
 	                $_SESSION['mid'] = $rw['mid'];
 	                $_SESSION['loggedin'] = true;
 	                $_SESSION['m_type'] = $m_type;
@@ -238,13 +241,15 @@ class Member {
 			    }
 				
 				if($success) {
+					$datetime = date("Y-m-d H:i:s");
 					$hash = $this->createUserHash($m_email,$m_password);
-			        $rs = mq("insert into " . DB_TBL_MEMBERS . " (m_username,m_type,m_hash,m_email,m_active,m_lastlogin) values ('$m_username','$m_type','$hash','$m_email','1','$datetime')");
+			        $rs = mq("insert into " . DB_TBL_MEMBERS . " (m_username,m_type,m_level,m_hash,m_email,m_active,m_lastlogin) values ('$m_username','$m_type','$m_level','$hash','$m_email','1','$datetime')");
 			        $mid = miid();
 					
 					$this->data['id'] = $mid;
 			        $this->data['username'] = $m_username;
 			        $this->data['type'] = $m_type;
+			        $this->data['level'] = $m_level;
 			        $this->data['email'] = $m_email;
 			        $this->data['active'] = '1';
 			        $this->data['lastlogin'] = $datetime;

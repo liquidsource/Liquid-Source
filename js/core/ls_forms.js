@@ -5,8 +5,15 @@
  *  - ie <form onsubmit="return submitForm('register_form')" method="post">
  *  - Add in case statement below for the form name.
  * 
+ * Case statement can use the following checks:
+ *  - checkBlank: Ensure field is not empty
+ *  - checkSame: Ensure two fields are the same
+ *  - checkEmail: Check email structure validity
+ *  - checkChecked: Ensure a radio button group is checked
+ * 
  * Notes:
- *   Four example forms that come with the base install are included below. You can safely remove these if the forms are not used.
+ *   Four example forms that come with the base install are included below. You can safely remove these if the forms are not used. 
+ *   The default for 'checkAdminForms' needs to stay in place for all the backend admin forms
  */
 function submitForm(frmName) {
     ls_overallFormSubmitFail = false;

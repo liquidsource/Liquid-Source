@@ -1,9 +1,16 @@
+/**
+ * This file is meant for all general js functions.
+ * Pre-installed packages call their relevant options, if they are enabled in Site Options. If they are not enabled they will not call their initialization functions.
+ * You can safely remove any if() { ... } statements if you wish to clean up the code, and if they are not enabled.
+ */
+
 $(document).ready(function() {
+	
 	/* Jquery UI elements - http://jqueryui.com/ */
-    $(".datepicker").datepicker({
-        dateFormat: 'dd-mm-ysy'
+    $('.datepicker').datepicker({
+        dateFormat: 'dd-mm-yy'
     });
-    $( ".slider" ).slider();
+    $('.slider').slider();
     
     /* Data tables  - http://datatables.net/ */
     if(use_table_parser) {
