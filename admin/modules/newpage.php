@@ -78,7 +78,7 @@ if($pgid != "") {
         </fieldset>
         
         <fieldset id="options_bs" style="display:none">
-        	<h4 class="alert_warning" style="margin-top:0px">Bepsoke pages do not have any options. They are hard coded pages within the system. Speak to the developer to alter the workings of this page.</h4>
+        	<h4 class="alert_warning" style="margin-top:0px">Bepsoke pages do not have any options. They are hard coded pages within the system.</h4>
         </fieldset>
     </div>
     <footer>

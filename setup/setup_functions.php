@@ -23,7 +23,7 @@ function setup_database($posty) {
 			  `aw_warning` varchar(1000) DEFAULT NULL,
 			  PRIMARY KEY (`awid`),
 			  KEY `aw_slug` (`aw_slug`)
-			) ENGINE=MyISAM  DEFAULT CHARSET=utf8;
+			) ENGINE=InnoDB  DEFAULT CHARSET=utf8;
 			
 			CREATE TABLE `" . DB_TBL_CATEGORIES . "` (
 			  `cid` int(11) NOT NULL AUTO_INCREMENT,
@@ -31,7 +31,7 @@ function setup_database($posty) {
 			  `c_parent` int(11) DEFAULT '0',
 			  `c_type` varchar(100) DEFAULT NULL,
 			  PRIMARY KEY (`cid`)
-			) ENGINE=MyISAM DEFAULT CHARSET=utf8;
+			) ENGINE=InnoDB DEFAULT CHARSET=utf8;
 			
 			CREATE TABLE `" . DB_TBL_CATEGORY_LINK . "` (
 			  `jcid` int(11) NOT NULL AUTO_INCREMENT,
@@ -39,7 +39,7 @@ function setup_database($posty) {
 			  `cid` int(11) NOT NULL,
 			  `l_type` varchar(10) DEFAULT NULL,
 			  PRIMARY KEY (`jcid`)
-			) ENGINE=MyISAM DEFAULT CHARSET=utf8;
+			) ENGINE=InnoDB DEFAULT CHARSET=utf8;
 			
 			CREATE TABLE `" . DB_TBL_LINKS . "` (
 			  `lid` int(11) NOT NULL AUTO_INCREMENT,
@@ -48,7 +48,7 @@ function setup_database($posty) {
 			  `l_active` int(11) NOT NULL,
 			  PRIMARY KEY (`lid`),
 			  KEY `l_active` (`l_active`)
-			) ENGINE=MyISAM DEFAULT CHARSET=utf8;
+			) ENGINE=InnoDB DEFAULT CHARSET=utf8;
 			
 			CREATE TABLE `" . DB_TBL_LOG_SHORTCODES . "` (
 			  `sc` char(3) NOT NULL,
@@ -68,7 +68,7 @@ function setup_database($posty) {
 			  `md_filesize` varchar(50) DEFAULT NULL,
 			  `md_active` int(11) DEFAULT '1',
 			  PRIMARY KEY (`mdid`)
-			) ENGINE=MyISAM DEFAULT CHARSET=utf8;
+			) ENGINE=InnoDB DEFAULT CHARSET=utf8;
 			
 			CREATE TABLE `" . DB_TBL_MEMBERS . "` (
 			  `mid` int(11) NOT NULL AUTO_INCREMENT,
@@ -82,7 +82,7 @@ function setup_database($posty) {
 			  `m_lastlogin` datetime DEFAULT NULL,
 			  `m_protected` int(11) DEFAULT '0',
 			  PRIMARY KEY (`mid`)
-			) ENGINE=MyISAM  DEFAULT CHARSET=utf8;
+			) ENGINE=InnoDB  DEFAULT CHARSET=utf8;
 			
 
 
@@ -111,7 +111,7 @@ function setup_database($posty) {
 			  `md_type` varchar(20) DEFAULT NULL,
 			  `md_recogniser` varchar(30) NOT NULL,
 			  PRIMARY KEY (`mdid`)
-			) ENGINE=MyISAM DEFAULT CHARSET=utf8 ;
+			) ENGINE=InnoDB DEFAULT CHARSET=utf8 ;
 			
 			CREATE TABLE `" . DB_TBL_PAGES. "` (
 			  `pgid` int(11) NOT NULL AUTO_INCREMENT,
@@ -131,7 +131,7 @@ function setup_database($posty) {
 			  `pg_origposttype` varchar(20) NOT NULL,
 			  PRIMARY KEY (`pgid`),
 			  KEY `mod_slug` (`pg_slug`)
-			) ENGINE=MyISAM  DEFAULT CHARSET=utf8 ;
+			) ENGINE=InnoDB  DEFAULT CHARSET=utf8 ;
 			
 			CREATE TABLE `" . DB_TBL_POSTS . "` (
 			  `pid` int(11) NOT NULL AUTO_INCREMENT,
@@ -150,7 +150,7 @@ function setup_database($posty) {
 			  KEY `p_slug` (`p_slug`),
 			  KEY `p_active` (`p_active`),
 			  KEY `p_type` (`p_type`)
-			) ENGINE=MyISAM  DEFAULT CHARSET=utf8;
+			) ENGINE=InnoDB  DEFAULT CHARSET=utf8;
 			
 			CREATE TABLE `" . DB_TBL_SITE_LOG . "` (
 			  `slid` int(11) NOT NULL AUTO_INCREMENT,
