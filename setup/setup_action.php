@@ -2,7 +2,6 @@
 $settingup = true;
 global $dbconnexfailed;
 include('setup_functions.php');
-include('setup_niche.php');
 include('../scripts/system.php');
 ?>
 <!doctype html>
@@ -63,9 +62,8 @@ include('../scripts/system.php');
 		        <label for="password"><strong>Password:</strong></label><i><?php echo $_POST['admin_password']; ?></i>
 	        </p>
 			<fieldset style="margin-top:20px">
-				<input type="button" value="Go to the homepage" onclick="location.href='<?php echo BASE_HREF; ?>index.php'" /> &nbsp;
-				<input type="button" value="Log into admin" onclick="location.href='<?php echo BASE_HREF; ?>admin/index.php'" />
-				</fieldset>
+				<input type="button" value="Go to the homepage" onclick="location.href='<?php echo BASE_HREF; ?>index.php'" />
+			</fieldset>
         </div>
     </div>
 </section>

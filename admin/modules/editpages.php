@@ -19,7 +19,7 @@ $orderdir = $_SESSION['orderdir'];
         <thead> 
             <tr> 
                 <th <?php echo tableSorter('pgid'); ?>> pgid</th>
-                <th <?php echo tableSorter('pg_title'); ?>> Page Title</th>
+                <th <?php echo tableSorter('pg_meta_title'); ?>> Page Title</th>
                 <th <?php echo tableSorter('pg_posttype'); ?>> Page State</th>
                 <th <?php echo tableSorter('pg_type'); ?>> Page Type</th> 
                 <th <?php echo tableSorter('pg_slug'); ?>> Page Slug</th>

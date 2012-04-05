@@ -141,15 +141,11 @@ tinyMCE.init({
         mode : "textareas",
         theme : "advanced"
 });
+var oldView = "";
 function mtypeSelected(typee) {
-    if(typee == "tx") {
-        $('#options_bs').hide('slow');
-        $('#options_tx').show('slow');
-    } else {
-        $('#options_bs').show('slow');
-        $('#options_tx').hide('slow');
-        
-    }
+	if(oldView != typee) { $('#options_' + oldView).hide('slow'); }
+    $('#options_' + typee).show('slow'); 
+    oldView = typee;	
 }
 <?php if($page->type != "") { ?>mtypeSelected('<?php echo strtolower($page->type); ?>');<?php } ?>
 </script>

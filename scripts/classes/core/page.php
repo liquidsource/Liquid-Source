@@ -7,6 +7,7 @@ class Page {
 		if($pg_slug != NULL) { $wc = "pg_slug='$pg_slug' "; }
 		if($pgid != NULL) { $wc = "pgid='$pgid' "; }
 		if($wc != "") { 
+			if(!Member::isLoggedin('A')) { $wc .= " and pg_publisheddate <= '" . date('Y-m-d H:i:s') . "' "; }
 			$rs = mq("select * from " . DB_TBL_PAGES . " where $wc and pg_posttype != 'inherit'");
 			if(mnr($rs) > 0) {
 				$rw = mfa($rs);

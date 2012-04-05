@@ -214,6 +214,7 @@ INSERT INTO `" . DB_TBL_PAGES . "` VALUES(3, 'Register', 'ex_register', 'Registe
 INSERT INTO `" . DB_TBL_PAGES . "` VALUES(4, 'Login', 'ex_login', 'Login description', 'kw1,kw2,login', 0, 0, '2012-01-01 00:00:01', '2012-01-01 00:00:01', 'bs', '', 1,'0','published','');
 INSERT INTO `" . DB_TBL_PAGES . "` VALUES(5, 'Contact Us', 'ex_contactus', 'des', 'key', 0, 0, '2012-01-01 00:00:01', '2012-01-01 00:00:01', 'bs', '', 1,'0','published','');
 INSERT INTO `" . DB_TBL_PAGES . "` VALUES(6, 'Elements', 'elements', 'des', 'key', 0, 0, '2012-01-01 00:00:01', '2012-01-01 00:00:01', 'bs', '', 1,'0','published','');
+INSERT INTO `" . DB_TBL_PAGES . "` VALUES(7, 'More Info', 'moreinfo', 'des', 'key', 0, 0, '2012-01-01 00:00:01', '2012-01-01 00:00:01', 'bs', '', 1,'0','published','');
 
 INSERT INTO `" . DB_TBL_POSTS . "` VALUES(1, 'Registration', 'registration', '<p>This is what gets sent out to new registrants</p>\r\n<p>[r_username]</p>\r\n<p>[r_email]</p>\r\n<p>[r_password]</p>\r\n<p>[r_fname]</p>\r\n<p>[r_lname]</p>\r\n<p>[tel]</p>', NULL, 1, 'template', 'en','0','published','');
 INSERT INTO `" . DB_TBL_POSTS . "` VALUES(2, 'Forgot Password', 'forgot-password', '<p>This is what gets sent out to people who forget their password</p>\r\n<p>[password]</p>\r\n<p>[mp_fname]</p>\r\n<p>[mp_lname]</p>\r\n<p>[uname]</p>', NULL, 1, 'template', 'en','0','published','');
@@ -290,7 +291,15 @@ INSERT INTO `" . DB_TBL_MEMBER_PROFILE_ARGUMENTS . "` VALUES(2, 'lname', 'Member
 		
 		echo "<p><h4 class='alert alert_success'>Admin user created succesfully</h4></p>";
 		
-		setupLiquidNiche();
+		if(NICHE_SITE != "") {
+			if(file_exists("setup_niche.php")) {
+				include("setup_niche.php");
+				$func = "setupLiquid_" . NICHE_SITE;
+				if(function_exists($func)) $func();
+			} else {
+				echo "<p><h4 class='alert alert_warning'>No additional setup configuration found for this niche site.</h4></p>";
+			}
+		}
 	} else {
 		echo "Fatal error";
 		die;

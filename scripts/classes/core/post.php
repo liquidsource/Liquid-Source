@@ -6,7 +6,7 @@ class Post {
 	public function __construct($pid=NULL) {
 		if($pid != NULL) { $wc = "pid='$pid' "; }
 		if($wc != "") {
-			if(!Member::isLoggedin('A')) { $wc .= " and p_publisheddate >= '" . date('Y-m-d H:i:s') . "' "; }
+			if(!Member::isLoggedin('A')) { $wc .= " and p_publisheddate <= '" . date('Y-m-d H:i:s') . "' "; }
 			$rs = mq("select * from " . DB_TBL_POSTS . " where $wc and p_posttype != 'inherit'");
 			if(mnr($rs) > 0) {
 				$rw = mfa($rs);

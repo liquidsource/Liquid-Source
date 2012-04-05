@@ -26,7 +26,7 @@ class LS {
 		if($dateto != "") { $wc .= " and p_publisheddate <= '$datefrom' "; }
 		if($content != "") { $wc .= " and p_content like '%$content%' "; }
 		
-		if(!Member::isLoggedin('A')) { $wc .= " and p_publisheddate >= '" . date('Y-m-d H:i:s') . "' "; }
+		if(!Member::isLoggedin('A')) { $wc .= " and p_publisheddate <= '" . date('Y-m-d H:i:s') . "' "; }
 		
 	    $ret_arr = array();
 	    $rs = mq("select pid from " . DB_TBL_POSTS . " $jc where p_type='post' $wc and p_posttype != 'inherit' order by $orderby $orderdir limit $limit");
@@ -75,6 +75,7 @@ class LS {
 					$wc .= " and pg_posttype = 'published' "; break;
 			}	
 		}
+		if(!Member::isLoggedin('A')) { $wc .= " and pg_publisheddate <= '" . date('Y-m-d H:i:s') . "' "; }
 		
 	    $ret_arr = array();
 	    $rs = mq("select pgid from " . DB_TBL_PAGES . " where isAdmin=0 $wc and pg_posttype != 'inherit' order by $orderby $orderdir limit $limit");

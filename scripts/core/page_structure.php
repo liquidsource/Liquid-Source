@@ -3,8 +3,16 @@
 function getModule($module) {
     if(empty($module)) {
         $rs = mq("select pg_slug from " . DB_TBL_PAGES . " where isDefault='1' and isAdmin='0' order by pgid asc");
-        if(mnr($rs) > 0) { $rw = mfa($rs); return $rw['pg_slug']; } else { echo "Error 101. No defualt module chosen."; die; }
-    } else { return $module; }
+        if(mnr($rs) > 0) {
+        	$rw = mfa($rs);
+        	$module = $rw['pg_slug']; 
+		} else { echo "Error 101. No defualt module chosen."; die; }
+    }
+	
+	if(Member::isLoggedin('A')) return $module;
+	$page = new Page($module);
+	if($page->id == "") return "404";
+	return $module;
 }
 
 /* This echos out all the text upto and including the body tag. Sets up all JS and CSS that is needed at the top. */
@@ -14,7 +22,7 @@ function topPage($module) {
 	$title = getMetaInfo($module,'title');
 	
     echo "<!doctype html> 
-    <html lang=\"en-gb\" class=\"no-js mod_$module\" itemscope itemtype=\"http://schema.org/\">
+    <html lang=\"" . strtolower(LANG) . "-" . strtoupper(ISO) . "\" class=\"no-js mod_$module\" itemscope itemtype=\"http://schema.org/\">
     <head>
         <meta charset=\"utf-8\" />
         <title>" . $title . "</title>
@@ -29,7 +37,7 @@ function topPage($module) {
         <meta name=\"msvalidate.01\" content=\"" . MS_VALIDATE_KEY . "\" />
         
         <meta name=\"author\" content=\"" . SITE_AUTHOR . "\" />
-        <meta name=\"language\" content=\"en-gb\" />
+        <meta name=\"language\" content=\"" . strtolower(LANG) . "-" . strtoupper(ISO) . "\" />
 		<meta name=\"Copyright\" content=\"Copyright " . COMPANY_NAME . " " . date("Y") . ". All Rights Reserved.\" />
 		
         <meta name=\"viewport\" content=\"width=device-width, initial-scale=1.0, maximum-scale=1.0\" />
