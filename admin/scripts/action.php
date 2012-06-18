@@ -22,6 +22,16 @@ if(Member::isLoggedin('A')) {
 			$page->deletePage();
             $to = "editpages";
             break;
+		case "restorepage":
+			$page = new Page('',$_GET['pgid']);
+			$page->restorePage();
+            $to = "editpages";
+			break;
+		case "removepage":
+			$page = new Page('',$_GET['pgid']);
+			$page->removePage();
+            $to = "editpages";
+			break;
         case "newpost":
 			$post = new Post($_GET['pid']);
 			$pid = $post->updatePost($_POST);

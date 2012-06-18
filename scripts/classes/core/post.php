@@ -20,6 +20,8 @@ class Post {
 				$this->data['type'] = $rw['p_type'];
 				$this->data['posttype'] = $rw['p_posttype'];
 				$this->data['lang'] = $rw['p_lang'];
+				
+				$this->data['link'] = "";
 			}
 		}
 	}

@@ -131,7 +131,7 @@ function delete_old_md5s($folder) {
 	$olddate=time() - 60;
 	$dircontent = scandir($folder);
 	foreach($dircontent as $filename) {
-		if (strlen($filename)==36 && filemtime($folder.$filename)<$olddate) {
+		if (strlen($filename)==35 && filemtime($folder.$filename)<$olddate) {
 			unlink($folder.$filename);
     	}
 	}

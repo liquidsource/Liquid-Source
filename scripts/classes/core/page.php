@@ -27,6 +27,8 @@ class Page {
 				$this->data['active'] = $rw['pg_active'];
 				if($this->data['type'] == "bs") { $pg_type_eng = "Bespoke"; } else { $pg_type_eng = "Text"; }
 				$this->data['type_eng'] = $pg_type_eng;
+				
+				$this->data['link'] = "";
 			}
 		}
 	}
@@ -157,7 +159,32 @@ class Page {
 		}
 	}
 	public function removePage() {
-		$rs = mq("delete from " . DB_TBL_PAGES . " where pgid='" . $this->data['id'] . "'");
+		if($this->data['id'] != NULL) {
+			if($this->data['type'] == "bs") { unlink("../../modules/" . $this->slug . ".php"); }
+			$rs = mq("delete from " . DB_TBL_PAGES . " where pgid='" . $this->data['id'] . "'");
+		}
+	}
+	public function restorePage() {
+		if($this->data['id'] != NULL) {
+			$rs = mq("update " . DB_TBL_PAGES . " set pg_active='1' where pgid='" . $this->data['id'] . "'");
+		}
+	}
+	
+	
+	public static function emptyTrash() {
+		$rs = mq("select pgid from " . DB_TBL_PAGES . " where pg_active='0'");
+		while($rw = mfa($rs)) {
+			$page = new Page($rw['pgid']);
+			$page->removePage();
+		}
+	}
+	public static function numberTrashItems() {
+		$rw = mfa(mq("select count(pgid) as n from " . DB_TBL_PAGES . " where pg_active='0'"));
+		return $rw['n'];
+	}
+	public static function numberNonTrashItems() {
+		$rw = mfa(mq("select count(pgid) as n from " . DB_TBL_PAGES . " where pg_active='1'"));
+		return $rw['n'];
 	}
 }
 ?>

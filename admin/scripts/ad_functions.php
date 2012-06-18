@@ -14,6 +14,7 @@ function tableSorter($colname) {
 	if($module == "editusers") {
 		$sc = "&m_type=$m_type";
 	}
+	if($_GET['active'] == "0") { $sc .= "&active=0"; }
     return " onclick=\"location.href='?module=$module&orderby=$colname" . $sc . "'\"><img src=\"$img\" ";
 }
 function setOrderBy($def) {
