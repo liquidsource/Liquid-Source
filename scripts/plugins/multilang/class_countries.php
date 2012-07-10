@@ -2,7 +2,7 @@
 /**
  * Countries class
  */
-
+echo "included";
 class Country {
     private $data;
 	
@@ -69,6 +69,8 @@ class Country {
 		return $ret;
 	}
 	public static function getDefaultCountry() {
+		echo "trying";
+		die;
 		$rs = mq("select iso, lang_code from " . DB_TBL_COUNTRIES . " where isDefault='1'");
 		if(mnr($rs) > 0) {
 			$rw = mfa($rs);

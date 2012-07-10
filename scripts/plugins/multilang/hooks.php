@@ -202,7 +202,9 @@ switch ($plugin_code) {
 	// PAGE STRUCTURE FOR CHOOSING MODULE TO LOAD
 	case "page_structure.module":
 		if(!$inAdmin) {
-			$defCountry = Country::getDefaultCountry()->iso;
+			echo "hello";
+			$defCountry = Country::getDefaultCountry();
+			echo "gdfd";
 			if($page->iso != $defCountry && $page->iso != "") {
 				$page_parent = new Page('',$page->iso_parent);
 				$module = $page_parent->slug;

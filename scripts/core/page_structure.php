@@ -233,7 +233,6 @@ function getModuleData($module) {
 	if($page->id != "") {
 		$m_type = $page->type;
 	}
-	
 	/* Plugin option */
 	$plugin_code = "page_structure.module";
 	include(INCLUDE_PLUGIN_ROOT . "core.php");
