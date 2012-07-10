@@ -113,6 +113,13 @@ function setup_database($posty) {
 			  PRIMARY KEY (`mdid`)
 			) ENGINE=InnoDB DEFAULT CHARSET=utf8 ;
 			
+			CREATE TABLE  `" . DB_TBL_OPTIONS . "` (
+			 `opid` INT NOT NULL AUTO_INCREMENT PRIMARY KEY ,
+			 `op_arg` VARCHAR( 300 ) NOT NULL ,
+			 `op_val` VARCHAR( 1000 ) NOT NULL ,
+			 `op_section` VARCHAR( 300 ) NOT NULL
+			) ENGINE = INNODB;
+			
 			CREATE TABLE `" . DB_TBL_PAGES. "` (
 			  `pgid` int(11) NOT NULL AUTO_INCREMENT,
 			  `pg_meta_title` varchar(300) DEFAULT NULL,
@@ -264,6 +271,7 @@ INSERT INTO `" . DB_TBL_SITE_OPTIONS . "` VALUES(42, 'LIQUID_SOURCE_VERSION', '1
 INSERT INTO `" . DB_TBL_SITE_OPTIONS . "` VALUES(43, 'FORCE_RECREATE', 'true', '0000-00-00 00:00:00', 'define', 0, '', 'bool');
 INSERT INTO `" . DB_TBL_SITE_OPTIONS . "` VALUES(44, 'LINKEDIN_PAGE_URL', '', '0000-00-00 00:00:00', 'define', 0, 'Social', '');
 INSERT INTO `" . DB_TBL_SITE_OPTIONS . "` VALUES(45, 'SITE_AUTHOR', '', '0000-00-00 00:00:00', 'define', 0, 'SEO', '');
+INSERT INTO `" . DB_TBL_SITE_OPTIONS . "` VALUES(46, 'USE_IE_ALERT', '', '0000-00-00 00:00:00', 'define', 0, 'Modules', 'bool');
 
 INSERT INTO `" . DB_TBL_MEMBER_PROFILE_ARGUMENTS . "` VALUES(1, 'fname', 'Member first name');
 INSERT INTO `" . DB_TBL_MEMBER_PROFILE_ARGUMENTS . "` VALUES(2, 'lname', 'Member last name');
@@ -292,9 +300,11 @@ INSERT INTO `" . DB_TBL_MEMBER_PROFILE_ARGUMENTS . "` VALUES(2, 'lname', 'Member
 		echo "<p><h4 class='alert alert_success'>Admin user created succesfully</h4></p>";
 		
 		if(NICHE_SITE != "") {
-			if(file_exists("setup_niche.php")) {
-				include("setup_niche.php");
-				$func = "setupLiquid_" . NICHE_SITE;
+			register_niche_site(NICHE_SITE);
+			$fname = INCLUDE_WEB_ROOT . "scripts/niche/" . NICHE_SITE . "_install.php";
+			if(file_exists($fname)) {
+				include($fname);
+				$func = NICHE_SITE . "_install";
 				if(function_exists($func)) $func();
 			} else {
 				echo "<p><h4 class='alert alert_warning'>No additional setup configuration found for this niche site.</h4></p>";

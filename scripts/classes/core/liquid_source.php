@@ -26,6 +26,9 @@ class LS {
 		if($dateto != "") { $wc .= " and p_publisheddate <= '$datefrom' "; }
 		if($content != "") { $wc .= " and p_content like '%$content%' "; }
 		
+		/* Plugin option */
+		$plugin_code = "class.liquid_source.posts.wc"; include(INCLUDE_PLUGIN_ROOT . "core.php");
+		
 		if(!Member::isLoggedin('A')) { $wc .= " and p_publisheddate <= '" . date('Y-m-d H:i:s') . "' "; }
 		
 	    $ret_arr = array();
@@ -53,6 +56,9 @@ class LS {
 			}	
 		}
 		
+		/* Plugin option */
+		$plugin_code = "class.liquid_source.templates.wc"; include(INCLUDE_PLUGIN_ROOT . "core.php");
+		
 	    $ret_arr = array();
 	    $rs = mq("select pid from " . DB_TBL_POSTS . " where p_type='template' $wc and p_posttype != 'inherit' order by $orderby $orderdir limit $limit");
 	    while($rw = mfa($rs)) {
@@ -77,6 +83,9 @@ class LS {
 		}
 		if(!Member::isLoggedin('A')) { $wc .= " and pg_publisheddate <= '" . date('Y-m-d H:i:s') . "' "; }
 		
+		/* Plugin option */
+		$plugin_code = "class.liquid_source.pages.wc"; include(INCLUDE_PLUGIN_ROOT . "core.php");
+		
 	    $ret_arr = array();
 	    $rs = mq("select pgid from " . DB_TBL_PAGES . " where isAdmin=0 $wc and pg_posttype != 'inherit' order by $orderby $orderdir limit $limit");
 	    while($rw = mfa($rs)) {
@@ -93,6 +102,9 @@ class LS {
 		if($m_type == "") { $m_type = "U"; }
 		if($active == "") { $wc .= " and m_active='1' "; } else { $wc .= " and m_active='$active' "; }
 		
+		/* Plugin option */
+		$plugin_code = "class.liquid_source.members.wc"; include(INCLUDE_PLUGIN_ROOT . "core.php");
+		
 	    $ret_arr = array();
 	    $rs = mq("select mid from " . DB_TBL_MEMBERS . " where m_type='$m_type' $wc order by $orderby $orderdir limit $limit");
 	    while($rw = mfa($rs)) {
@@ -108,6 +120,9 @@ class LS {
 		if($orderdir == "") { $orderdir = "asc"; }
 		if($active == "") { $wc .= " and md_active='1' "; } else { $wc .= " and md_active='$active' "; }
 		
+		/* Plugin option */
+		$plugin_code = "class.liquid_source.media.wc"; include(INCLUDE_PLUGIN_ROOT . "core.php");
+		
 		$ret_arr = array();
 	    $rs = mq("select mdid from " . DB_TBL_MEDIA . " where 1=1 $wc order by $orderby $orderdir limit $limit");
 	    while($rw = mfa($rs)) {
@@ -121,6 +136,9 @@ class LS {
 	    if($num != "") { $limit = $num; } else { $limit = " 0,1000"; }
 		if($orderby == "") { $orderby = "lid"; }
 		if($orderdir == "") { $orderdir = "asc"; }
+		
+		/* Plugin option */
+		$plugin_code = "class.liquid_source.links.wc"; include(INCLUDE_PLUGIN_ROOT . "core.php");
 		
 		$ret_arr = array();
 	    $rs = mq("select lid from " . DB_TBL_LINKS . " order by $orderby $orderdir limit $limit");
@@ -138,6 +156,10 @@ class LS {
 		if($parent == "") { $parent = "0"; }
 		if($type == "") { $type = "post"; }
 		$wc = " and c_type='$type' ";
+		
+		/* Plugin option */
+		$plugin_code = "class.liquid_source.categories.wc"; include(INCLUDE_PLUGIN_ROOT . "core.php");
+		
 		$ret_arr = array();
 		$rs = mq("select * from " . DB_TBL_CATEGORIES . " where c_parent=$parent $wc order by $orderby $orderdir limit $limit");
 		while($rw = mfa($rs)) {

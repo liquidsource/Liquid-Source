@@ -201,8 +201,7 @@ function getMetaData($uid,$typee) {
 	$ret_arr = array();
 	$rs = mq("select md_val,md_arg from " . DB_TBL_META_DATA . " where uid='$uid' and md_type='$typee' order by md_recogniser");
 	while($rw = mfa($rs)) {
-		$ret_arr[$i]['arg'] = stripslashes($rw['md_arg']);
-		$ret_arr[$i]['val'] = stripslashes($rw['md_val']);
+		$ret_arr[stripslashes($rw['md_arg'])] = stripslashes($rw['md_val']);
 		$i++;
 	}
 	return $ret_arr;

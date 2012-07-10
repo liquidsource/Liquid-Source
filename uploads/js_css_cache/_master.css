@@ -8,7 +8,6 @@
 html {
   font-family:'Open Sans', sans-serif, arial, verdana;
   color:#333333;
-  font-size:1em;
   line-height:1.5;
 }
 p {
@@ -36,11 +35,11 @@ h3 { font-size:1.6em; }
 h4 { font-size:1.4em; }
 h5 { font-size:1.2em; }
 h6 { font-size:1em; }
-body { font-size:10pt; }
+body { font-size:80%; }
 header { background:#eeeeee; }
 #main {
   background:#ffffff;
-  padding:10px 0px;
+  padding:10px 10px;
 }
 footer {
   background:#999999;
@@ -49,10 +48,11 @@ footer {
 }
 #top_header {
   height:70px;
-  padding-top:5px;
+  padding:5px 0px 0px 10px;
   width:100%;
   background:#222222;
 }
+footer { padding:0px 10px; }
 footer ul li {
   float:left;
   margin:10px 0px;
@@ -74,7 +74,7 @@ footer a { color:#333333 !important; }
 footer a:Hover { text-decoration:underline; }
 .wrap {
   margin:0 auto;
-  width:1580px;
+  max-width:1580px;
 }
 .noinfo {
   color:#666666;
@@ -115,19 +115,14 @@ h4.alert_warning { background:#f5f3ba url(../../images/icons/icn_alert_warning.p
 h4.alert_error { background:#f3d9d9 url(../../images/icons/icn_alert_error.png); }
 h4.alert_success { background:#e2f6c5 url(../../images/icons/icn_alert_success.png); }
 @media only screen and (min-width: 1300px) and (max-width: 1600px) {
-  .wrap { width:1280px; }
 }
 @media only screen and (min-width: 1020px) and (max-width: 1300px) {
-  .wrap { width:990px; }
 }
 @media only screen and (min-width: 768px) and (max-width: 1020px) {
-  .wrap { width:730px; }
 }
 @media only screen and (min-width: 480px) and (max-width: 768px) {
-  .wrap { width:440px; }
 }
 @media only screen and (max-width: 480px) {
-  .wrap { width:300px; }
   header { background:transparent; }
   #nav li {
     z-index:99;

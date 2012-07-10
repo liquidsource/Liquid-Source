@@ -4,8 +4,17 @@ class Page {
 	
 	/* PUBLIC FUNCTIONS */
 	public function __construct($pg_slug=NULL,$pgid=NULL) {
-		if($pg_slug != NULL) { $wc = "pg_slug='$pg_slug' "; }
-		if($pgid != NULL) { $wc = "pgid='$pgid' "; }
+		$pluginWClause = false;
+		
+		/* Plugin option */
+		$plugin_code = "class.page.construct.wc";
+		include(INCLUDE_PLUGIN_ROOT . "core.php");
+		
+		if(!$pluginWClause) {
+			if($pg_slug != NULL) { $wc = "pg_slug='$pg_slug' "; }
+			if($pgid != NULL) { $wc = "pgid='$pgid' "; }
+		}
+		
 		if($wc != "") { 
 			if(!Member::isLoggedin('A')) { $wc .= " and pg_publisheddate <= '" . date('Y-m-d H:i:s') . "' "; }
 			$rs = mq("select * from " . DB_TBL_PAGES . " where $wc and pg_posttype != 'inherit'");
@@ -29,6 +38,10 @@ class Page {
 				$this->data['type_eng'] = $pg_type_eng;
 				
 				$this->data['link'] = "";
+				
+				/* Plugin option */
+				$plugin_code = "class.page.construct.setup";
+				include(INCLUDE_PLUGIN_ROOT . "core.php");
 			}
 		}
 	}
@@ -65,8 +78,11 @@ class Page {
 	    	'inherit',
 	    	'" . $this->data['posttype'] . "'
 			)");
+			$pgid_n = miid();
 			
-			
+			/* Plugin option */
+			$plugin_code = "class.page.update.extra";
+			include(INCLUDE_PLUGIN_ROOT . "core.php");
 			
 	    	$u_arr = array('pg_meta_title','pg_slug','pg_meta_description','pg_meta_keywords','pg_type','pg_content','pg_posttype');
 			foreach($u_arr as $val) {
@@ -84,6 +100,10 @@ class Page {
 			}
 			
 			$rs = mq("update " . DB_TBL_PAGES . " set $uc_x, pg_createdate='$datetime' where pgid='$pgid'");
+			
+			/* Plugin option */
+			$plugin_code = "class.page.update.old.return";
+			include(INCLUDE_PLUGIN_ROOT . "core.php");
 	    } else {
 	    	if($pg_posttype == "published") {
 				if($pg_publisheddate != "") {
@@ -92,9 +112,20 @@ class Page {
 					$pubDate = $datetime;
 				}
 			}
-	    	$rs = mq("insert into " . DB_TBL_PAGES . " (pg_meta_title,pg_slug,pg_meta_description,pg_meta_keywords,pg_type,pg_content,pg_publisheddate,isAdmin,pg_active,pg_posttype) values ('$pg_meta_title','$pg_slug','$pg_meta_description','$pg_meta_keywords','$pg_type','$pg_content','$pubDate','0','1','$pg_posttype')");
+			if($pg_type == "") $pg_type = "bs";
+			
+			/* Plugin option */
+			$plugin_code = "class.page.update.new.setiso";
+			include(INCLUDE_PLUGIN_ROOT . "core.php");
+			
+	    	$rs = mq("insert into " . DB_TBL_PAGES . " (pg_meta_title,pg_slug,pg_meta_description,pg_meta_keywords,pg_type,pg_content,pg_publisheddate,isAdmin,pg_active,pg_posttype) values
+	    	('$pg_meta_title','$pg_slug','$pg_meta_description','$pg_meta_keywords','$pg_type','$pg_content','$pubDate','0','1','$pg_posttype')");
 	        $pgid = miid();
 			$this->data['id'] = $pgid;
+			
+			/* Plugin option */
+			$plugin_code = "class.page.update.new.return";
+			include(INCLUDE_PLUGIN_ROOT . "core.php");
 	    }
 		
 		if($pg_type == "tx") {

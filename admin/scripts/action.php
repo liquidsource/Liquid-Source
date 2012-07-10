@@ -103,6 +103,12 @@ if(Member::isLoggedin('A')) {
 			$_SESSION['_msg'] = "newsiteoptions";
 			$to = "editsiteoptions";
 			break;
+		default:
+			/* Plugin option */
+			$plugin_code = "admin.action";
+			include(INCLUDE_PLUGIN_ROOT . "core.php");
+			break;
+		
     }
     header("Location: ../index.php?module=$to");
 	die;

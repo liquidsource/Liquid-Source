@@ -102,11 +102,10 @@ function stylesAndJsTop($module) {
 	}
     echo "<link href=\"uploads/js_css_cache/$css_name.css\" rel=\"stylesheet\" type=\"text/css\" media=\"screen\" />\n\r";
     echo "<link href=\"uploads/js_css_cache/print.css\" rel=\"stylesheet\" type=\"text/css\" media=\"print\" />\n\r";
-	
+	echo "<link rel=\"stylesheet\" href=\"http://ajax.googleapis.com/ajax/libs/jqueryui/1.8.16/themes/base/jquery-ui.css\" type=\"text/css\" media=\"all\" />\n\r";
 	
     if(USE_TABLE_PARSER) { echo "<link rel=\"stylesheet\" type=\"text/css\" href=\"http://ajax.aspnetcdn.com/ajax/jquery.dataTables/1.8.2/css/jquery.dataTables.css\" />\n\r";}
-	
-	echo "<link rel=\"stylesheet\" href=\"http://ajax.googleapis.com/ajax/libs/jqueryui/1.8.16/themes/base/jquery-ui.css\" type=\"text/css\" media=\"all\" />\n\r";
+	if(USE_IE_ALERT && $module == "home") { echo "<link rel=\"stylesheet\" type=\"text/css\" href=\"css/packages/iealert_style.css\" />\n\r"; }
     
 	echo "
 	<link rel=\"shortcut icon\" href=\"favicon.ico\" />
@@ -160,6 +159,7 @@ function bottomPage($module) {
 	
 	if(USE_BX_SLIDER) { echo "<script src=\"http://bxslider.com/sites/default/files/jquery.bxSlider.min.js\"></script>\n\r"; }
 	if(USE_TABLE_PARSER) { echo "<script src=\"http://ajax.aspnetcdn.com/ajax/jquery.dataTables/1.8.2/jquery.dataTables.min.js\"></script>\n\r"; }
+	if(USE_IE_ALERT && $module == "home") { echo "<script src=\"js/libs/iealert.min.js\"></script>\n\r"; }
 	
 	echo "
     <!--[if lt IE 7 ]>
@@ -183,31 +183,7 @@ function bottomPage($module) {
 	if(USE_GOOGLE_PLUS) echo "<script src=\"https://apis.google.com/js/plusone.js\">{lang: 'en-GB'}</script>\n\r";
 	if(USE_LINKEDIN) { echo "<script src=\"http://platform.linkedin.com/in.js\" type=\"text/javascript\"></script>\n\r"; }	
 	if(USE_TWITTER) { echo "<script>!function(d,s,id){var js,fjs=d.getElementsByTagName(s)[0];if(!d.getElementById(id)){js=d.createElement(s);js.id=id;js.src=\"//platform.twitter.com/widgets.js\";fjs.parentNode.insertBefore(js,fjs);}}(document,\"script\",\"twitter-wjs\");</script>\n\r"; }	
-	if(USE_PINTEREST) {
-		echo "<script type=\"text/javascript\">
-			(function() {
-			    window.PinIt = window.PinIt || { loaded:false };
-			    if (window.PinIt.loaded) return;
-			    window.PinIt.loaded = true;
-			    function async_load(){
-			        var s = document.createElement(\"script\");
-			        s.type = \"text/javascript\";
-			        s.async = true;
-			        if (window.location.protocol == \"https:\")
-			            s.src = \"https://assets.pinterest.com/js/pinit.js\";
-			        else
-			            s.src = \"http://assets.pinterest.com/js/pinit.js\";
-			        var x = document.getElementsByTagName(\"script\")[0];
-			        x.parentNode.insertBefore(s, x);
-			    }
-			    if (window.attachEvent)
-			        window.attachEvent(\"onload\", async_load);
-			    else
-			        window.addEventListener(\"load\", async_load, false);
-			})();
-			</script>
-		";
-	}
+	if(USE_PINTEREST) { echo "<script type=\"text/javascript\" src=\"//assets.pinterest.com/js/pinit.js\"></script>"; }
 	if(USE_FACEBOOK_LIKE) {
 		if(FACEBOOK_APP_ID != "") { $fbappid = "&appId=" . FACEBOOK_APP_ID; }
 		echo "
@@ -251,14 +227,24 @@ function getMetaInfo($module,$ret) {
 
 /* The main body of the page is passed through this function. It takes a module as a parameter and ensures that the file exists. */
 function getModuleData($module) {
+	global $inAdmin;
 	$page = new Page($module);
 	$m_type = "bs";
 	if($page->id != "") {
 		$m_type = $page->type;
 	}
 	
+	/* Plugin option */
+	$plugin_code = "page_structure.module";
+	include(INCLUDE_PLUGIN_ROOT . "core.php");
+	
 	if($m_type == "bs") {
-		if(file_exists("modules/$module.php")) { $incFile = "modules/$module.php"; }
+		$fname = "modules/$module.php";
+		if($inAdmin && substr($module,0,1) == "_") {
+			$fname_pt = substr($module,1);
+			$fname = "../scripts/plugins/" . $fname_pt . ".php";
+		}
+		if(file_exists($fname)) { $incFile = $fname; }
 		else { echo "<p>Error finding module <i>" . $module . ".php</i><p>"; }
 	} else {
 		$incFile = "modules/text.php";

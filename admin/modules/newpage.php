@@ -1,35 +1,67 @@
 <?php
 $pgid = $_GET['pgid'];
+
+/* Plugin option */
+$plugin_code = "admin.view.page.newpage.top"; include(INCLUDE_PLUGIN_ROOT . "core.php");
+
 if($pgid != "") {
    	$page = new Page('',$pgid);
 	if($page->isdefault) $disabled = " disabled ";
 	if($page->posttype == "published") {
 		$pg_publisheddate = date("d-m-Y H:i",strtotime($page->publisheddate));
 	}
+	$pagetype = $page->type;
 } else {
 	$page = new Page();
 }
+
+/* Plugin option */
+$plugin_code = "admin.view.page.newpage.top_i"; include(INCLUDE_PLUGIN_ROOT . "core.php");
 ?>
+
 <form method="post" action="scripts/action.php?action=newpage&to=newpage&pgid=<?php echo $pgid; ?>" id="admin_page_frm" onsubmit="return submitForm('admin_page_frm');">
+<input type="hidden" id="pg_type" name="pg_type" value="<?php echo $pagetype; ?>" />
+
+<?php
+/* Plugin option */
+$plugin_code = "admin.view.page.newpage.form.top"; include(INCLUDE_PLUGIN_ROOT . "core.php");
+?>
+
 <article class="module width_full">
     <header><h3>New / Edit Page</h3></header>
     <div class="module_content">
         <fieldset>
             <label>Page Title</label>
             <input type="text" name="pg_meta_title" id="pg_meta_title" value="<?php echo $page->title; ?>" required />
+            <?php
+            /* Plugin option */
+			$plugin_code = "admin.view.page.newpage.field.meta_title"; include(INCLUDE_PLUGIN_ROOT . "core.php");	        
+            ?>
         </fieldset>
         <fieldset>
             <label>Page Slug</label>
             <input type="text" name="pg_slug" id="pg_slug" value="<?php echo $page->slug; ?>" <?php echo $disabled; ?> />
+            <?php
+            /* Plugin option */
+			$plugin_code = "admin.view.page.newpage.field.slug"; include(INCLUDE_PLUGIN_ROOT . "core.php");	        
+            ?>
         </fieldset>
         <input type="hidden" name="init_slug" id="init_slug" value="<?php echo $page->slug; ?>" />
         
         <fieldset>
             <label>Meta Description</label>
             <input type="text" name="pg_meta_description" id="pg_meta_description" value="<?php echo $page->meta_description; ?>">
+            <?php
+            /* Plugin option */
+			$plugin_code = "admin.view.page.newpage.field.meta_description"; include(INCLUDE_PLUGIN_ROOT . "core.php");	        
+            ?>
             <div class="clear" style="padding:1px;">&nbsp;</div>
             <label style='width:300px'>Meta Keywords (comma seperated)</label>
             <input type="text" name="pg_meta_keywords" id="pg_meta_keywords" value="<?php echo $page->meta_keywords; ?>">
+            <?php
+            /* Plugin option */
+			$plugin_code = "admin.view.page.newpage.field.meta_keywords"; include(INCLUDE_PLUGIN_ROOT . "core.php");	        
+            ?>
         </fieldset>
         <div class="clear"></div>
         
@@ -48,7 +80,10 @@ if($pgid != "") {
             <label>Content</label>
             <div class="clear"></div>
             <textarea rows="30" name="pg_content" id="pg_content" style="margin-bottom: 20px;width:95%;height:400px"><?php echo $page->content; ?></textarea>
-                
+            <?php
+            /* Plugin option */
+			$plugin_code = "admin.view.page.newpage.field.content"; include(INCLUDE_PLUGIN_ROOT . "core.php");	        
+            ?>
                 
             <div class="clear"></div>
             <label>Meta Data</label>
@@ -105,6 +140,11 @@ if($pgid != "") {
     </footer>
 </article>
 </form>
+
+<?php
+/* Plugin option */
+$plugin_code = "admin.view.page.newpage.form.bottom"; include(INCLUDE_PLUGIN_ROOT . "core.php");
+?>
 
 <article class="module width_full">
 	<header><h3>Page Information</h3></header>

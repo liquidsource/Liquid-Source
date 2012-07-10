@@ -19,7 +19,7 @@ define('DB_PASSWORD',"root");
 
 define('TABLE_PREFIX','ls_');
 
-/* This is intentionally blank. It is used for niche site deployment, and can be ignore with this install */
+/* This is intentionally blank. It is used for niche site deployment, and can be ignored with this install */
 define('NICHE_SITE','');
 
 
@@ -27,14 +27,11 @@ define('NICHE_SITE','');
 global $settingup;
 include(INCLUDE_WEB_ROOT . "scripts/core/database.php");
 include(INCLUDE_WEB_ROOT . "scripts/core/dbconnex.php");
+include(INCLUDE_WEB_ROOT . "scripts/core/extensions.php");
 if(!defined('REDIRECT_ROOT_PATH')) define('REDIRECT_ROOT_PATH',"http://" . $_SERVER['HTTP_HOST'] . BASE_HREF);
+if(!defined('INCLUDE_PLUGIN_ROOT')) define('INCLUDE_PLUGIN_ROOT',INCLUDE_WEB_ROOT . "scripts/plugins/");
 
-if(NICHE_SITE != "") {
-	$fname = INCLUDE_WEB_ROOT . "scripts/niche/" . NICHE_SITE . ".php";
-	if(file_exists($fname)) include($fname);
-}
-
-$site_tables = array('alert_warnings','categories','category_link','links','log_shortcodes','media','members','member_profile','member_profile_arguments','meta_data','pages','posts','site_log','site_options');
+$site_tables = array('alert_warnings','categories','category_link','links','log_shortcodes','media','members','member_profile','member_profile_arguments','meta_data','options','pages','posts','site_log','site_options');
 foreach($site_tables as $tbl) { if(!defined(TABLE_PREFIX . $tbl)) define('DB_TBL_' . strtoupper($tbl), TABLE_PREFIX . $tbl); }
 
 if($settingup != "true") {
@@ -58,7 +55,10 @@ if($settingup != "true") {
 		die;
 	}
 	
-	if(function_exists('niche_config')) { niche_config(); }
+	if(NICHE_SITE != "") {
+		$fname = INCLUDE_WEB_ROOT . "scripts/niche/" . NICHE_SITE . ".php";
+		if(file_exists($fname)) include($fname);
+	}
 	
 	$rs = mq("select * from " . DB_TBL_SITE_OPTIONS . " where so_type='define'");
 	while($rw = mfa($rs)) {

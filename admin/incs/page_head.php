@@ -17,5 +17,12 @@
     <script type="text/javascript" src="js/timepicker.js"></script>
     <script type="text/javascript" src="tiny_mce/tiny_mce.js"></script>
     <link rel="stylesheet" href="http://ajax.googleapis.com/ajax/libs/jqueryui/1.8.11/themes/base/jquery-ui.css" type="text/css" media="all" />
+    
+    <?php
+    /* Plugin option */
+	$plugin_code = "admin.head.css"; include(INCLUDE_PLUGIN_ROOT . "core.php");
+	$plugin_code = "admin.head.javascript"; include(INCLUDE_PLUGIN_ROOT . "core.php");
+    
+    ?>
 </head>
 <body>

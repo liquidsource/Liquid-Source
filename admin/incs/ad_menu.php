@@ -37,6 +37,11 @@
 </ul>
 <hr />
 
+<?php
+/* Plugin option */
+$plugin_code = "admin.view.menu"; include(INCLUDE_PLUGIN_ROOT . "core.php");
+?>
+
 <h3 id="admin">Admin</h3>
 <ul>
     <li class="icn_edit_article"><a href="?module=editsiteoptions">Site Options</a></li>

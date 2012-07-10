@@ -1,4 +1,5 @@
 <?php
+$inAdmin = true;
 include("../scripts/system.php");
 include("scripts/ad_functions.php");
 

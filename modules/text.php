@@ -4,6 +4,7 @@
  */
 ?>
 <p>This is an example text page.</p>
+<p>Remove this line of text by editing <code>'modules/text.php'</code></p>
 <hr />
 <?php
 $page = new Page(MODULE);

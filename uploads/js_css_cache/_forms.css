@@ -44,8 +44,7 @@ input[type=submit], input[type=button], button, .button {
   background:#0093cb;
   height:35px;
   font-size:1em;
-  border:1px solid #3079ed !important;
-  background:#4b8df8;
+  border:1px solid #3079ed;
   -webkit-border-radius:5px;
   -moz-border-radius:5px;
   border-radius:5px;
@@ -65,12 +64,12 @@ a.button {
   height:auto;
 }
 a.button:Hover { text-decoration:none; }
-input[type=submit]:Hover:not([disabled]), input[type=button]:Hover:not([disabled]), button:Hover:not([disabled]), .button:Hover:not([disabled]) {
-  border:1px solid #2f5bb7 !important;
+input[type=submit]:Hover, input[type=button]:Hover, button:Hover, .button:Hover {
+  border:1px solid #2f5bb7;
   background:#3f83f1;
-  background:#4d90fe;
-  background:-webkit-gradient(linear,0 0,0 100%,from(#4d90fe),color-stop(100%,#357ae8));
-  background:-moz-linear-gradient(top,#4d90fe,#357ae8 100%);
-  background:-o-linear-gradient(top,#4d90fe,#357ae8 100%);
-  background:linear-gradient(top,#4d90fe,#357ae8 100%);
+  background:#3c7fed;
+  background:-webkit-gradient(linear,0 0,0 100%,from(#3c7fed),color-stop(100%,#3777dd));
+  background:-moz-linear-gradient(top,#3c7fed,#3777dd 100%);
+  background:-o-linear-gradient(top,#3c7fed,#3777dd 100%);
+  background:linear-gradient(top,#3c7fed,#3777dd 100%);
 }

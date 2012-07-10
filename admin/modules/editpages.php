@@ -31,6 +31,10 @@ if($_GET['active'] == "0") {
             <th <?php echo tableSorter('pg_slug'); ?>> Page Slug</th>
             <th <?php echo tableSorter('pg_meta_description'); ?>> Meta Description</th>
             <th <?php echo tableSorter('pg_createdate'); ?>> Created On</th>
+            <?php
+            /* Plugin option */
+			$plugin_code = "admin.view.page.editpages.table_headers"; include(INCLUDE_PLUGIN_ROOT . "core.php");
+            ?>
             <th> Actions</th>
         </tr> 
     </thead> 
@@ -38,6 +42,11 @@ if($_GET['active'] == "0") {
         <?php
         $pg_arr = array("num" => $llimit . "," . $hlimit, "orderby" => $orderby, "orderdir" => $orderdir, "state" => 'all');
 		if(!empty($x_arr)) { $pg_arr = array_merge($pg_arr,$x_arr); }
+		
+		/* Plugin option */
+		$plugin_code = "admin.view.page.editpages.plugin_arr"; include(INCLUDE_PLUGIN_ROOT . "core.php");
+		
+		if(!empty($plugin_arr)) { $pg_arr = array_merge($pg_arr,$plugin_arr); }
         $arr = getPages($pg_arr);
 		foreach($arr as $page) {
 			$pgid = $page->id;
@@ -52,6 +61,10 @@ if($_GET['active'] == "0") {
 			<td>" . $page->meta_description . " ... </td>
 			<td>" . $page->createdate . "</td>
 			";
+			
+            /* Plugin option */
+			$plugin_code = "admin.view.page.editpages.table_columns"; include(INCLUDE_PLUGIN_ROOT . "core.php");
+			
 			if($viewingTrash) {
 				echo "
 				<td>
@@ -123,6 +136,7 @@ if($_GET['active'] == "0") {
 </div><!-- end of .tab_container -->
 </article><!-- end of content manager article -->
 
+<!-- View / not view trash box -->
 <article class="module width_full">
 <div class="tab_container">
 <?php
@@ -131,3 +145,4 @@ if($viewingTrash) { $n = Page::numberNonTrashItems(); $nonwords = "non-"; } else
 <ul><li><a href="?module=editpages<?php echo $xurl; ?>">View <?php echo $nonwords; ?>trash (<?php echo $n; ?> items)</a></li></ul>
 </div>
 </article>
+<!-- end of view / not view trash box -->
