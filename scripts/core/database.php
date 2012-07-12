@@ -24,11 +24,13 @@ function mfa($rs) {
 	
 }
 function mres($val) {
-	if(USE_MYSQLI) {
-		global $db;
-		return mysqli_real_escape_string($db,trim($val));
-	} else {
-		return mysql_real_escape_string(trim($val));
+	if(gettype($val) == "string") {
+		if(USE_MYSQLI) {
+			global $db;
+			return mysqli_real_escape_string($db,trim($val));
+		} else {
+			return mysql_real_escape_string(trim($val));
+		}
 	}
 }
 function miid() {

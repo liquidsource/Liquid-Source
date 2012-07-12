@@ -1,7 +1,7 @@
 <?php
 include("../../scripts/system.php");
 include("ad_functions.php");
-$userid = getMid();
+$userid = Member::getMid();
 
 switch (strtolower($_GET['ajaxcall'])) {
 	case "showhidemenu":

@@ -8,16 +8,9 @@ class Media {
 			$rs = mq("select * from " . DB_TBL_MEDIA . " where mdid='$mdid'");
 			if(mnr($rs) > 0) {
 				$rw = mfa($rs);
-				$this->data['id'] = $rw['mdid'];
-				$this->data['title'] = $rw['md_title'];
-				$this->data['alttext'] = stripslashes($rw['md_alttext']);
-				$this->data['text'] = stripslashes($rw['md_text']);
-				$this->data['folder'] = $rw['md_folder'];
-				$this->data['filename'] = $rw['md_filename'];
-				$this->data['dateuploaded'] = $rw['md_dateuploaded'];
-				$this->data['type'] = $rw['md_type'];
-				$this->data['filesize'] = $rw['md_filesize'];
-				$this->data['active'] = $rw['md_active'];
+				foreach($rw as $arg=>$val) {
+					$this->data[$arg] = stripslashes($val);
+				}
 			}
 		}
 	}
@@ -29,40 +22,43 @@ class Media {
         }
     }
     public function __set($arg, $val) {
-        if ($arg == "mdid") { return; }
+        if($arg == "mdid") { return; }
 		
         if (isset($this->data[$arg])) {
-        	$val = mres($val);
         	$rs = mq("SELECT * FROM information_schema.COLUMNS WHERE TABLE_NAME = '" . DB_TBL_MEDIA . "' AND COLUMN_NAME = '$arg'");
-            $this->data[$arg] = $val;
 			if(mnr($rs) > 0) {
-				$rs = mq("update " . DB_TBL_MEDIA . " set $arg='$val' where mdid='" . $this->data['id'] . "'");
+        		$val = mres($val);
+				$rs = mq("update " . DB_TBL_MEDIA . " set $arg='$val' where mdid='" . $this->data['mdid'] . "'");
 			}
         }
+		$this->data[$arg] = $val;
     }
 	
-	public function updateMedia($post_array,$files_array=NULL,$lvl=NULL) {
+	public function updateMedia($post_array,$files_array=NULL) {
 		foreach($post_array as $arg => $val) { $$arg = mres($val); }
-		$datetime = date("Y-m-d H:i:s");
 		
-		$mdid = $this->data['id'];
+		$mdid = $this->data['mdid'];
 	    if($mdid == "") {
-	        $rs = mq("insert into " . DB_TBL_MEDIA . " (md_title,md_alttext,md_text,md_dateuploaded) values ('$md_title','$md_alttext','$md_text','$datetime')");
+	        $rs = mq("insert into " . DB_TBL_MEDIA . " (md_dateuploaded) values ('" . DB_SAFE_DATETIME . "')");
 	        $mdid = miid();
+			$this->data['mdid'] = $mdid;
+			$_SESSION['_msg'] = "newmedia";
 	    } else {
-	    	if($files['newmedia']['name'] != "") { $this->deleteMediaFile($lvl); }
-	        $rs = mq("update " . DB_TBL_MEDIA . " set md_title='$md_title', md_alttext='$md_alttext', md_text='$md_text' where mdid='$mdid'");	
+	    	$this->deleteMediaFile();
+			$_SESSION['_msg'] = "updatedmedia";
 	    }
+	    foreach($post_array as $arg => $val) {
+			$this->$arg = $val;
+		}
 		
 	    if($files_array['newmedia']['name'] != "") {
-	        $y = date("Y",strtotime($datetime));
-	        $m = date("m",strtotime($datetime));
-	        $target_path = $lvl . "uploads/media/$y/";
-	        if(!file_exists($target_path)) mkdir($target_path);
+			
+	        $target_path = $lvl . "uploads/media/" . date("Y") . "/";
+	        if(!file_exists($target_path)) mkdir($target_path,0777);
 	        
-	        $target_path = $lvl . "uploads/media/$y/$m/";
-	        if(!file_exists($target_path)) mkdir($target_path);
-			$base_folder = "uploads/media/$y/$m/";
+	        $target_path = $lvl . "uploads/media/" . date("Y") . "/" . date("m") . "/";
+	        if(!file_exists($target_path)) mkdir($target_path,0777);
+			
 			
 	        $filename = basename($files_array['newmedia']['name']);
 	        $fullurl = $target_path . $filename; 
@@ -75,66 +71,58 @@ class Media {
 	        if(move_uploaded_file($files_array['newmedia']['tmp_name'], $fullurl)) {
 	            $mdtype = $files_array['newmedia']['type'];
 	            $mdsize = $files_array['newmedia']['size'];
-	            $rs = mq("update " . DB_TBL_MEDIA . " set md_filename='$filename', md_type='$mdtype', md_filesize='$mdsize', md_folder='$base_folder' where mdid='$mdid'");
+	            $rs = mq("update " . DB_TBL_MEDIA . " set md_filename='$filename', md_type='$mdtype', md_filesize='$mdsize', md_folder='$target_path' where mdid='$mdid'");
 	        }
 	    }
 	   	
-	   	updateCategoryLink($post_array['cid'],$mdid,'media');
+	   	if(isset($post_array['cid']))  updateCategoryLink($post_array['cid'],$mdid,'media');
 		
 		$_SESSION['_mtype'] = "S";
-		$_SESSION['_msg'] = "newmedia";
 		return $mdid;
 	}
-	function getCid() {
-		if($this->mdid != "") {
-			return getCategoryId($this->data['id'],'media');
+	public function categoryArray() {
+		if($this->data['mdid'] != "") {
+			return getCategoryArray($this->data['mdid'],'media');
 		}
-	}
-	public function categories() {
-		if($this->data['id'] != "") {
-			return getCategoryArray($this->data['id'],'media');
-		}
+		return ;
 	}
 	public function categoryNames() {
-		return getCategoryNames($this->data['id'],'media',', ');
+		return getCategoryNames($this->data['mdid'],'media',',');
 	}
 	public function inCategory($catids) {
-		return inCategory($catids,$this->id,'media');
+		return inCategory($catids,$this->data['mdid'],'media');
 	}
-	public function getLocation($options) {
-		$location = $this->location();
-		
-		extract($options);
-		if(!$echo) return $location;
-		if($style != "") { $x_style = "style=\"$style\""; }
-		if($class != "") { $x_class = "class=\"$class\""; }
-		$location = $lvl . $location;
-		$alt = $this->data['alttext'];
-		
-		$img = "<img src=\"$location\" $x_style $xclass alt=\"$alt\" />";
-		
-		return $img;
+	public function getLocation() {
+		if($this->data['mdid'] != "") {
+			return $this->data['md_folder'] . $this->data['md_filename'];
+		}
+		return ;
 	}
 
 	public function deleteMedia() {
-		if($this->data['id'] != NULL) {
-			$rs = mq("update " . DB_TBL_MEDIA . " set md_active='0' where mdid='" . $this->data['id'] . "'");
+		if(isset($this->data['mdid'])) {
+			$rs = mq("update " . DB_TBL_MEDIA . " set md_active='0' where mdid='" . $this->data['mdid'] . "'");
 			$_SESSION['_mtype'] = "W";
 			$_SESSION['_msg'] = "deletedmedia";
+			return true;
 		}
+		return false;
 	}
-	public function removeMedia($lvl) {
-		$this->deleteMediaFile($vl);
-		$rs = mq("delete from " . DB_TBL_MEDIA . " mdid='" . $this->data['id'] . "'");
-		$rs = mq("delete from " . DB_TBL_CATEGORY_LINK . " where iid='" . $this->data['id'] . "' and l_type='media'");
+	public function removeMedia() {
+		$success = $this->deleteMediaFile();
+		if($success) {
+			$rs = mq("delete from " . DB_TBL_MEDIA . " mdid='" . $this->data['mdid'] . "'");
+			$rs = mq("delete from " . DB_TBL_CATEGORY_LINK . " where uid='" . $this->data['mdid'] . "' and l_type='media'");
+		}
+		return $success;
 	}
-	private function deleteMediaFile($lvl) {
-		$file = $this->location();
-		unlink($lvl . $file);
-	}
-	
-	private function location() {
-		return $this->data['folder'] . $this->data['filename'];
+	private function deleteMediaFile() {
+		$suc = true;
+		$fileloc = $this->getLocation();
+		if($fileloc != "") {
+			$suc = unlink(INCLUDE_WEB_ROOT . $fileloc);
+		}
+		return $suc;
 	}
 	
 }

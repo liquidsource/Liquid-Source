@@ -4,33 +4,6 @@
  * OBJECTIVE: Core functions for Liquid Source 
  */
 
-/**
- * USER RELATED FUNCTIONS
- */
-function getMid() { return $_SESSION['mid']; }
-function getUserFullName($mid) {
-	if($mid > 0) {
-		if($_SESSION['userFullName_' . $mid] != "") { return $_SESSION['userFullName_' . $mid]; }
-		$member = new Member($mid);
-		return $member->userFullName;
-	}
-    return "";
-}
-function sendForgotPassword($email) {
-	log_me('FGP');
-	$rs = mq("select m.mid, m_username, mp_fname, mp_lname from " . DB_TBL_MEMBERS  ." m inner join " . DB_TBL_MEMBER_PROFILE . " p on m.mid = p.mid where m_email='$email' and m_active='1'");
-    if(mnr($rs) > 0) {
-        $rw = mfa($rs);
-        $mid = $rw['mid'];
-		$member = new Member($mid);
-		$member->sendForgotPassword();
-    } else {
-        $_SESSION['_mtype'] = "E";
-        $_SESSION['_msg'] = "noemailfound";
-		log_me('FGF');
-    }
-}
-
 
 /**
  * FORM BOT PROTECTIONS FUNCTIONS
@@ -73,7 +46,17 @@ function projectParsers($newf) {
 	}
 	return $newf;
 }
+function showAlertMessage() {
+	$mtype = "";
+	$msg = "";
+	if(isset($_SESSION['_mtype'])) { $mtype = $_SESSION['_mtype']; }
+	if(isset($_SESSION['_msg'])) { $msg = $_SESSION['_msg']; }
+	if($msg != "" && $mtype != "") {
+		return getAlertMessage($mtype,$msg);
+	}
+}
 function getAlertMessage($mtype,$msg_e) {
+	$msg = "";
     if($msg_e != "") {
         if($mtype == "W") { $msg = "<h4 class=\"alert_warning alert\">"; }
         if($mtype == "E") { $msg = "<h4 class=\"alert_error alert\">"; }
@@ -95,7 +78,7 @@ function strToSlug($str,$module=NULL,$uid=NULL){
 	if(!empty($module)) {
 		switch ($module) {
 			case "page":
-				$rs = mq("select pg_slug from " . DB_TBL_PAGES . " where pg_slug='$str' and pgid <> '$uid' and p_parent='0'");
+				$rs = mq("select pg_slug from " . DB_TBL_PAGES . " where pg_slug='$str' and pgid <> '$uid' and pg_parent='0'");
 				if(mnr($rs) > 0) {
 					return strToSlug($str . rand(0,100),$module,$uid);
 				}
@@ -152,6 +135,7 @@ function getMedia($arr) { return LS::media($arr); }
  * CATEGORY HELPER FUNCTIONS
  */
 function getCategoryArray($uid,$l_type='post') {
+	$ret_arr = array();
 	$rs = mq("select distinct cid from " . DB_TBL_CATEGORY_LINK . " where uid='$uid' and l_type='$l_type'");
 	while($rw = mfa($rs)) {
 		$ret_arr[] = new Category($rw['cid']);
@@ -159,12 +143,17 @@ function getCategoryArray($uid,$l_type='post') {
 	return $ret_arr;
 }
 function getCategoryNames($uid,$l_type='post',$seperator=',') {
+	$ret = "";
 	$cats = getCategoryArray($uid,$l_type);
 	foreach($cats as $cat) {
-		$ret .= $cat->name . $seperator;
+		$ret .= $cat->c_name . $seperator . " ";
 	}
-	if(strlen($ret) > 0)
-		return substr($ret,0,-2);
+	if(strlen($ret) > 0) {
+		$seplen = (strlen($seperator) + 1) * -1; 
+		return substr($ret,0,$seplen);
+	}
+	return ;
+		
 }
 function inCategory($catids,$uid,$l_type='post') {
 	$cat_arr = explode(",",$catids);
@@ -178,6 +167,22 @@ function inCategory($catids,$uid,$l_type='post') {
 		}
 	}
 	return false;
+}
+function updateCategoryLink($cids,$uid,$l_type) {
+	if(!is_array($cids)) { $cids[] = $cids; }
+	$xsql = "";
+	foreach($cids as $cid) {
+		$rs = mq("select * from " . DB_TBL_CATEGORY_LINK . " where cid='$cid' and uid='$uid' and l_type='$l_type'");
+	    if(mnr($rs) == 0) {
+	        $rsi = mq("insert into " . DB_TBL_CATEGORY_LINK . " (uid,cid,l_type) values ('$uid','$cid','$l_type')");
+	    }
+		$xsql .= " cid != '$cid' and ";
+	}
+	
+	$rs = mq("select * from " . DB_TBL_CATEGORY_LINK . " where ($xsql 1=1) and l_type='$l_type' and uid='$uid'");
+	while($rw = mfa($rs)) {
+		$rsd = mq("delete from " . DB_TBL_CATEGORY_LINK . " where jcid='" . $rw['jcid'] . "'");
+	}
 }
 
 /**
@@ -193,6 +198,13 @@ function insertMetaData($arg,$val,$uid,$typee,$ident) {
 			$rsi = mq("update " . DB_TBL_META_DATA . " set md_arg='$arg', md_val='$val' where mdid='$mdid'");
 		} else {
 			$rsi = mq("insert into " . DB_TBL_META_DATA . " (md_arg,md_val,uid,md_type,md_recogniser) values ('$arg','$val','$uid','$typee','$ident')");
+		}
+	} else {
+		if($val == "") {
+			$rw = mgr("select mdid from " . DB_TBL_META_DATA . " where md_recogniser='$ident' and uid='$uid' and md_type='$typee'");
+			if($rw != "") {
+				$rsd = mq("delete from  " . DB_TBL_META_DATA . " where mdid='" . $rw['mdid'] . "'");
+			}
 		}
 	}
 }

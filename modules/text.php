@@ -8,6 +8,6 @@
 <hr />
 <?php
 $page = new Page(MODULE);
-echo "<h1>" . $page->title . "</h1>";
-echo $page->content;
+echo "<h1>" . $page->pg_meta_title . "</h1>";
+echo $page->pg_content;
 ?>

@@ -1,5 +1,8 @@
 <?php
-$pid = $_GET['pid'];
+$p_publisheddate = "";
+$pid = "";
+if(isset($_GET['pid'])) $pid = $_GET['pid'];
+
 if($pid != "") {
     $post = new Post($pid);
 	if($post->posttype == "published") {
@@ -15,11 +18,11 @@ if($pid != "") {
     <div class="module_content">
         <fieldset>
             <label>Post Title</label>
-            <input type="text" name="p_title" id="p_title" value="<?php echo $post->title; ?>" required />
+            <input type="text" name="p_title" id="p_title" value="<?php echo $post->p_title; ?>" required />
         </fieldset>
         <fieldset>
             <label>Content</label>
-            <textarea rows="12" name="p_content" id="p_content"><?php echo $post->content; ?></textarea>
+            <textarea rows="12" name="p_content" id="p_content"><?php echo $post->p_content; ?></textarea>
         </fieldset>
         <fieldset style="width:48%; float:left; margin-right: 10px">
             <label>Category</label>
@@ -27,7 +30,7 @@ if($pid != "") {
                 <?php
                 $arr = getCategories(array());
 				foreach($arr as $category) {
-					echo showCategoryOption($category,'0',$post->categories());
+					echo showCategoryOption($category,'0',$post->categoryArray());
 				}
                 ?>
             </select>
@@ -42,9 +45,9 @@ if($pid != "") {
 				foreach($meta_data_arr as $arg => $val) {
 				$i++;
 				?>
-	                <label style="width:100px">Argument <?php echo $i ;?></label><input style="width:350px;" type="text" name="md_arg_<?php echo $i; ?>" id="md_arg_<?php echo $i; ?>" value="<?php echo $val['arg']; ?>" />
+	                <label style="width:100px">Argument <?php echo $i ;?></label><input style="width:350px;" type="text" name="md_arg_<?php echo $i; ?>" id="md_arg_<?php echo $i; ?>" value="<?php echo $arg; ?>" />
 	                <div class="clear"></div>
-	                <label style="width:100px">Value <?php echo $i ;?></label><input style="width:350px;" type="text" name="md_val_<?php echo $i; ?>" id="md_val_<?php echo $i; ?>" value="<?php echo $val['val']; ?>" />
+	                <label style="width:100px">Value <?php echo $i ;?></label><input style="width:350px;" type="text" name="md_val_<?php echo $i; ?>" id="md_val_<?php echo $i; ?>" value="<?php echo $val; ?>" />
 	                <div class="clear"> <br /> </div>
                 <?php
             	}
@@ -68,18 +71,18 @@ if($pid != "") {
             <input type="button" value="Schedule" class="alt_btn" onclick="ls_admin_saveForm('p','published','admin_post_frm')" />
             &nbsp; &nbsp; &nbsp; or
             <strong style="margin-left:20px">Save Options:</strong> &nbsp; &nbsp;
-        	<?php if($post->posttype == "") { ?>
+        	<?php if($post->p_posttype == "") { ?>
         		<input type="button" value="Save as Draft" onclick="ls_admin_saveForm('p','draft','admin_post_frm')" /> &nbsp;
             	<input type="button" value="Publish Now" class="alt_btn" onclick="ls_admin_saveForm('p','published','admin_post_frm')" />
             <?php } ?>
-            <?php if($post->posttype == "draft") { ?>
+            <?php if($post->p_posttype == "draft") { ?>
         		<input type="button" value="Update Draft" onclick="ls_admin_saveForm('p','draft','admin_post_frm')" /> &nbsp;
             	<input type="button" value="Publish Now" class="alt_btn" onclick="ls_admin_saveForm('p','published','admin_post_frm')" />
             <?php } ?>
-            <?php if($post->posttype == "published") { ?>
+            <?php if($post->p_posttype == "published") { ?>
             	<input type="button" value="Update Published" class="alt_btn" onclick="ls_admin_saveForm('p','published','admin_post_frm')" />
             <?php } ?>
-            <input type="hidden" name="p_posttype" id="p_posttype" value="<?php echo $post->posttype; ?>" />
+            <input type="hidden" name="p_posttype" id="p_posttype" value="<?php echo $post->p_posttype; ?>" />
         </div>
     </footer>
 </article>
@@ -96,14 +99,14 @@ if($pid != "") {
 		    	<div style="margin-top:6px">Post</div>
 		    	<div class="clear small">&nbsp;</div>
 	    	<label style="width:150px">State</label>
-		    	<div style="margin-top:6px"><?php echo $post->posttype; ?></div>
+		    	<div style="margin-top:6px"><?php echo $post->p_posttype; ?></div>
 		    	<div class="clear small">&nbsp;</div>
-	    	<?php if($post->posttype == "published") { ?>
+	    	<?php if($post->p_posttype == "published") { ?>
 	    	<label style="width:150px">Live on Site</label>
 		    	<div style="margin-top:6px">
 		    	<?php
-		    	if(strtotime($post->publisheddate) <= time()) { echo "Live &nbsp; &nbsp; (Since - <i>" . date("D jS M Y @ H:i",strtotime($post->publisheddate)) . "</i>)"; }
-				else { echo "Scheduled for the future &nbsp; &nbsp; (Live on  - <i>" . date("D jS M Y @ H:i",strtotime($post->publisheddate)) . "</i>)"; }
+		    	if(strtotime($post->p_publisheddate) <= time()) { echo "Live &nbsp; &nbsp; (Since - <i>" . date("D jS M Y @ H:i",strtotime($post->p_publisheddate)) . "</i>)"; }
+				else { echo "Scheduled for the future &nbsp; &nbsp; (Live on  - <i>" . date("D jS M Y @ H:i",strtotime($post->p_publisheddate)) . "</i>)"; }
 		    	?>
 		    	</div>
 		    	<div class="clear small">&nbsp;</div>

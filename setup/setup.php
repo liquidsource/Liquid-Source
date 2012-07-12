@@ -1,9 +1,11 @@
 <?php
+error_reporting(E_ALL);
+ini_set('display_errors', '1');
 $settingup = true;
 global $dbconnexfailed, $failedWriteable;
 include('setup_functions.php');
 include('../scripts/system.php');
-if($dbconnexfailed || $_GET['error'] == "dbconnection") { $failedDB = true; }
+if($dbconnexfailed || (isset($_GET['dbconnection']) && $_GET['error'] == "dbconnection")) { $failedDB = true; }
 ?>
 <!doctype html>
     <html lang="en-gb" class="no-js mod_home">

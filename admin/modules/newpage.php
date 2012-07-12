@@ -1,5 +1,10 @@
 <?php
-$pgid = $_GET['pgid'];
+$pgid = "";
+$disabled = "";
+$pg_publisheddate = "";
+$pagetype = "";
+
+if(isset($_GET['pgid'])) $pgid = $_GET['pgid'];
 
 /* Plugin option */
 $plugin_code = "admin.view.page.newpage.top"; include(INCLUDE_PLUGIN_ROOT . "core.php");
@@ -7,10 +12,10 @@ $plugin_code = "admin.view.page.newpage.top"; include(INCLUDE_PLUGIN_ROOT . "cor
 if($pgid != "") {
    	$page = new Page('',$pgid);
 	if($page->isdefault) $disabled = " disabled ";
-	if($page->posttype == "published") {
-		$pg_publisheddate = date("d-m-Y H:i",strtotime($page->publisheddate));
+	if($page->pg_posttype == "published") {
+		$pg_publisheddate = date("d-m-Y H:i",strtotime($page->pg_publisheddate));
 	}
-	$pagetype = $page->type;
+	$pagetype = $page->pg_type;
 } else {
 	$page = new Page();
 }
@@ -32,7 +37,7 @@ $plugin_code = "admin.view.page.newpage.form.top"; include(INCLUDE_PLUGIN_ROOT .
     <div class="module_content">
         <fieldset>
             <label>Page Title</label>
-            <input type="text" name="pg_meta_title" id="pg_meta_title" value="<?php echo $page->title; ?>" required />
+            <input type="text" name="pg_meta_title" id="pg_meta_title" value="<?php echo $page->pg_meta_title; ?>" required />
             <?php
             /* Plugin option */
 			$plugin_code = "admin.view.page.newpage.field.meta_title"; include(INCLUDE_PLUGIN_ROOT . "core.php");	        
@@ -40,24 +45,24 @@ $plugin_code = "admin.view.page.newpage.form.top"; include(INCLUDE_PLUGIN_ROOT .
         </fieldset>
         <fieldset>
             <label>Page Slug</label>
-            <input type="text" name="pg_slug" id="pg_slug" value="<?php echo $page->slug; ?>" <?php echo $disabled; ?> />
+            <input type="text" name="pg_slug" id="pg_slug" value="<?php echo $page->pg_slug; ?>" <?php echo $disabled; ?> />
             <?php
             /* Plugin option */
 			$plugin_code = "admin.view.page.newpage.field.slug"; include(INCLUDE_PLUGIN_ROOT . "core.php");	        
             ?>
         </fieldset>
-        <input type="hidden" name="init_slug" id="init_slug" value="<?php echo $page->slug; ?>" />
+        <input type="hidden" name="init_slug" id="init_slug" value="<?php echo $page->pg_slug; ?>" />
         
         <fieldset>
             <label>Meta Description</label>
-            <input type="text" name="pg_meta_description" id="pg_meta_description" value="<?php echo $page->meta_description; ?>">
+            <input type="text" name="pg_meta_description" id="pg_meta_description" value="<?php echo $page->pg_meta_description; ?>">
             <?php
             /* Plugin option */
 			$plugin_code = "admin.view.page.newpage.field.meta_description"; include(INCLUDE_PLUGIN_ROOT . "core.php");	        
             ?>
             <div class="clear" style="padding:1px;">&nbsp;</div>
             <label style='width:300px'>Meta Keywords (comma seperated)</label>
-            <input type="text" name="pg_meta_keywords" id="pg_meta_keywords" value="<?php echo $page->meta_keywords; ?>">
+            <input type="text" name="pg_meta_keywords" id="pg_meta_keywords" value="<?php echo $page->pg_meta_keywords; ?>">
             <?php
             /* Plugin option */
 			$plugin_code = "admin.view.page.newpage.field.meta_keywords"; include(INCLUDE_PLUGIN_ROOT . "core.php");	        
@@ -69,17 +74,17 @@ $plugin_code = "admin.view.page.newpage.form.top"; include(INCLUDE_PLUGIN_ROOT .
         	<label>Page Type</label>
             <div class="clear" style="padding:1px;font-size:1px;line-height:1px">&nbsp;</div>
             <label style="width:150px">Text</label>
-            <span class="pg_type"><input type="radio" name="pg_type" id="pg_type" value="tx" onclick="mtypeSelected('tx');" <?php if($page->type == "tx") echo "checked=\"checked\""; ?> required />&nbsp;</span>
+            <span class="pg_type"><input type="radio" name="pg_type" id="pg_type" value="tx" onclick="mtypeSelected('tx');" <?php if($page->pg_type == "tx") echo "checked=\"checked\""; ?> required />&nbsp;</span>
             <div class="clear" style="padding:1px;font-size:1px;line-height:1px">&nbsp;</div>
             <label style="width:150px">Bespoke</label>
-            <span class="pg_type"><input type="radio" name="pg_type" id="pg_type" value="bs" onclick="mtypeSelected('bs');" <?php if($page->type == "bs") echo "checked=\"checked\""; ?> required />&nbsp;</span>
+            <span class="pg_type"><input type="radio" name="pg_type" id="pg_type" value="bs" onclick="mtypeSelected('bs');" <?php if($page->pg_type == "bs") echo "checked=\"checked\""; ?> required />&nbsp;</span>
         </fieldset>
         
         
         <fieldset id="options_tx" style="display:none">
             <label>Content</label>
             <div class="clear"></div>
-            <textarea rows="30" name="pg_content" id="pg_content" style="margin-bottom: 20px;width:95%;height:400px"><?php echo $page->content; ?></textarea>
+            <textarea rows="30" name="pg_content" id="pg_content" style="margin-bottom: 20px;width:95%;height:400px"><?php echo $page->pg_content; ?></textarea>
             <?php
             /* Plugin option */
 			$plugin_code = "admin.view.page.newpage.field.content"; include(INCLUDE_PLUGIN_ROOT . "core.php");	        
@@ -95,9 +100,9 @@ $plugin_code = "admin.view.page.newpage.form.top"; include(INCLUDE_PLUGIN_ROOT .
 				foreach($meta_data_arr as $arg => $val) {
 				$i++;
 				?>
-	                <label style="width:100px">Argument <?php echo $i ;?></label><input style="width:350px;" type="text" name="md_arg_<?php echo $i; ?>" id="md_arg_<?php echo $i; ?>" value="<?php echo $val['arg']; ?>" />
+	                <label style="width:100px">Argument <?php echo $i ;?></label><input style="width:350px;" type="text" name="md_arg_<?php echo $i; ?>" id="md_arg_<?php echo $i; ?>" value="<?php echo $arg; ?>" />
 	                <div class="clear"></div>
-	                <label style="width:100px">Value <?php echo $i ;?></label><input style="width:350px;" type="text" name="md_val_<?php echo $i; ?>" id="md_val_<?php echo $i; ?>" value="<?php echo $val['val']; ?>" />
+	                <label style="width:100px">Value <?php echo $i ;?></label><input style="width:350px;" type="text" name="md_val_<?php echo $i; ?>" id="md_val_<?php echo $i; ?>" value="<?php echo $val; ?>" />
 	                <div class="clear"> <br /> </div>
                 <?php
             	}
@@ -124,18 +129,18 @@ $plugin_code = "admin.view.page.newpage.form.top"; include(INCLUDE_PLUGIN_ROOT .
             &nbsp; &nbsp; &nbsp; or
             
         	<strong>Save Options:</strong> &nbsp; &nbsp;
-        	<?php if($page->posttype == "") { ?>
+        	<?php if($page->pg_posttype == "") { ?>
         		<input type="button" value="Save as Draft" onclick="ls_admin_saveForm('pg','draft','admin_page_frm')" /> &nbsp;
             	<input type="button" value="Publish" class="alt_btn" onclick="ls_admin_saveForm('pg','published','admin_page_frm')" />
             <?php } ?>
-            <?php if($page->posttype == "draft") { ?>
+            <?php if($page->pg_posttype == "draft") { ?>
         		<input type="button" value="Update Draft" onclick="ls_admin_saveForm('pg','draft','admin_page_frm')" /> &nbsp;
             	<input type="button" value="Publish" class="alt_btn" onclick="ls_admin_saveForm('pg','published','admin_page_frm')" />
             <?php } ?>
-            <?php if($page->posttype == "published") { ?>
+            <?php if($page->pg_posttype == "published") { ?>
             	<input type="button" value="Update Published" class="alt_btn" onclick="ls_admin_saveForm('pg','published','admin_page_frm')" />
             <?php } ?>
-            <input type="hidden" name="pg_posttype" id="pg_posttype" value="<?php echo $page->posttype; ?>" />
+            <input type="hidden" name="pg_posttype" id="pg_posttype" value="<?php echo $page->pg_posttype; ?>" />
         </div>
     </footer>
 </article>
@@ -154,20 +159,20 @@ $plugin_code = "admin.view.page.newpage.form.bottom"; include(INCLUDE_PLUGIN_ROO
 		    	<div style="margin-top:6px"><?php echo $pgid; ?></div>
 		    	<div class="clear small">&nbsp;</div>
     		<label style="width:150px">Page Slug</label>
-		    	<div style="margin-top:6px"><?php echo $page->slug; ?></div>
+		    	<div style="margin-top:6px"><?php echo $page->pg_slug; ?></div>
 		    	<div class="clear small">&nbsp;</div>
 	    	<label style="width:150px">Type</label>
 		    	<div style="margin-top:6px">Page</div>
 		    	<div class="clear small">&nbsp;</div>
 	    	<label style="width:150px">State</label>
-		    	<div style="margin-top:6px"><?php echo $page->posttype; ?></div>
+		    	<div style="margin-top:6px"><?php echo $page->pg_posttype; ?></div>
 		    	<div class="clear small">&nbsp;</div>
-	    	<?php if($page->posttype == "published") { ?>
+	    	<?php if($page->pg_posttype == "published") { ?>
 	    	<label style="width:150px">Live on Site</label>
 		    	<div style="margin-top:6px">
 		    	<?php
-		    	if(strtotime($page->publisheddate) <= time()) { echo "Live &nbsp; &nbsp; (Since - <i>" . date("D jS M Y @ H:i",strtotime($page->publisheddate)) . "</i>)"; }
-				else { echo "Scheduled for the future &nbsp; &nbsp; (Live on  - <i>" . date("D jS M Y @ H:i",strtotime($page->publisheddate)) . "</i>)"; }
+		    	if(strtotime($page->pg_publisheddate) <= time()) { echo "Live &nbsp; &nbsp; (Since - <i>" . date("D jS M Y @ H:i",strtotime($page->pg_publisheddate)) . "</i>)"; }
+				else { echo "Scheduled for the future &nbsp; &nbsp; (Live on  - <i>" . date("D jS M Y @ H:i",strtotime($page->pg_publisheddate)) . "</i>)"; }
 		    	?>
 		    	</div>
 		    	<div class="clear small">&nbsp;</div>
@@ -187,5 +192,5 @@ function mtypeSelected(typee) {
     $('#options_' + typee).show('slow'); 
     oldView = typee;	
 }
-<?php if($page->type != "") { ?>mtypeSelected('<?php echo strtolower($page->type); ?>');<?php } ?>
+<?php if($page->pg_type != "") { ?>mtypeSelected('<?php echo strtolower($page->pg_type); ?>');<?php } ?>
 </script>

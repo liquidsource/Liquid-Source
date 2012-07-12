@@ -1,6 +1,6 @@
 <?php
 class Email {
-	public $em_slug, $em_message, $em_message_formatted, $em_to, $em_subject;
+	public $em_slug, $em_message, $em_message_formatted, $em_to, $em_subject, $em_headers;
 	
 	public function __construct($slug=NULL,$posty=NULL,$to=NULL,$subject=NULL) {
 		if($slug != NULL) {
@@ -19,6 +19,12 @@ class Email {
 			if($to != NULL) $this->em_to = $to;
 			if($subject != NULL) $this->em_subject = $subject;
 		}
+		
+		$headers = "MIME-Version: 1.0\r\n"; 
+		$headers .= "Content-Type: text/HTML; charset=utf8\r\n";
+		$headers .= "From: \"". EM_FROM_NAME ."\" <". EM_FROM_EMAIL .">\r\n"; 
+		
+		$this->em_headers = $headers;
 	}
 	public function setEmailTo($to) { $this->em_to = $to; }
 	public function setSubject($subj) { $this->em_subject = $subj; }
@@ -29,9 +35,7 @@ class Email {
 			$msg_inner = $this->formatEmailMessage();
 			$msg = $this->checkMailInjection($msg_inner);
 		
-			$headers = "MIME-Version: 1.0\r\n"; 
-			$headers .= "Content-Type: text/HTML; charset=utf8\r\n";
-			$headers .= "From: \"". EM_FROM_NAME ."\" <". EM_FROM_EMAIL .">\r\n"; 
+			$headers = $this->em_headers;
 		
 		    $msg = $this->getEmailHead();
 		    $msg .= $this->getEmailBodyHead();
@@ -54,6 +58,49 @@ class Email {
 		$this->em_slug = 'temp';
 		
 		$this->sendEmail();
+	}
+	public function addAttachment($file) {
+		if(file_exists($file)) {
+			$filename = basename($file);
+			$file_size = filesize($file);
+			$uid = md5(uniqid(time()));
+			
+			$handle = fopen($file, "r");
+			$content = fread($handle, $file_size);
+			$content = chunk_split(base64_encode($content));
+			fclose($handle);
+	
+			if (function_exists('mime_content_type')) {
+				$mtype = mime_content_type($file);
+			}
+			else if (function_exists('finfo_file')) {
+				$finfo = finfo_open(FILEINFO_MIME); // return mime type
+				$mtype = finfo_file($finfo, $file);
+				finfo_close($finfo);  
+			}
+			$mimetype = $mtype;
+			
+			$uid = md5(uniqid(time()));
+			
+			$headers = "MIME-Version: 1.0\r\n"; 
+			$headers .= "Content-Type: text/HTML; charset=utf8\r\n";
+			$headers .= "From: \"". EM_FROM_NAME ."\" <". EM_FROM_EMAIL .">\r\n"; 
+			
+			$headers .= "Content-Type: multipart/mixed; boundary=\"".$uid."\"\r\n\r\n";
+			$headers .= "This is a multi-part message in MIME format.\r\n";
+			$headers .= "--".$uid."\r\n";
+			$headers .= "Content-type:text/html; charset=utf8\r\n";
+			$headers .= "Content-Transfer-Encoding: 7bit\r\n\r\n";
+			$headers .= $msg."\r\n\r\n";
+			$headers .= "--".$uid."\r\n";
+			$headers .= "Content-Type: $mimetype; name=\"".$filename."\"\r\n"; // use different content types here
+			$headers .= "Content-Transfer-Encoding: base64\r\n";
+			$headers .= "Content-Disposition: attachment; filename=\"".$filename."\"\r\n\r\n";
+			$headers .= $content."\r\n\r\n";
+			$headers .= "--".$uid."--";
+			
+			$this->em_headers = $headers;
+		}
 	}
 	private function formatEmailMessage($msg=NULL) {
 		if($msg == NULL) $msg = $this->em_message_formatted;

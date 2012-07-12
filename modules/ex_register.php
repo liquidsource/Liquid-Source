@@ -9,7 +9,7 @@
 	<h4>Logon Details</h4>
 	    <fieldset>
 		    <label>Username:</label>
-		    <input type="text" name="r_username" id="r_username" value="<?php echo $_SESSION['r_username']; ?>" />
+		    <input type="text" name="r_username" id="r_username" value="" />
 	    </fieldset>  
 	    <fieldset>
 		    <label>Password:</label>
@@ -21,7 +21,7 @@
 		</fieldset>
 	    <fieldset>
 		    <label>Email:</label>
-		    <input type="email" name="r_email" id="r_email" value="<?php echo $_SESSION['r_email']; ?>" />
+		    <input type="email" name="r_email" id="r_email" value="" />
 		</fieldset>
 	    <fieldset>
 		    <label>Confirm Email:</label>
@@ -32,11 +32,11 @@
 	<h4>Personal Details</h4>
 	    <fieldset>
 		    <label>First Name:</label>
-		    <input type="text" name="r_fname" id="r_fname" value="<?php echo $_SESSION['r_fname']; ?>" />
+		    <input type="text" name="r_fname" id="r_fname" value="" />
 		</fieldset>
 	    <fieldset>
 		    <label>Last Name:</label>
-		    <input type="text" name="r_lname" id="r_lname" value="<?php echo $_SESSION['r_lname']; ?>" />
+		    <input type="text" name="r_lname" id="r_lname" value="" />
 		</fieldset>
 	    <fieldset>
 	    	<input type="submit" value="Submit" />

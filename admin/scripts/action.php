@@ -3,7 +3,8 @@ include("../../scripts/system.php");
 include("../scripts/ad_functions.php");
 
 $action = $_GET['action'];
-$to = $_GET['to'];
+$to = "";
+if(isset($_GET['to'])) $to = $_GET['to'];
 
 if(Member::isLoggedin('A')) {
     switch ($action) {
@@ -117,8 +118,13 @@ if(Member::isLoggedin('A')) {
         $m_username = mres($_POST['m_username']);
         $password = $_POST['m_password'];
 		
-		$member = new Member();
-		$member->checkLogin($m_username,$password,'A','../index.php?module=login','../index.php?module=home');
+		$mid = Member::checkLogin($m_username,$password,'A');
+		if($mid > 0) {
+			$member = new Member($mid);
+			$member->login();
+			header("Location: ../index.php?module=home");
+			die;
+		}
 	}
 }
 header("Location: ../index.php?module=login");

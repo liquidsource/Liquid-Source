@@ -1,6 +1,11 @@
 <section id="secondary_bar">
 	<div class="user">
-		<p><a href="index.php"><?php echo getUserFullName($mid); ?></a></p>
+		<p><a href="index.php">
+			<?php
+			$member = new Member(Member::getMid());
+			echo $member->m_username;
+			?>
+		</a></p>
 	</div>
 	<div class="breadcrumbs_container">
 		<article class="breadcrumbs"><a href="index.php">Website Admin</a> <div class="breadcrumb_divider"></div>

@@ -1,5 +1,6 @@
 <?php
-$mdid = $_GET['mdid'];
+$mdid = "";
+if(isset($_GET['mdid'])) $mdid = $_GET['mdid'];
 if($mdid != "") {
     $media = new Media($mdid);
 } else {
@@ -23,15 +24,15 @@ if($mdid != "") {
         </fieldset>
         <fieldset>
             <label>Media Title</label>
-            <input type="text" name="md_title" id="md_title" value="<?php echo $media->title; ?>">
+            <input type="text" name="md_title" id="md_title" value="<?php echo $media->md_title; ?>">
         </fieldset>
         <fieldset>
             <label>Media Alt Text</label>
-            <input type="text" name="md_alttext" id="md_alttext" value="<?php echo $media->alttext; ?>">
+            <input type="text" name="md_alttext" id="md_alttext" value="<?php echo $media->md_alttext; ?>">
         </fieldset>
         <fieldset>
             <label>Media Text</label>
-            <textarea name="md_text" id="md_text"><?php echo $media->text; ?></textarea>
+            <textarea name="md_text" id="md_text"><?php echo $media->md_text; ?></textarea>
         </fieldset>
         <fieldset style="width:48%; float:left; margin-right: 3%;">
             <label>Category</label>
@@ -39,7 +40,7 @@ if($mdid != "") {
             	<?php
 	            $arr = getCategories(array('type' => 'media'));
 				foreach($arr as $category) {
-					echo showCategoryOption($category,'0',$media->categories());
+					echo showCategoryOption($category,'0',$media->categoryArray());
 				}
 	            ?>
             </select>

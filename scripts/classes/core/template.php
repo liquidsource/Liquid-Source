@@ -11,7 +11,7 @@ class Template extends Post {
 		$_SESSION['_msg'] = "newtemplate";
 		return parent::updatePost($post_array,'template');
 	}
-	public function deleteTemplate($post_array) {
+	public function deleteTemplate() {
 		$_SESSION['_mtype'] = "W";
 		$_SESSION['_msg'] = "deletedtemplate";
 		parent::deletePost();

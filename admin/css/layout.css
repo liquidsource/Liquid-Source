@@ -934,3 +934,14 @@ tr.posttype_draft td { color: #666; }
 .ui-timepicker-div dl dd { margin: 0 10px 10px 65px; }
 .ui-timepicker-div td { font-size: 90%; }
 .ui-tpicker-grid-label { background: none; border: none; margin: 0; padding: 0; }
+
+
+.dataTables_length label { width: inherit; margin: 20px 15px; }
+.dataTables_filter label { width: inherit; margin: 20px 15px; }
+
+.dataTables_info, .dataTables_paginate { padding: 15px 10px 0; } 
+
+table.dataTable tr.odd { background-color: #eee !important; }
+table.dataTable tr.odd td.sorting_1, table.dataTable tr.odd td.sorting_2, table.dataTable tr.odd td.sorting_3, table.dataTable tr.odd td.sorting_4 { background-color: #ccc !important; }
+table.dataTable tr.even { background-color: #fff !important; }
+table.dataTable tr.even td.sorting_1, table.dataTable tr.even td.sorting_2, table.dataTable tr.even td.sorting_3, table.dataTable tr.even td.sorting_4 { background-color: #ddd !important; }

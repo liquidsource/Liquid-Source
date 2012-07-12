@@ -5,11 +5,10 @@ class Page {
 	/* PUBLIC FUNCTIONS */
 	public function __construct($pg_slug=NULL,$pgid=NULL) {
 		$pluginWClause = false;
-		
+		$wc = "";
 		/* Plugin option */
 		$plugin_code = "class.page.construct.wc";
 		include(INCLUDE_PLUGIN_ROOT . "core.php");
-		
 		if(!$pluginWClause) {
 			if($pg_slug != NULL) { $wc = "pg_slug='$pg_slug' "; }
 			if($pgid != NULL) { $wc = "pgid='$pgid' "; }
@@ -20,24 +19,11 @@ class Page {
 			$rs = mq("select * from " . DB_TBL_PAGES . " where $wc and pg_posttype != 'inherit'");
 			if(mnr($rs) > 0) {
 				$rw = mfa($rs);
-				$this->data['id'] = $rw['pgid'];
-				$this->data['meta_title'] = stripslashes($rw['pg_meta_title']);
-				$this->data['title'] = $this->meta_title;
-				$this->data['slug'] = $rw['pg_slug'];
-				$this->data['meta_description'] = stripslashes($rw['pg_meta_description']);
-				$this->data['meta_keywords'] = stripslashes($rw['pg_meta_keywords']);
-				$this->data['isdefault'] = $rw['isDefault'];
-				$this->data['isadmin'] = $rw['isAdmin'];
-				$this->data['createdate'] = $rw['pg_createdate'];
-				$this->data['publisheddate'] = $rw['pg_publisheddate'];
-				$this->data['type'] = $rw['pg_type'];
-				$this->data['posttype'] = $rw['pg_posttype'];
-				$this->data['content'] = stripslashes($rw['pg_content']);
-				$this->data['active'] = $rw['pg_active'];
-				if($this->data['type'] == "bs") { $pg_type_eng = "Bespoke"; } else { $pg_type_eng = "Text"; }
-				$this->data['type_eng'] = $pg_type_eng;
-				
-				$this->data['link'] = "";
+				foreach($rw as $arg=>$val) {
+					$this->data[$arg] = stripslashes($val);
+				}
+				if($this->data['pg_type'] == "bs") { $pg_type_eng = "Bespoke"; } else { $pg_type_eng = "Text"; }
+				$this->data['pg_type_eng'] = $pg_type_eng;
 				
 				/* Plugin option */
 				$plugin_code = "class.page.construct.setup";
@@ -45,38 +31,56 @@ class Page {
 			}
 		}
 	}
+	public function __get($arg) {
+		$m = "get_$arg";
+		if(method_exists($this, $m)) return $this->$m();
+		
+        if (isset($this->data[$arg])) {
+            return $this->data[$arg];
+        }
+    }
+    public function __set($arg, $val) {
+        if($arg == "pgid") { return; }
+		
+        $val = mres($val);
+    	$rs = mq("SELECT * FROM information_schema.COLUMNS WHERE TABLE_NAME = '" . DB_TBL_PAGES . "' AND COLUMN_NAME = '$arg'");
+		if(mnr($rs) > 0) {
+			$rs = mq("update " . DB_TBL_PAGES . " set $arg='$val' where pgid='" . $this->data['pgid'] . "'");
+		}
+		$this->data[$arg] = $val;
+    }
 	public function updatePage($post_array) {
 		foreach($post_array as $arg => $val) { $$arg = mres($val); }
-		$datetime = date("Y-m-d H:i:s");
 		
-		if($this->data['isdefault'] == '1') {
-			$pg_slug = $this->data['slug'];
+		if($this->data['isDefault'] == '1') {
+			$pg_slug = $this->data['pg_slug'];
 		}
 		else {
 		    if($pg_slug != "") { $sluggy = $pg_slug; } else { $sluggy = $pg_title; }
-			if($sluggy != "") { $pg_slug = strToSlug($sluggy,'page',$this->data['id']); }
+			if($sluggy != "") { $pg_slug = strToSlug($sluggy,'page',$this->data['pgid']); }  else { $p_slug = "temp"; }
 		}
+		$post_array['pg_slug'] = $pg_slug;
 	    
-	    if($this->data['id'] != "") {
-	    	$pgid = $this->data['id'];
+	    if($this->data['pgid'] != "") {
+	    	$pgid = $this->data['pgid'];
 	    	
-			if($sluggy != $this->data['slug']) {
+			if($sluggy != $this->data['pg_slug']) {
 				$rs = mq("update " . DB_TBL_PAGES . " set pg_slug='$sluggy' where pg_parent='$pgid'");
 			}
 			
 	    	$rs = mq("insert into " . DB_TBL_PAGES . " (pg_meta_title,pg_slug,pg_meta_description,pg_meta_keywords,pg_type,pg_content,pg_publisheddate,isAdmin,pg_active,pg_parent,pg_posttype,pg_origposttype) values (
-	    	'" . $this->data['meta_title'] . "',
+	    	'" . $this->data['pg_meta_title'] . "',
 	    	'" . $pg_slug . "',
-	    	'" . $this->data['meta_description'] . "',
-	    	'" . $this->data['meta_keywords'] . "',
-	    	'" . $this->data['type'] . "',
-	    	'" . $this->data['content'] . "',
-	    	'" . $this->data['publisheddate'] . "',
+	    	'" . $this->data['pg_meta_description'] . "',
+	    	'" . $this->data['pg_meta_keywords'] . "',
+	    	'" . $this->data['pg_type'] . "',
+	    	'" . $this->data['pg_content'] . "',
+	    	'" . $this->data['pg_publisheddate'] . "',
 	    	'0',
 	    	'0',
 	    	'$pgid',
 	    	'inherit',
-	    	'" . $this->data['posttype'] . "'
+	    	'" . $this->data['pg_posttype'] . "'
 			)");
 			$pgid_n = miid();
 			
@@ -84,48 +88,50 @@ class Page {
 			$plugin_code = "class.page.update.extra";
 			include(INCLUDE_PLUGIN_ROOT . "core.php");
 			
-	    	$u_arr = array('pg_meta_title','pg_slug','pg_meta_description','pg_meta_keywords','pg_type','pg_content','pg_posttype');
-			foreach($u_arr as $val) {
-				if($$val != NULL) { $uc_x .= $val . "='" . $$val . "', "; }
-			}
-			if($uc_x != "") $uc_x = substr($uc_x,0,-2);
-			
 			if($pg_posttype == "published") { 
-				if($pg_publisheddate != $this->data['publisheddate']) {
+				if($pg_publisheddate != $this->data['pg_publisheddate']) {
 					$pub_datetime = date("Y-m-d H:i:s",strtotime($pg_publisheddate));
 				} else {
-					$pub_datetime = $this->data['publisheddate'];
+					$pub_datetime = $this->data['pg_publisheddate'];
 				}
-				$uc_x .= ", pg_publisheddate='$pub_datetime' ";
+				$post_array['pg_publisheddate'] = $pub_datetime;
+				$rs = mq("update " . DB_TBL_PAGES . " set pg_createdate='" . DB_SAFE_DATETIME ."' where pgid='$pgid'");
 			}
-			
-			$rs = mq("update " . DB_TBL_PAGES . " set $uc_x, pg_createdate='$datetime' where pgid='$pgid'");
+			foreach($post_array as $arg => $val) {
+				$this->$arg = $val;
+			}
 			
 			/* Plugin option */
 			$plugin_code = "class.page.update.old.return";
 			include(INCLUDE_PLUGIN_ROOT . "core.php");
+			$_SESSION['_msg'] = "updatedpage";
 	    } else {
 	    	if($pg_posttype == "published") {
 				if($pg_publisheddate != "") {
 					$pubDate = date("Y-m-d H:i:s",strtotime($pg_publisheddate));
 				} else {
-					$pubDate = $datetime;
+					$pubDate = DB_SAFE_DATETIME;
 				}
+				$post_array['pg_publisheddate'] = $pubDate;
 			}
-			if($pg_type == "") $pg_type = "bs";
+			if($pg_type == "") $post_array['pg_type'] = "bs";
 			
 			/* Plugin option */
 			$plugin_code = "class.page.update.new.setiso";
 			include(INCLUDE_PLUGIN_ROOT . "core.php");
 			
-	    	$rs = mq("insert into " . DB_TBL_PAGES . " (pg_meta_title,pg_slug,pg_meta_description,pg_meta_keywords,pg_type,pg_content,pg_publisheddate,isAdmin,pg_active,pg_posttype) values
-	    	('$pg_meta_title','$pg_slug','$pg_meta_description','$pg_meta_keywords','$pg_type','$pg_content','$pubDate','0','1','$pg_posttype')");
+	    	$rs = mq("insert into " . DB_TBL_PAGES . " (isAdmin,pg_active) values ('0','1')");
 	        $pgid = miid();
-			$this->data['id'] = $pgid;
+			$this->data['pgid'] = $pgid;
+			
+			foreach($post_array as $arg => $val) {
+				$this->$arg = $val;
+			}
 			
 			/* Plugin option */
 			$plugin_code = "class.page.update.new.return";
 			include(INCLUDE_PLUGIN_ROOT . "core.php");
+			$_SESSION['_msg'] = "newpage";
 	    }
 		
 		if($pg_type == "tx") {
@@ -139,65 +145,45 @@ class Page {
 		}
 
 		$_SESSION['_mtype'] = "S";
-		$_SESSION['_msg'] = "newpage";
 		return $pgid;
 	}
-	public function __get($arg) {
-		$m = "get_$arg";
-		if(method_exists($this, $m)) return $this->$m();
-		
-        if (isset($this->data[$arg])) {
-            return $this->data[$arg];
-        }
-    }
-    public function __set($arg, $val) {
-        if ($arg == "pgid") { return; }
-		
-        if (isset($this->data[$arg])) {
-        	$val = mres($val);
-        	$rs = mq("SELECT * FROM information_schema.COLUMNS WHERE TABLE_NAME = '" . DB_TBL_PAGES . "' AND COLUMN_NAME = '$arg'");
-            $this->data[$arg] = $val;
-			if(mnr($rs) > 0) {
-				$rs = mq("update " . DB_TBL_PAGES . " set $arg='$val' where pgid='" . $this->data['id'] . "'");
-			}
-        }
-    }
+	
 	public function theShort($size=50) {
-		return mb_substr($this->data['content'],0,$size);
+		return mb_substr($this->data['pg_content'],0,$size);
 	}
 	public function updatedDate() {
-		return $this->createDate;
+		return $this->data['pg_createDate'];
 	}
 	public function publishedDate() {
-		$rw = mfa(mq("select min(pg_createdate) as pub_date where pg_slug='" . $this->data['slug'] . "'"));
+		$rw = mfa(mq("select min(pg_createdate) as pub_date where pg_slug='" . $this->data['pg_slug'] . "'"));
 		return $rw['pub_date'];
 	}
 	public function metaData() {
-		if($this->data['id'] != "") {
-			return getMetaData($this->data['id'],'page');
+		if(isset($this->data['pgid'])) {
+			return getMetaData($this->data['pgid'],'page');
 		}
 		return array();
 	}
 	public function insertMetaData($a,$v,$ui) {
-		insertMetaData($a,$v,$this->data['id'],'page',$ui);
+		insertMetaData($a,$v,$this->data['pgid'],'page',$ui);
 	}
 	
 	public function deletePage() {
-		if($this->data['id'] != NULL) {
-			$rs = mq("update " . DB_TBL_PAGES . " set pg_active='0' where pgid='" . $this->data['id'] . "'");
+		if(isset($this->data['pgid'])) {
+			$rs = mq("update " . DB_TBL_PAGES . " set pg_active='0' where pgid='" . $this->data['pgid'] . "'");
 			$_SESSION['_mtype'] = "W";
 			$_SESSION['_msg'] = "deletedpage";
 		}
 	}
 	public function removePage() {
-		if($this->data['id'] != NULL) {
-			if($this->data['type'] == "bs") { unlink("../../modules/" . $this->slug . ".php"); }
-			$rs = mq("delete from " . DB_TBL_PAGES . " where pgid='" . $this->data['id'] . "'");
+		if(isset($this->data['pgid'])) {
+			if($this->data['pg_type'] == "bs") { unlink("../../modules/" . $this->data['pg_slug'] . ".php"); }
+			$rs = mq("delete from " . DB_TBL_PAGES . " where pgid='" . $this->data['pgid'] . "'");
 		}
 	}
 	public function restorePage() {
-		if($this->data['id'] != NULL) {
-			$rs = mq("update " . DB_TBL_PAGES . " set pg_active='1' where pgid='" . $this->data['id'] . "'");
+		if(isset($this->data['pgid'])) {
+			$rs = mq("update " . DB_TBL_PAGES . " set pg_active='1' where pgid='" . $this->data['pgid'] . "'");
 		}
 	}
 	

@@ -1,4 +1,7 @@
 <?php
+error_reporting(E_ALL);
+ini_set('display_errors', '1');
+
 /* Config */
 if ( !defined('INCLUDE_WEB_ROOT') ) define('INCLUDE_WEB_ROOT', dirname(__FILE__) . '/../');
 include(INCLUDE_WEB_ROOT . "scripts/config/site_config.php");
@@ -24,5 +27,14 @@ include(INCLUDE_WEB_ROOT . "scripts/core/useful.php");
 include(INCLUDE_WEB_ROOT . "scripts/general.php");
 
 global $settingup;
-if(!$settingup) { define('MODULE', getModule($_GET['module'])); }
+if(!$settingup) {
+	
+	if(NICHE_SITE != "") {
+		$fname = INCLUDE_WEB_ROOT . "scripts/niche/" . NICHE_SITE . ".php";
+		if(file_exists($fname)) include($fname);
+	}
+	
+	if(!isset($_GET['module'])) { $module_system = ""; } else { $module_system = $_GET['module']; }
+	define('MODULE', getModule($module_system));
+}
 ?>

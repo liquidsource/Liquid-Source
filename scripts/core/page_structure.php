@@ -11,7 +11,7 @@ function getModule($module) {
 	
 	if(Member::isLoggedin('A')) return $module;
 	$page = new Page($module);
-	if($page->id == "") return "404";
+	if($page->pgid == "") return "404";
 	return $module;
 }
 
@@ -105,7 +105,6 @@ function stylesAndJsTop($module) {
 	echo "<link rel=\"stylesheet\" href=\"http://ajax.googleapis.com/ajax/libs/jqueryui/1.8.16/themes/base/jquery-ui.css\" type=\"text/css\" media=\"all\" />\n\r";
 	
     if(USE_TABLE_PARSER) { echo "<link rel=\"stylesheet\" type=\"text/css\" href=\"http://ajax.aspnetcdn.com/ajax/jquery.dataTables/1.8.2/css/jquery.dataTables.css\" />\n\r";}
-	if(USE_IE_ALERT && $module == "home") { echo "<link rel=\"stylesheet\" type=\"text/css\" href=\"css/packages/iealert_style.css\" />\n\r"; }
     
 	echo "
 	<link rel=\"shortcut icon\" href=\"favicon.ico\" />
@@ -159,7 +158,6 @@ function bottomPage($module) {
 	
 	if(USE_BX_SLIDER) { echo "<script src=\"http://bxslider.com/sites/default/files/jquery.bxSlider.min.js\"></script>\n\r"; }
 	if(USE_TABLE_PARSER) { echo "<script src=\"http://ajax.aspnetcdn.com/ajax/jquery.dataTables/1.8.2/jquery.dataTables.min.js\"></script>\n\r"; }
-	if(USE_IE_ALERT && $module == "home") { echo "<script src=\"js/libs/iealert.min.js\"></script>\n\r"; }
 	
 	echo "
     <!--[if lt IE 7 ]>
@@ -185,6 +183,7 @@ function bottomPage($module) {
 	if(USE_TWITTER) { echo "<script>!function(d,s,id){var js,fjs=d.getElementsByTagName(s)[0];if(!d.getElementById(id)){js=d.createElement(s);js.id=id;js.src=\"//platform.twitter.com/widgets.js\";fjs.parentNode.insertBefore(js,fjs);}}(document,\"script\",\"twitter-wjs\");</script>\n\r"; }	
 	if(USE_PINTEREST) { echo "<script type=\"text/javascript\" src=\"//assets.pinterest.com/js/pinit.js\"></script>"; }
 	if(USE_FACEBOOK_LIKE) {
+		$fbappid = "";
 		if(FACEBOOK_APP_ID != "") { $fbappid = "&appId=" . FACEBOOK_APP_ID; }
 		echo "
 		<div id=\"fb-root\"></div>
@@ -230,8 +229,8 @@ function getModuleData($module) {
 	global $inAdmin;
 	$page = new Page($module);
 	$m_type = "bs";
-	if($page->id != "") {
-		$m_type = $page->type;
+	if($page->pgid != "") {
+		$m_type = $page->pg_type;
 	}
 	/* Plugin option */
 	$plugin_code = "page_structure.module";
@@ -260,6 +259,7 @@ function getModuleData($module) {
 
 /* Used to add in which parsers are used to the javascript file, so javascript functions can call on the variables */ 
 function getParserJavascript() {
+	$ret = "";
 	$rs = mq("select * from " . DB_TBL_SITE_OPTIONS . " where (so_group='Modules' or so_group='APIs') and so_field_type='bool'");
 	while($rw = mfa($rs)) {
 		$ret .= "var " . strtolower($rw['so_arg']) . " = " . $rw['so_val'] . ";";

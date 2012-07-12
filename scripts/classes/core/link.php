@@ -8,11 +8,9 @@ class Link {
 			$rs = mq("select * from " . DB_TBL_LINKS . " where lid='$lid'");
 			if(mnr($rs) > 0) {
 				$rw = mfa($rs);
-				$this->data['id'] = $rw['lid'];
-				$this->data['link'] = stripslashes($rw['l_link']);
-				$this->data['text'] = stripslashes($rw['l_text']);
-				$this->data['active'] = $rw['l_active'];
-				
+				foreach($rw as $arg=>$val) {
+					$this->data[$arg] = stripslashes($val);
+				}
 			}
 		}
 	}
@@ -24,31 +22,35 @@ class Link {
         }
     }
     public function __set($arg, $val) {
-        if ($arg == "lid") { return; }
+        if($arg == "lid") { return; }
 		
         if (isset($this->data[$arg])) {
-        	$val = mres($val);
         	$rs = mq("SELECT * FROM information_schema.COLUMNS WHERE TABLE_NAME = '" . DB_TBL_LINKS . "' AND COLUMN_NAME = '$arg'");
-            $this->data[$arg] = $val;
 			if(mnr($rs) > 0) {
-				$rs = mq("update " . DB_TBL_LINKS . " set $arg='$val' where lid='" . $this->data['id'] . "'");
+        		$val = mres($val);
+				$rs = mq("update " . DB_TBL_LINKS . " set $arg='$val' where lid='" . $this->data['lid'] . "'");
 			}
         }
+        $this->data[$arg] = $val;
     }
 	
 	public function updateLink($post_array) {
 		foreach($post_array as $arg => $val) { $$arg = mres($val); }
-	    
-		$lid = $this->data['id'];
-	    if($lid != "") {
-	        $rs = mq("update " . DB_TBL_LINKS . " set l_text='$l_text', l_link='$l_link' where lid='$lid'");
-	    } else {
+		
+	    $lid = $this->data['lid'];
+	    if($lid == "") {
 	        $rs = mq("insert into " . DB_TBL_LINKS . " (l_text,l_link,l_active) values ('$l_text','$l_link','1')");
 			$lid = miid();
-			$this->data['id'] = $lid;
+			$this->data['lid'] = $lid;
+			$_SESSION['_msg'] = "newlink";
+	    } else {
+	    	$_SESSION['_msg'] = "updatedlink";
 	    }
+		foreach($post_array as $arg => $val) {
+			$this->$arg = $val;
+		}
 		
-		updateCategoryLink($post_array['cid'],$lid,'link');
+		if(isset($post_array['cid'])) updateCategoryLink($post_array['cid'],$lid,'link');
 	    
 		$i=0;
 		foreach($post_array as $arg => $val) {
@@ -59,12 +61,12 @@ class Link {
 		}
 		
 		$_SESSION['_mtype'] = "S";
-		$_SESSION['_msg'] = "newlink";
 		return $lid;
+		
 	}
 	
 	public function deleteLink() {
-		$lid = $this->data['id'];
+		$lid = $this->data['lid'];
 		if($lid > 0) {
 	        $rs = mq("delete from " . DB_TBL_LINKS . " where lid='$lid'");
 	        $rs = mq("delete from " . DB_TBL_CATEGORY_LINK . " where uid='$lid'");
@@ -74,31 +76,26 @@ class Link {
 		}
 	}
 	
-	public function categories() {
-		if($this->data['id'] != "") {
-			return getCategoryArray($this->data['id'],'link');
+	public function categoryArray() {
+		if($this->data['lid'] != "") {
+			return getCategoryArray($this->data['lid'],'link');
 		}
 	}
 	public function categoryNames() {
-		return getCategoryNames($this->data['id'],'link',',');
+		return getCategoryNames($this->data['lid'],'link',',');
 	}
 	public function inCategory($catids) {
-		return inCategory($catids,$this->id,'link');
+		return inCategory($catids,$this->data['lid'],'link');
 	}
-	public function getCid() {
-		if($this->data['id'] != "") {
-			return getCategoryId($this->data['id'],'link');
-		}
-	}
-	public function metaData() {
-		if($this->data['id'] != "") {
-			return getMetaData($this->data['id'],'link');
+	public function getMetaData() {
+		if($this->data['lid'] != "") {
+			return getMetaData($this->data['lid'],'link');
 		}
 		return array();
 	}
 	
 	public function insertMetaData($a,$v,$ui) {
-		insertMetaData($a,$v,$this->data['id'],'link',$ui);
+		insertMetaData($a,$v,$this->data['lid'],'link',$ui);
 	}
 }
 ?>

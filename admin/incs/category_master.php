@@ -1,5 +1,6 @@
 <?php
-$cid = $_GET['cid'];
+$cid = "";
+if(isset($_GET['cid'])) $cid = $_GET['cid'];
 if($cid != "") {
     $category = new Category($cid);
 	$editnew = "Edit";
@@ -11,7 +12,7 @@ if($cid != "") {
 <article class="module width_full">
 <header><h3 class="tabs_involved"><?php echo $l_type; ?> Categories</h3></header>
 <div class="tab_container">
-    <table class="tablesorter" cellspacing="0"> 
+    <table class="tablesorter datatTable" cellspacing="0"> 
     <thead> 
         <tr> 
             <th>cid</th> 
@@ -21,13 +22,15 @@ if($cid != "") {
     </thead> 
     <tbody>
         <?php
-        $arr = getCategories(array("num" => $llimit . "," . $hlimit, "orderby" => $orderby, "orderdir" => $orderdir, "type" => $l_type));
+        $arr = getCategories(array("type" => $l_type));
 		foreach($arr as $cat) {
-			echo showCategoryRow($cat);
+			echo showCategoryRow($cat,0,$l_type);
 		}
 		?>
     </tbody> 
     </table>
+    <p style="clear:both">&nbsp;</p>
+    <br />
 </div>
 <?php if($cid != "") { ?>
 <footer>
@@ -50,14 +53,14 @@ if($cid != "") {
             <select name="c_parent" id="c_parent">
                 <option value="0">Parent</option>
                 <?php
-                $arr = getCategories(array("num" => $llimit . "," . $hlimit, "orderby" => $orderby, "orderdir" => $orderdir, "type" => $l_type));
+                $arr = getCategories(array("type" => $l_type));
 				foreach($arr as $i_category) {
-					echo showCategoryOption($i_category,'0',$category,true);
+					echo showCategoryOption($i_category,'0',$category,true,true);
 				}
                 ?>
             </select>
             </td>
-            <td><input type="text" name="c_name" id="c_name" value="<?php echo $category->name; ?>" /></td>
+            <td><input type="text" name="c_name" id="c_name" value="<?php echo $category->c_name; ?>" /></td>
             <td><input type="submit" value="<?php echo $editnew; ?>" class="alt_btn" /></td>
         </tr>
     </tbody> 

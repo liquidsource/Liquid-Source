@@ -1,16 +1,6 @@
 <?php
-$llimit = "0";
-$hlimit = "20";
-
-if($_GET['llimit'] != "") $llimit = $_GET['llimit'];
-if($_GET['hlimit'] != "") $hlimit = $_GET['hlimit'];
-
-if($_GET['orderby'] == "" && $_GET['llimit'] == "") { clearSessionSorts(); }
-setOrderBy('pgid');
-$orderby = $_SESSION['curorderby'];
-$orderdir = $_SESSION['orderdir'];
-
-if($_GET['active'] == "0") {
+$viewingTrash = false;
+if(isset($_GET['active']) && $_GET['active'] == "0") {
 	$viewingTrash = true;
 	$x_arr = array('active' => '0');
 	$active = "0";
@@ -21,16 +11,16 @@ if($_GET['active'] == "0") {
 <h3 class="tabs_involved">Edit Pages</h3>
 </header>
 <div class="tab_container">
-    <table class="tablesorter" cellspacing="0"> 
+    <table class="tablesorter dataTable" cellspacing="0"> 
     <thead> 
         <tr> 
-            <th <?php echo tableSorter('pgid'); ?>> pgid</th>
-            <th <?php echo tableSorter('pg_meta_title'); ?>> Page Title</th>
-            <th <?php echo tableSorter('pg_posttype'); ?>> Page State</th>
-            <th <?php echo tableSorter('pg_type'); ?>> Page Type</th> 
-            <th <?php echo tableSorter('pg_slug'); ?>> Page Slug</th>
-            <th <?php echo tableSorter('pg_meta_description'); ?>> Meta Description</th>
-            <th <?php echo tableSorter('pg_createdate'); ?>> Created On</th>
+            <th> pgid</th>
+            <th> Page Title</th>
+            <th> Page State</th>
+            <th> Page Type</th> 
+            <th> Page Slug</th>
+            <th> Meta Description</th>
+            <th class='no_sort'> Created On</th>
             <?php
             /* Plugin option */
 			$plugin_code = "admin.view.page.editpages.table_headers"; include(INCLUDE_PLUGIN_ROOT . "core.php");
@@ -40,26 +30,27 @@ if($_GET['active'] == "0") {
     </thead> 
     <tbody> 
         <?php
-        $pg_arr = array("num" => $llimit . "," . $hlimit, "orderby" => $orderby, "orderdir" => $orderdir, "state" => 'all');
+        $uids = "";
+        $pg_arr = array("state" => 'all');
 		if(!empty($x_arr)) { $pg_arr = array_merge($pg_arr,$x_arr); }
 		
 		/* Plugin option */
 		$plugin_code = "admin.view.page.editpages.plugin_arr"; include(INCLUDE_PLUGIN_ROOT . "core.php");
-		
 		if(!empty($plugin_arr)) { $pg_arr = array_merge($pg_arr,$plugin_arr); }
+		
         $arr = getPages($pg_arr);
 		foreach($arr as $page) {
-			$pgid = $page->id;
-			$posttype = $page->posttype;
+			$pgid = $page->pgid;
+			$posttype = $page->pg_posttype;
 			
 			echo "<tr onclick=\"rowSelect('$pgid');\" id=\"row_$pgid\" class=\"posttype_$posttype\">
 			<td><a href=\"?module=newpage&pgid=$pgid\">$pgid</a></td>
-			<td><strong>" . $page->title . "</strong></td>
+			<td><strong>" . $page->pg_meta_title . "</strong></td>
 			<td>" . $posttype . "</td>
-			<td>" . $page->type_eng . "</td>
-			<td>" . $page->slug . "</td>
-			<td>" . $page->meta_description . " ... </td>
-			<td>" . $page->createdate . "</td>
+			<td>" . $page->pg_type_eng . "</td>
+			<td>" . $page->pg_slug . "</td>
+			<td>" . $page->pg_meta_description . " ... </td>
+			<td>" . $page->pg_createdate . "</td>
 			";
 			
             /* Plugin option */
@@ -88,40 +79,8 @@ if($_GET['active'] == "0") {
 		?>
 	</tbody> 
     </table>
-    <div class="paging">
-    <?php
-    $pagenum = ($llimit / $hlimit) + 1;
-	$pg_count_arr = array("state" => 'all');
-	if(!empty($x_arr)) { $pg_count_arr = array_merge($pg_count_arr,$x_arr); }
-	$arr = getPages($pg_count_arr);
-    $numrows = sizeof($arr);
-    if($numrows > $hlimit) {
-        $numpages = ceil($numrows / $hlimit);
-		
-		$maxnumtoshow = $pagenum + 12;
-		$dontShowEnd = false;
-		if($numpages < $maxnumtoshow) {$maxnumtoshow = $numpages; $dontShowEnd = true; }
-		
-		$minnumtoshow = $pagenum - 12;
-		if($minnumtoshow < 1) { $minnumtoshow = "1";
-		} else { echo "<a href=\"?module=$module&llimit=0&active=$active\" $class>1</a> ... "; }
-		
-        for($i=$minnumtoshow;$i<=$maxnumtoshow;$i++) {
-            $nllimit = ($i-1) * $hlimit;
-            $class = "";
-            if($llimit == $nllimit) { $class="class=\"chosen\""; }
-            echo "<a href=\"?module=$module&llimit=$nllimit&active=$active\" $class>$i</a> ";
-        }
-		
-		if(!$dontShowEnd) {
-            $nllimit = ($numpages-1) * $hlimit;
-			echo " ... <a href=\"?module=$module&llimit=$nllimit&active=$active\" $class>$numpages</a> ";
-		}
-		
-    }
-    ?>
-    </div>
-		
+	<p style="clear:both"></p>
+	
 	<?php if(!$viewingTrash) { ?>
 	<div class='search'>
     	<fieldset class='actions'>
@@ -140,6 +99,8 @@ if($_GET['active'] == "0") {
 <article class="module width_full">
 <div class="tab_container">
 <?php
+$nonwords = "";
+$xurl = "";
 if($viewingTrash) { $n = Page::numberNonTrashItems(); $nonwords = "non-"; } else { $n = Page::numberTrashItems(); $xurl = "&active=0"; }
 ?>
 <ul><li><a href="?module=editpages<?php echo $xurl; ?>">View <?php echo $nonwords; ?>trash (<?php echo $n; ?> items)</a></li></ul>
