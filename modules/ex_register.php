@@ -4,7 +4,7 @@
 
 <h1>Register</h1>
 <p>This is an example registration page for new members to sign up.</p>
-	<form method="post" action="scripts/action.php?action=register" name="reg_frm" id="reg_frm" onsubmit="return submitForm('reg_frm')">
+	<form method="post" action="scripts/action.php?action=ex_register" name="reg_frm" id="reg_frm" onsubmit="return submitForm('reg_frm')">
 	
 	<h4>Logon Details</h4>
 	    <fieldset>

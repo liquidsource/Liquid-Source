@@ -15,10 +15,8 @@ class LS {
 	        $jc = " inner join " . DB_TBL_CATEGROY_LINK . " c on posts.pid = c.uid ";
 	        $wc = " and c.l_type='post' and cid='$cid' ";
 	    }
-		if(isset($orderby)) { $orderby = "pid"; }
-		if(isset($orderdir)) { $orderdir = "asc"; }
 		if(!isset($active)) { $wc .= " and p_active='1' "; } else { $wc .= " and p_active='$active' "; }
-		if(isset($state)) { $wc .= " and p_posttype='published' "; } else {
+		if(!isset($state)) { $wc .= " and p_posttype='published' "; } else {
 			switch($state) {
 				case "draft":
 					$wc .= " and p_posttype == 'draft' "; break;
@@ -52,10 +50,8 @@ class LS {
 		
 	    extract($arr);
 	    if(isset($num)) { $limit = $num; } else { $limit = " 0,1000"; }
-		if(isset($orderby)) { $orderby = "pid"; }
-		if(isset($orderdir)) { $orderdir = "asc"; }
 		if(!isset($active)) { $wc .= " and p_active='1' "; } else { $wc .= " and p_active='$active' "; }
-		if(isset($state)) { $wc .= " and p_posttype='published' "; } else {
+		if(!isset($state)) { $wc .= " and p_posttype='published' "; } else {
 			switch($state) {
 				case "draft":
 					$wc .= " and p_posttype == 'draft' "; break;
@@ -81,10 +77,8 @@ class LS {
 		$orderdir = "asc";
 	    extract($arr);
 	    if(isset($num)) { $limit = $num; } else { $limit = " 0,1000"; }
-		if(isset($orderby)) { $orderby = "pgid"; }
-		if(isset($orderdir)) { $orderdir = "asc"; }
 		if(!isset($active)) { $wc .= " and pg_active='1' "; } else { $wc .= " and pg_active='$active' "; }
-		if(isset($state)) { $wc .= " and pg_posttype='published' "; } else {
+		if(!isset($state)) { $wc .= " and pg_posttype='published' "; } else {
 			switch($state) {
 				case "draft":
 					$wc .= " and pg_posttype = 'draft' "; break;
@@ -111,8 +105,6 @@ class LS {
 		$orderdir = "asc";
 		extract($arr);
 	    if(isset($num)) { $limit = $num; } else { $limit = " 0,1000"; }
-		if(isset($orderby)) { $orderby = "mid"; }
-		if(isset($orderdir)) { $orderdir = "asc"; }
 		if(!isset($m_type)) { $m_type = "U"; }
 		if(!isset($active)) { $wc .= " and m_active='1' "; } else { $wc .= " and m_active='$active' "; }
 		
@@ -133,8 +125,6 @@ class LS {
 		$orderdir = "asc";
 		extract($arr);
 	    if(isset($num)) { $limit = $num; } else { $limit = " 0,1000"; }
-		if(isset($orderby)) { $orderby = "mdid"; }
-		if(isset($orderdir)) { $orderdir = "asc"; }
 		if(!isset($active)) { $wc .= " and md_active='1' "; } else { $wc .= " and md_active='$active' "; }
 		
 		/* Plugin option */
@@ -152,8 +142,6 @@ class LS {
 		$orderby = "lid";
 		extract($arr);
 	    if(isset($num)) { $limit = $num; } else { $limit = " 0,1000"; }
-		if(isset($orderby)) { $orderby = "lid"; }
-		if(isset($orderdir)) { $orderdir = "asc"; }
 		
 		/* Plugin option */
 		$plugin_code = "class.liquid_source.links.wc"; include(INCLUDE_PLUGIN_ROOT . "core.php");

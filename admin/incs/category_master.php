@@ -41,7 +41,7 @@ if($cid != "") {
 <?php } ?>
 </article>
 
-<form method="post" action="scripts/action.php?action=newcategory&to=<?php echo $l_type; ?>categories&c_type=<?php echo $l_type; ?>&cid=<?php echo $cid; ?>">
+<form method="post" action="scripts/action.php?action=newcategory&c_type=<?php echo $l_type; ?>&cid=<?php echo $cid; ?>">
 <article class="module width_full">
 <header><h3 class="tabs_involved"><?php echo $editnew . " " . $l_type; ?> Category</h3></header>
 <div class="tab_container">

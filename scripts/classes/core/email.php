@@ -187,7 +187,7 @@ class Email {
 		return $str;
 	}
 	
-	private function checkMailInjection($value) { if(eregi("TO:", $value) || eregi("CC:", $value) || eregi("CCO:", $value) || eregi("Content-Type", $value)) exit("ERROR: Code injection attempt denied! Please don't use the following sequences in your message: 'TO:', 'CC:', 'CCO:' or 'Content-Type'.");  }
+	private function checkMailInjection($value) { if(preg_match("/TO:/", $value) > 0 || preg_match("/CC:/", $value) > 0 || preg_match("/CCO:/", $value) > 0 || preg_match("/Content-Type/", $value) > 0) exit("ERROR: Code injection attempt denied! Please don't use the following sequences in your message: 'TO:', 'CC:', 'CCO:' or 'Content-Type'.");  }
 	private function str_style_replace($f,$style,$msg) { $msg = str_replace($f,$f . " style='$style' ",$msg); return $msg; }
 }
 

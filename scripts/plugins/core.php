@@ -13,9 +13,10 @@
  
 /* Funciton that is called throughout the site, to run plugin hooks */
 
-$rs_plugin_load = mq("select * from " . DB_TBL_OPTIONS . " where op_arg='$plugin_code' and op_section='plugin_hook'");
+$rs_plugin_load = mq("select * from " . DB_TBL_OPTIONS . " where op_arg='$plugin_code' and (op_section='plugin_hook' or op_section='niche_hook')");
 while($rw_plugin_load = mfa($rs_plugin_load)) {
-	$fname = INCLUDE_PLUGIN_ROOT . $rw_plugin_load['op_val'];
+	$fname = INCLUDE_NICHE_ROOT . $rw_plugin_load['op_val'];
+	if($rw_plugin_load['op_section'] == "plugin_hook") $fname = INCLUDE_PLUGIN_ROOT . $rw_plugin_load['op_val'];
 	if(file_exists($fname)) include($fname);
 }
 ?>

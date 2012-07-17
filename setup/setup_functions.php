@@ -210,6 +210,11 @@ INSERT INTO `" . DB_TBL_ALERT_WARNINGS . "` VALUES(24, 'updatedmember', 'Member 
 INSERT INTO `" . DB_TBL_ALERT_WARNINGS . "` VALUES(25, 'updatedtemplate', 'Template amended');
 INSERT INTO `" . DB_TBL_ALERT_WARNINGS . "` VALUES(26, 'updatedlink', 'Link amended');
 INSERT INTO `" . DB_TBL_ALERT_WARNINGS . "` VALUES(27, 'updatedcategory', 'Category amended');
+INSERT INTO `" . DB_TBL_ALERT_WARNINGS . "` VALUES(28, 'r_botcheck', 'Bot check failed');
+INSERT INTO `" . DB_TBL_ALERT_WARNINGS . "` VALUES(29, 'errorsendingemail', 'Welcome. We had a problem sending you a welcome email but you are logged in');
+INSERT INTO `" . DB_TBL_ALERT_WARNINGS . "` VALUES(30, 'forgotpswdsent', 'A new password has been emailed to your registered email address.');
+INSERT INTO `" . DB_TBL_ALERT_WARNINGS . "` VALUES(31, 'emailnotexist', 'That email address did not exist in our system.');
+INSERT INTO `" . DB_TBL_ALERT_WARNINGS . "` VALUES(32, 'contactsent', 'Thankyou for contacting us. We will be in touch shortly.');
 
 
 INSERT INTO `" . DB_TBL_LOG_SHORTCODES . "` VALUES('ALI', 'Attempt to login');
@@ -301,7 +306,7 @@ INSERT INTO `" . DB_TBL_MEMBER_PROFILE_ARGUMENTS . "` VALUES(3, 'm_email', 'Emai
 		$mem_email = $posty['your_email'];
 		
 		$member = new Member();
-		$post_array = array('m_username' => $mem_username, 'm_email' => $mem_email, 'm_password' => $mem_password, 'm_level' => '10', 'mp_fname' => "Base", 'mp_lname' => "Admin");
+		$post_array = array('m_username' => $mem_username, 'm_email' => $mem_email, 'm_password' => $mem_password, 'm_level' => '10', 'm_fname' => "Base", 'm_lname' => "Admin");
 		$member->updateUser($post_array,'A');
 		
 		echo "<p><h4 class='alert alert_success'>Admin user created succesfully</h4></p>";

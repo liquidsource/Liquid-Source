@@ -221,6 +221,14 @@ class Member {
 	    $_SESSION['_mtype'] = "E";
 		return 0;
 	}
+	public static function getMidFromEmail($email) {
+		$rs = mq("select mid from " . DB_TBL_MEMBER_PROFILE . " where mp_val='$email' and mpa_sc='m_email'");
+		if(mnr($rs) > 0) {
+			$rw = mfa($rs);
+			return $rw['mid'];
+		}
+		return 0;
+	}
 	
 	/* PRIVATE FUNCTIONS */
 	public static function isCorrectPassword($pswd,$_hash) {

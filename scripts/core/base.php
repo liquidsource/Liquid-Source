@@ -9,11 +9,18 @@
  * FORM BOT PROTECTIONS FUNCTIONS
  */
 function checkFormBot($arr) {
+	$nohtml = "";
 	if($_GET['g_timeloaded'] != $_POST['p_timeloaded']) return true;
 	if($_POST['aformfield'] != "") return true;
 	
 	extract($arr);
-	if($timecheck > 0) { if(time() - $_GET['p_timeloaded'] < $timecheck) return true; }
+	if($timecheck > 0) {
+		if(isset($_GET['g_timeloaded'])) {
+			if(time() - $_GET['g_timeloaded'] < $timecheck) return true;
+		} else {
+			return true;
+		}
+	}
 	if($nohtml != "") { if(strlen($nohtml) != striptags(strlen($nohtml))) { return true; } }
 	
 	return checkBotFromUserAgent();

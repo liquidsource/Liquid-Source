@@ -238,9 +238,15 @@ function getModuleData($module) {
 	
 	if($m_type == "bs") {
 		$fname = "modules/$module.php";
-		if($inAdmin && substr($module,0,1) == "_") {
-			$fname_pt = substr($module,1);
-			$fname = "../scripts/plugins/" . $fname_pt . ".php";
+		if($inAdmin) {
+			if(substr($module,0,2) == "_p") {
+				$fname_pt = substr($module,2);
+				$fname = "../scripts/plugins/" . $fname_pt . ".php";
+			}
+			if(substr($module,0,2) == "_n") {
+				$fname_pt = substr($module,2);
+				$fname = "../scripts/niche/" . $fname_pt . ".php";
+			}
 		}
 		if(file_exists($fname)) { $incFile = $fname; }
 		else { echo "<p>Error finding module <i>" . $module . ".php</i><p>"; }

@@ -2,21 +2,22 @@
 include("system.php");
 
 $action = strtolower($_GET['action']);
-$to = $_GET['to'];
+if(isset($_GET['to'])) $to = $_GET['to'];
 $datetime = date("Y-m-d H:i:s");
 
 switch ($action) {
+	
     case "login":
 		$username = mres($_POST['username']);
         $password = mres($_POST['password']);
 		
-        $member = new Member();
-		$success = $member->checkLogin($username,$password,'U','../login/','../home/');
-		
-		if(!$success) {
-	        $_SESSION['_mtype'] = "E";
-	        $_SESSION['_msg'] = "loginfailed";
-			$to = "login";
+        $mid = Member::checkLogin($username,$password,'U');
+		if($mid > 0) {
+	        $member = new Member($mid);
+			$member->login();
+			$to = "home";
+		} else {
+			$to = "ex_login";
 		}
         break;
     case "logout":
@@ -35,39 +36,58 @@ switch ($action) {
 	        if($r_password != $r_password_t) { $failed = true; $_SESSION['_msg'] = "r_passwordmatch"; }
 	        if($r_email != $r_email_t) { $failed = true; $_SESSION['_msg'] = "r_emailmatch"; }
 	        
-			$member = new Member();
-			$post_array = array('m_username' => $r_username, 'm_password' => $r_password, 'm_email' => $r_email, 'mp_fname' => $r_fname, 'mp_lname' => $r_lname);
-	        $mid = $member->updateUser($post_array,'U');
-	        if($mid > 0) {
-	        	//$member->sendUserRegistrationEmail();
-				$member->setCurrentUserIntoSession();
-	        	$_SESSION['_mtype'] = "S";
-				$to = "home";
-	        } else {
-	        	$_SESSION['_mtype'] = "E";
-				$to = "register";
-				foreach($_POST as $arg => $var) { $_SESSION['r_' . $arg] = $val; }
-	        }
+			if(!$failed) {
+				$member = new Member();
+				$post_array = array('m_username' => $r_username, 'm_password' => $r_password, 'm_email' => $r_email, 'm_fname' => $r_fname, 'm_lname' => $r_lname);
+		        $mid = $member->updateUser($post_array,'U');
+		        if($mid > 0) {
+		        	$member->login();
+		        	$member->sendUserRegistrationEmail();
+		        	$_SESSION['_mtype'] = "S";
+					$to = "home/";
+		        } else {
+					$to = "ex_register/";
+					foreach($_POST as $arg => $var) { $_SESSION['r_' . $arg] = $val; }
+		        }
+			}
 		} else {
-        	$failed = true; $_SESSION['_msg'] = "r_botcheck";
+        	$_SESSION['_msg'] = "r_botcheck";
+        	$failed = true;
+		}
+		if($failed) {
+		    $_SESSION['_mtype'] = "E";
+			$to = "ex_register/";
 		}
         break;
     case "forgotpswd":
         $email = $_POST['fgt_email'];
         $aBot = checkFormBot(array('timecheck' => '2'));
-		if(!$aBot) { sendForgotPassword($email); }
+		if(!$aBot) {
+			$mid = Member::getMidFromEmail($email);
+			if($mid > 0) {
+				$member = new Member($mid);
+				$member->sendForgotPassword();
+				$_SESSION['_msg'] = "forgotpswdsent";
+				$_SESSION['_mtype'] = "S";
+				$to = "ex_login";
+			} else {
+				$_SESSION['_msg'] = "emailnotexist";
+				$_SESSION['_mtype'] = "E";
+				$to = "ex_login";
+			} 
+		}
         break;
     case "contactus":
 		$aBot = checkFormBot(array('timecheck' => '2'));
 		if(!$aBot) {
-	        $name = $_POST['cu_namey'];
+	        $name = $_POST['cu_name'];
 	        $email = $_POST['cu_email'];
 	        $message = $_POST['cu_msg'];
 	        
 	        $msg = "Contact page message sent:<br />From: $name<br />Email: $email<br />Their message:<br />$message";
 	        
 			$email = new Email();
-			$email->sendRawEmail(EM_CONTACT_ADDRESS, "$companyName Contact Page", $msg);
+			$email->sendRawEmail(EM_CONTACT_ADDRESS, COMPANY_NAME . " Contact Page", $msg);
 	        $_SESSION['_mtype'] = "S";
 	        $_SESSION['_msg'] = "contactsent";
 		}
