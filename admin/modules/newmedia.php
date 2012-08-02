@@ -7,19 +7,19 @@ if($mdid != "") {
 	$media = new Media();
 }
 ?>
-<form method="post" id="media_frm" action="scripts/action.php?action=newmedia&to=newmedia&mdid=<?php echo $mdid; ?>" enctype="multipart/form-data" onSubmit="return submitForm('admin_media_frm');">
+<form method="post" id="media_frm" action="scripts/action.php?action=newmedia&to=newmedia&mdid=<?php echo $mdid; ?>" enctype="multipart/form-data">
 <article class="module width_full">
     <header><h3>New Media</h3></header>
     <div class="module_content">
         <fieldset>
 	        <label>Media:</label>
-	        <?php if($mdid != "") { ?><?php echo $media->getLocation(array('echo' => true, 'lvl' => '../', 'style' => 'height:100px')); ?><?php } ?>
+	        <?php if($mdid != "") { ?><img src="../<?php echo $media->getLocation(); ?>" style="max-height: 200px" /><?php } ?>
 	        <div class="clear" style="padding:1px;">&nbsp;</div>
 	        <label>Media Location:</label>
 	        <span style="font-family:courier"><?php echo $media->getLocation(); ?></span>
 	        <div class="clear" style="padding:1px;">&nbsp;</div>
 	        <label>New / Update Media:</label>
-	        <input type="file" name="newmedia" id="newmedia" />
+	        <input type="file" name="newmedia" id="newmedia" <?php if($mdid == "") { ?>required<?php } ?> />
 	        <input type="hidden" name="cur_file" id="cur_file" value="<?php echo $media->getLocation(); ?>" />
         </fieldset>
         <fieldset>

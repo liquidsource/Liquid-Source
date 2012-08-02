@@ -1,9 +1,12 @@
 <?php
 class Page {
-    private $data;
+    protected $data=array();
 	
+	/********************/
 	/* PUBLIC FUNCTIONS */
+	/********************/
 	public function __construct($pg_slug=NULL,$pgid=NULL) {
+		$this->data['pgid'] = $pgid;
 		$pluginWClause = false;
 		$wc = "";
 		/* Plugin option */
@@ -49,15 +52,19 @@ class Page {
 		}
 		$this->data[$arg] = $val;
     }
+	
+	/**************************/
+	/* PUBLIC UPDATE FUNCTION */
+	/**************************/
 	public function updatePage($post_array) {
 		foreach($post_array as $arg => $val) { $$arg = mres($val); }
 		
-		if($this->data['isDefault'] == '1') {
-			$pg_slug = $this->data['pg_slug'];
+		if(isset($this->data['isDefault']) && $this->data['isDefault'] == '1') {
+			$sluggy = $this->data['pg_slug'];
 		}
 		else {
-		    if($pg_slug != "") { $sluggy = $pg_slug; } else { $sluggy = $pg_title; }
-			if($sluggy != "") { $pg_slug = strToSlug($sluggy,'page',$this->data['pgid']); }  else { $p_slug = "temp"; }
+		    if($pg_slug != "") { $sluggy = $pg_slug; } else { $sluggy = $pg_meta_title; }
+			if($sluggy != "") { $pg_slug = strToSlug($sluggy,'page',$this->data['pgid']); }  else { $pg_slug = "temp"; }
 		}
 		$post_array['pg_slug'] = $pg_slug;
 	    
@@ -134,13 +141,11 @@ class Page {
 			$_SESSION['_msg'] = "newpage";
 	    }
 		
-		if($pg_type == "tx") {
-			$i=0;
-			foreach($post_array as $arg => $val) {
-				if(substr($arg,0,6) == "md_arg") {
-					$i++;
-	        		$this->insertMetaData($post_array['md_arg_' . $i],$post_array['md_val_' . $i],$i);
-				}
+		$i=0;
+		foreach($post_array as $arg => $val) {
+			if(substr($arg,0,6) == "md_arg") {
+				$i++;
+        		$this->insertMetaData($post_array['md_arg_' . $i],$post_array['md_val_' . $i],$i);
 			}
 		}
 
@@ -148,6 +153,9 @@ class Page {
 		return $pgid;
 	}
 	
+	/************************/
+	/* GET HELPER FUNCTIONS */
+	/************************/
 	public function theShort($size=50) {
 		return mb_substr($this->data['pg_content'],0,$size);
 	}
@@ -158,6 +166,10 @@ class Page {
 		$rw = mfa(mq("select min(pg_createdate) as pub_date where pg_slug='" . $this->data['pg_slug'] . "'"));
 		return $rw['pub_date'];
 	}
+	
+	/***********************/
+	/* META DATA FUNCTIONS */
+	/***********************/
 	public function metaData() {
 		if(isset($this->data['pgid'])) {
 			return getMetaData($this->data['pgid'],'page');
@@ -168,6 +180,9 @@ class Page {
 		insertMetaData($a,$v,$this->data['pgid'],'page',$ui);
 	}
 	
+	/*****************************/
+	/* PAGE ALTERATION FUNCTIONS */
+	/*****************************/
 	public function deletePage() {
 		if(isset($this->data['pgid'])) {
 			$rs = mq("update " . DB_TBL_PAGES . " set pg_active='0' where pgid='" . $this->data['pgid'] . "'");
@@ -186,8 +201,11 @@ class Page {
 			$rs = mq("update " . DB_TBL_PAGES . " set pg_active='1' where pgid='" . $this->data['pgid'] . "'");
 		}
 	}
-	
-	
+
+
+	/*********************/
+	/* STATIC FUNCTIONS */
+	/*********************/
 	public static function emptyTrash() {
 		$rs = mq("select pgid from " . DB_TBL_PAGES . " where pg_active='0'");
 		while($rw = mfa($rs)) {
@@ -196,11 +214,11 @@ class Page {
 		}
 	}
 	public static function numberTrashItems() {
-		$rw = mfa(mq("select count(pgid) as n from " . DB_TBL_PAGES . " where pg_active='0'"));
+		$rw = mfa(mq("select count(pgid) as n from " . DB_TBL_PAGES . " where pg_active='0' and pg_posttype != 'inherit'"));
 		return $rw['n'];
 	}
 	public static function numberNonTrashItems() {
-		$rw = mfa(mq("select count(pgid) as n from " . DB_TBL_PAGES . " where pg_active='1'"));
+		$rw = mfa(mq("select count(pgid) as n from " . DB_TBL_PAGES . " where pg_active='1' and pg_posttype != 'inherit'"));
 		return $rw['n'];
 	}
 }

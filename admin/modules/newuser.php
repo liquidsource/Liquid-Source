@@ -11,7 +11,7 @@ if($mid != "") {
 <article class="module width_full" id="newuser">
 <header><h3 class="tabs_involved">New / Edit Members</h3></header>
 
-<form method="post" action="scripts/action.php?action=newuser&to=newuser&mid=<?php echo $mid; ?>" id="admin_newuser_frm" onsubmit="return submitForm('admin_newuser_frm');">
+<form method="post" action="scripts/action.php?action=newuser&to=newuser&mid=<?php echo $mid; ?>" id="admin_newuser_frm">
 <input type="hidden" name="cur_mid" id="cur_mid" value="<?php echo $mid; ?>" />
 <div class="tab_container">
     <div class="module_content">

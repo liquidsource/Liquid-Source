@@ -2,6 +2,9 @@
 class Email {
 	public $em_slug, $em_message, $em_message_formatted, $em_to, $em_subject, $em_headers;
 	
+	/********************/
+	/* PUBLIC FUNCTIONS */
+	/********************/
 	public function __construct($slug=NULL,$posty=NULL,$to=NULL,$subject=NULL) {
 		if($slug != NULL) {
 			$this->em_slug = $slug;
@@ -26,9 +29,6 @@ class Email {
 		
 		$this->em_headers = $headers;
 	}
-	public function setEmailTo($to) { $this->em_to = $to; }
-	public function setSubject($subj) { $this->em_subject = $subj; }
-	
 	public function sendEmail() {
 		$validator = new EmailAddressValidator;
 		if ($validator->check_email_address($this->em_to)) {
@@ -49,15 +49,6 @@ class Email {
 		    }
 		}
 		return false;
-	}
-	public function sendRawEmail($to,$subject,$msg) {
-		$this->em_to = $to;
-		$this->em_subject = $subject;
-		$this->em_message = $msg;
-		$this->em_message_formatted = $msg;
-		$this->em_slug = 'temp';
-		
-		$this->sendEmail();
 	}
 	public function addAttachment($file) {
 		if(file_exists($file)) {
@@ -102,6 +93,30 @@ class Email {
 			$this->em_headers = $headers;
 		}
 	}
+	
+	/************************/
+	/* SET HELPER FUNCTIONS */
+	/************************/
+	public function setEmailTo($to) { $this->em_to = $to; }
+	public function setSubject($subj) { $this->em_subject = $subj; }
+	
+	/*********************/
+	/* RAW EMAIL ABILITY */
+	/*********************/
+	public function sendRawEmail($to,$subject,$msg) {
+		$this->em_to = $to;
+		$this->em_subject = $subject;
+		$this->em_message = $msg;
+		$this->em_message_formatted = $msg;
+		$this->em_slug = 'temp';
+		
+		$this->sendEmail();
+	}
+	
+	
+	/*********************/
+	/* PRIVATE FUNCTIONS */
+	/*********************/
 	private function formatEmailMessage($msg=NULL) {
 		if($msg == NULL) $msg = $this->em_message_formatted;
 		

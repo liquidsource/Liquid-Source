@@ -1,9 +1,12 @@
 <?php
 class Link {
-    private $data;
+    protected $data=array();
 	
+	/********************/
 	/* PUBLIC FUNCTIONS */
+	/********************/
 	public function __construct($lid=NULL) {
+		$this->data['lid'] = $lid;
 		if($lid != NULL) {
 			$rs = mq("select * from " . DB_TBL_LINKS . " where lid='$lid'");
 			if(mnr($rs) > 0) {
@@ -34,6 +37,9 @@ class Link {
         $this->data[$arg] = $val;
     }
 	
+	/**************************/
+	/* PUBLIC UPDATE FUNCTION */
+	/**************************/
 	public function updateLink($post_array) {
 		foreach($post_array as $arg => $val) { $$arg = mres($val); }
 		
@@ -65,6 +71,9 @@ class Link {
 		
 	}
 	
+	/*****************************/
+	/* LINK ALTERATION FUNCTIONS */
+	/*****************************/
 	public function deleteLink() {
 		$lid = $this->data['lid'];
 		if($lid > 0) {
@@ -76,6 +85,22 @@ class Link {
 		}
 	}
 	
+	/***********************/
+	/* META DATA FUNCTIONS */
+	/***********************/
+	public function getMetaData() {
+		if(isset($this->data['lid'])) {
+			return getMetaData($this->data['lid'],'link');
+		}
+		return array();
+	}
+	public function insertMetaData($a,$v,$ui) {
+		insertMetaData($a,$v,$this->data['lid'],'link',$ui);
+	}
+	
+	/***************************/
+	/* LINK CATEGORY FUNCTIONS */
+	/***************************/
 	public function categoryArray() {
 		if($this->data['lid'] != "") {
 			return getCategoryArray($this->data['lid'],'link');
@@ -86,16 +111,6 @@ class Link {
 	}
 	public function inCategory($catids) {
 		return inCategory($catids,$this->data['lid'],'link');
-	}
-	public function getMetaData() {
-		if($this->data['lid'] != "") {
-			return getMetaData($this->data['lid'],'link');
-		}
-		return array();
-	}
-	
-	public function insertMetaData($a,$v,$ui) {
-		insertMetaData($a,$v,$this->data['lid'],'link',$ui);
 	}
 }
 ?>

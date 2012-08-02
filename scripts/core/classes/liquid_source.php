@@ -1,5 +1,8 @@
 <?php
 class LS {
+	/********************/
+	/* PUBLIC FUNCTIONS */
+	/********************/
 	public function __construct() {
 		
 	}
@@ -12,8 +15,8 @@ class LS {
 	    extract($arr);
 	    if(isset($num)) { $limit = $num; } else { $limit = " 0,1000"; }
 	    if(isset($category_id)) {
-	        $jc = " inner join " . DB_TBL_CATEGROY_LINK . " c on posts.pid = c.uid ";
-	        $wc = " and c.l_type='post' and cid='$cid' ";
+	        $jc = " inner join " . DB_TBL_CATEGORY_LINK . " c on " . DB_TBL_POSTS . ".pid = c.uid ";
+	        $wc = " and c.l_type='post' and cid='$category_id' ";
 	    }
 		if(!isset($active)) { $wc .= " and p_active='1' "; } else { $wc .= " and p_active='$active' "; }
 		if(!isset($state)) { $wc .= " and p_posttype='published' "; } else {
@@ -121,16 +124,21 @@ class LS {
 	}
 	public static function media($arr=array()) {
 		$wc = "";
+		$jc = "";
 		$orderby = "mdid";
 		$orderdir = "asc";
 		extract($arr);
 	    if(isset($num)) { $limit = $num; } else { $limit = " 0,1000"; }
 		if(!isset($active)) { $wc .= " and md_active='1' "; } else { $wc .= " and md_active='$active' "; }
+		if(isset($category_id)) {
+	        $jc = " inner join " . DB_TBL_CATEGORY_LINK . " c on " . DB_TBL_MEDIA . ".mdid = c.uid ";
+	        $wc = " and c.l_type='media' and cid='$category_id' ";
+	    }
 		
 		/* Plugin option */
 		$plugin_code = "class.liquid_source.media.wc"; include(INCLUDE_PLUGIN_ROOT . "core.php");
 		$ret_arr = array();
-	    $rs = mq("select mdid from " . DB_TBL_MEDIA . " where 1=1 $wc order by $orderby $orderdir limit $limit");
+	    $rs = mq("select distinct " . DB_TBL_MEDIA . ".mdid from " . DB_TBL_MEDIA . " $jc where 1=1 $wc order by $orderby $orderdir limit $limit");
 	    while($rw = mfa($rs)) {
 			$ret = new Media($rw['mdid']);
 			if($ret != "") $ret_arr[] = $ret;

@@ -4,9 +4,11 @@
  */
 
 class Member {
-    private $data=array(), $m_hash, $m_password;
+    protected $data=array(), $m_hash, $m_password;
 	
+	/********************/
 	/* PUBLIC FUNCTIONS */
+	/********************/
 	public function __construct($mid=NULL) {
 		if($mid != "") {
 			$rs = mq("select * from " . DB_TBL_MEMBERS . " where mid='$mid'");
@@ -20,6 +22,8 @@ class Member {
 					$this->data[$rwi['mpa_sc']] = stripslashes($rwi['mp_val']);
 				}
 			}
+		} else {
+			$this->data['mid'] = NULL;
 		}
 	}
 	public function __get($arg) {
@@ -30,7 +34,7 @@ class Member {
         }
     }
     public function __set($arg, $val) {
-        if ($arg == "mid") { return; }
+        if($arg == "mid") { return; }
 		
 		if($this->data['mid'] > 0) {
 	        $val = mres($val);
@@ -51,6 +55,10 @@ class Member {
 			$this->data[$arg] = $val;
 		}
     }
+	
+	/**************************/
+	/* PUBLIC UPDATE FUNCTION */
+	/**************************/
 	public function updateUser($post_array,$m_type='U') {
 		$mid = "";
 		if(isset($this->data['mid'])) $mid = $this->data['mid'];
@@ -62,7 +70,7 @@ class Member {
 			if(!isset($m_username) || !isset($m_password)) { $failed = true; }
 			if(!$failed) {
 				
-				// check email isn't taken
+				// check username isn't taken
 			    $rs = mq("SELECT mid, m_active FROM " . DB_TBL_MEMBERS . " WHERE m_username='$m_username' LIMIT 1");
 			    if(mnr($rs) > 0) {
 			        $rw = mfa($rs);
@@ -75,7 +83,7 @@ class Member {
 			        }
 			    }
 				
-				// insert a new member, check are ok
+				// insert a new member, checks have been done and are ok
 				if(!$failed) {
 					$hash = $this->createUserHash($m_username,$m_password);
 					if(!isset($m_level)) $m_level = 5;
@@ -122,56 +130,7 @@ class Member {
 		}
 		return $mid;
 	}
-	public function login() {
-		foreach($_SESSION as $arg => $var) { unset($_SESSION[$arg]); }
-		$rsu = mq("update " . DB_TBL_MEMBERS . " set m_lastlogin='" . DB_SAFE_DATETIME . "' where mid='" . $this->data['mid'] . "'");
-		$_SESSION['mid'] = $this->data['mid'];
-        $_SESSION['loggedin'] = true;
-        $_SESSION['m_type'] = $this->data['m_type'];
-	}
 	
-	public function sendUserRegistrationEmail() {
-    	$email = new Email('registration',$this->data,$this->data['m_username'],"Welcome to " . COMPANY_NAME);
-    	$success = $email->sendEmail();
-        if($success) {
-            $_SESSION['_msg'] = "welcome";
-            $_SESSION['_mtype'] = "S";
-        } else {
-            $_SESSION['_msg'] = "errorsendingemail";
-            $_SESSION['_mtype'] = "W";
-        }
-	}
-	public function sendForgotPassword() {
-        $pswd = generatePassword(9);
-		$this->data['m_password'] = $pswd;
-		
-		$hash = $this->createUserHash($this->data['m_username'], $pswd);
-        $rsu = mq("update " . DB_TBL_MEMBERS . " set m_hash='$hash' where mid='" . $this->data['mid'] . "'");
-        
-    	$email = new Email('forgot-password',$this->data,$this->data['m_username'],COMPANY_NAME . " Forgotten Password");
-    	$success = $email->sendEmail();
-		return $success;
-	}
-	public function deleteMember() {
-		$rs = mq("update " . DB_TBL_MEMBERS . " set m_active='0' where mid='" . $this->data['mid'] . "'");
-		$_SESSION['_mtype'] = "W";
-		$_SESSION['_msg'] = "deletedmember";
-	}
-    public function changePassword($newPassword) {
-		if($this->data['mid'] > 0) {
-    		$hash = $this->createUserHash($this->data['m_username'], $newPassword);
-			$rsu = mq("update " . DB_TBL_MEMBERS . " set m_hash='$hash' where mid='" . $this->data['mid'] . "'");
-			return true;
-		}
-		return false;
-    }
-	public function removeMember() {
-		$mid = $this->data['mid'];
-		if($mid > 0) {
-			$rs = mq("delete from " . DB_TBL_MEMBERS . " where mid='$mid'");
-			$rs = mq("delete from " . DB_TBL_MEMBER_PROFILE . " where mid='$mid'");
-		}
-	}
 	public function getMemberProfileArray() {
 		$ret = array();
 		$rsi = mq("select * from " . DB_TBL_MEMBER_PROFILE_ARGUMENTS);
@@ -185,7 +144,87 @@ class Member {
 		return $ret;
 	}
 	
-	/* STATIC PUBLIC FUNCTIONS */
+	/**************************/
+	/* MEMBER LOGIN FUNCTIONS */
+	/**************************/
+	public function login() {
+		foreach($_SESSION as $arg => $var) { unset($_SESSION[$arg]); }
+		$rsu = mq("update " . DB_TBL_MEMBERS . " set m_lastlogin='" . DB_SAFE_DATETIME . "' where mid='" . $this->data['mid'] . "'");
+		$_SESSION['mid'] = $this->data['mid'];
+        $_SESSION['loggedin'] = true;
+        $_SESSION['m_type'] = $this->data['m_type'];
+	}
+	public function sendUserRegistrationEmail() {
+		$arr = array('r_username' => $this->data['m_username'], 'r_email' => $this->data['m_email'], 'r_password' => $this->data['password']);
+    	$email = new Email('registration',$arr,$this->data['m_username'],"Welcome to " . COMPANY_NAME);
+    	$success = $email->sendEmail();
+        if($success) {
+            $_SESSION['_msg'] = "welcome";
+            $_SESSION['_mtype'] = "S";
+        } else {
+            $_SESSION['_msg'] = "errorsendingemail";
+            $_SESSION['_mtype'] = "W";
+        }
+	}
+	
+	/*****************************/
+	/* MEMBER PASSWORD FUNCTIONS */
+	/*****************************/
+	public function sendForgotPassword() {
+        $pswd = generatePassword(9);
+		$this->data['m_password'] = $pswd;
+		
+		$hash = $this->createUserHash($this->data['m_username'], $pswd);
+        $rsu = mq("update " . DB_TBL_MEMBERS . " set m_hash='$hash' where mid='" . $this->data['mid'] . "'");
+        
+    	$email = new Email('forgot-password',$this->data,$this->data['m_username'],COMPANY_NAME . " Forgotten Password");
+    	$success = $email->sendEmail();
+		return $success;
+	}
+    public function changePassword($newPassword) {
+		if($this->data['mid'] > 0) {
+    		$hash = $this->createUserHash($this->data['m_username'], $newPassword);
+			$rsu = mq("update " . DB_TBL_MEMBERS . " set m_hash='$hash' where mid='" . $this->data['mid'] . "'");
+			return true;
+		}
+		return false;
+    }
+	public function checkPassword($password) {
+		return Member::isCorrectPassword($password,$this->data['m_hash']);
+	}
+	
+	/*****************************/
+	/* USER ALTERATION FUNCTIONS */
+	/*****************************/
+	public function deleteMember() {
+		$rs = mq("update " . DB_TBL_MEMBERS . " set m_active='0' where mid='" . $this->data['mid'] . "'");
+		$_SESSION['_mtype'] = "W";
+		$_SESSION['_msg'] = "deletedmember";
+	}
+	public function removeMember() {
+		$mid = $this->data['mid'];
+		if($mid > 0) {
+			$rs = mq("delete from " . DB_TBL_MEMBERS . " where mid='$mid'");
+			$rs = mq("delete from " . DB_TBL_MEMBER_PROFILE . " where mid='$mid'");
+		}
+	}
+	
+
+	/*********************/
+	/* STATIC FUNCTIONS */
+	/*********************/
+	public static function getMid() {
+		if(isset($_SESSION['mid'])) return $_SESSION['mid'];
+		return ;
+	}
+	public static function getMidFromEmail($email) {
+		$rs = mq("select mid from " . DB_TBL_MEMBER_PROFILE . " where mp_val='$email' and mpa_sc='m_email'");
+		if(mnr($rs) > 0) {
+			$rw = mfa($rs);
+			return $rw['mid'];
+		}
+		return false;
+	}
 	public static function isLoggedin($m_type='U') {
 		if(!isset($_SESSION['mid'])) return false;
 		if(!isset($_SESSION['loggedin'])) return false;
@@ -196,10 +235,6 @@ class Member {
 	public static function logout() {
 		foreach($_SESSION as $arg => $var) { unset($_SESSION[$arg]); }
         session_destroy();
-	}
-	public static function getMid() {
-		if(isset($_SESSION['mid'])) return $_SESSION['mid'];
-		return ;
 	}
 	public static function checkLogin($u,$p,$m_type="U") {
 		if(!isset($_SESSION['tried'])) { $_SESSION['tried'] = 0; }
@@ -212,26 +247,20 @@ class Member {
 	            }
 			}
 	    }
-		
 		$_SESSION['mid'] = "";
 		$_SESSION['loggedin'] = false;
 		$_SESSION['m_type'] = "";
 	    $_SESSION['tried'] = $_SESSION['tried'] + 1;
 	    $_SESSION['_msg'] = "loginfailed";
 	    $_SESSION['_mtype'] = "E";
-		return 0;
-	}
-	public static function getMidFromEmail($email) {
-		$rs = mq("select mid from " . DB_TBL_MEMBER_PROFILE . " where mp_val='$email' and mpa_sc='m_email'");
-		if(mnr($rs) > 0) {
-			$rw = mfa($rs);
-			return $rw['mid'];
-		}
-		return 0;
+		return false;
 	}
 	
+
+	/*********************/
 	/* PRIVATE FUNCTIONS */
-	public static function isCorrectPassword($pswd,$_hash) {
+	/*********************/
+	private static function isCorrectPassword($pswd,$_hash) {
 		$salt = substr($_hash, 0, 64);
 	    $hash = $salt . $pswd;
 	    

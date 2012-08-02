@@ -12,6 +12,13 @@ $(document).ready(function() {
     });
     $('.slider').slider();
     
+    /* Inline form validation - http://bassistance.de/jquery-plugins/jquery-plugin-validation/ */
+    if(use_form_validation) {
+    	$('form').validate({
+    		
+    	});
+    }
+    
     /* Data tables  - http://datatables.net/ */
     if(use_table_parser) {
 	    $('.dataTable').dataTable({
@@ -33,12 +40,16 @@ $(document).ready(function() {
 	
 	/* Shows google map - http://code.google.com/apis/maps/documentation/javascript/ */
 	if(use_google_maps) {
-		var myOptions = {
-			center: new google.maps.LatLng(-34.397, 150.644),
-			zoom: 8,
-			mapTypeId: google.maps.MapTypeId.ROADMAP
-		};
-		var map = new google.maps.Map(document.getElementById("map_canvas"),myOptions);
+		mpc_name = "map_canvas"
+		map_canvas = $('#' + mpc_name);
+		if(map_canvas.length != 0) {
+			var myOptions = {
+				center: new google.maps.LatLng(-34.397, 150.644),
+				zoom: 8,
+				mapTypeId: google.maps.MapTypeId.ROADMAP
+			};
+			var map = new google.maps.Map(document.getElementById(mpc_name),myOptions);
+		}
 	}
 	
 	/* Shadowbox - http://www.shadowbox-js.com/ */

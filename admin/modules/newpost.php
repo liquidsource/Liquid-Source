@@ -12,7 +12,7 @@ if($pid != "") {
 	$post = new Post();
 }
 ?>
-<form method="post" action="scripts/action.php?action=newpost&to=newpost&pid=<?php echo $pid; ?>" id="admin_post_frm" onsubmit="return submitForm('admin_post_frm');">
+<form method="post" action="scripts/action.php?action=newpost&to=newpost&pid=<?php echo $pid; ?>" id="admin_post_frm">
 <article class="module width_full">
 	<header><h3>Post New Article</h3></header>
     <div class="module_content">

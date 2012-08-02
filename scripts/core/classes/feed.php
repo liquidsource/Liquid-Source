@@ -1,8 +1,10 @@
 <?php
 class Feed {
-    private $datetime, $homepage, $title, $subtitle, $feedurl, $feed_email;
+    protected $datetime, $homepage, $title, $subtitle, $feedurl, $feed_email;
 	
+	/********************/
 	/* PUBLIC FUNCTIONS */
+	/********************/
 	public function __construct($filename=NULL,$typee=NULL) {
 		if($filename != NULL) {
 			$this->datetime = date("D, d M Y H:i:s");
@@ -12,13 +14,24 @@ class Feed {
 			$this->feed_email = EM_FEED_ADDRESS;
 			$homepage = HOMEPAGE;
 			
-			if(substr($homepage,-1,1) != "/") $homepage = $homepage ."/";
+			// Optional to force a slash at the end of homepage if its not give
+			//if(substr($homepage,-1,1) != "/") $homepage = $homepage ."/";
+			
 			$this->homepage = $homepage;
 			
 			$fh = fopen($filename,"w");
 				$headstr = $this->getFeedHead($typee);
 				fwrite($fh, $headstr);
+				
+				/**
+		 		 * Normally you'd append a loop here to run through all the relevant pages / posts / rss items on your site.
+				 * You could pass an id, or an object to getFeedInner() as the 3rd paramter for that funciton to use
+				 */
 				$innerstr = $this->getFeedInner($typee,$fh);
+				/**
+				 * End of loop
+				 */
+				
 				$footerstr = $this->getFeedFooter($typee);
 				fwrite($fh, $footerstr);   
     		fclose($fh);
@@ -75,11 +88,10 @@ class Feed {
 		}
 		return $str;
 	}
-	private function getFeedInner($typee,$fh) {
+	private function getFeedInner($typee,$fh,$obj=NULL) {
 		$homepage = $this->homepage;
 		/**
-		 * Normally you'd append a loop here to run through all the relevant pages on your site
-		 * Needed in loop:
+		 * Needed in this function:
 		 * 	i_title, i_details, i_link, atom_id, i_pubdate
 		 * 
 		 * Also you may need to escape ascii control characters
@@ -88,6 +100,9 @@ class Feed {
 		$str = "";
 		switch($typee) {
 			case "rss":
+				/*
+				 *  example rss date: Sat, 07 Sep 2002 09:42:31 GMT
+				 */
 	            $str = "
 	            <item>
 	                <title><![CDATA[$i_title]]></title>

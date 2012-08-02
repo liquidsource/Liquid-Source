@@ -1,9 +1,12 @@
 <?php
 class Category {
-    private $data;
+    protected $data=array();
 	
+	/********************/
 	/* PUBLIC FUNCTIONS */
+	/********************/
 	public function __construct($cid=NULL) {
+		$this->data['cid'] = $cid;
 		if($cid != NULL) {
 			$rs = mq("select * from " . DB_TBL_CATEGORIES . " where cid='$cid'");
 			if(mnr($rs) > 0) {
@@ -41,6 +44,9 @@ class Category {
         $this->data[$arg] = $val;
     }
 	
+	/**************************/
+	/* PUBLIC UPDATE FUNCTION */
+	/**************************/
 	public function updateCategory($post_array,$c_type='post') {
 		foreach($post_array as $arg => $val) { $$arg = mres($val); }
 		
@@ -62,6 +68,10 @@ class Category {
 		$_SESSION['_mtype'] = "S";
 		return $cid;
 	}
+	
+	/*********************************/
+	/* CATEGORY ALTERATION FUNCTIONS */
+	/*********************************/
 	public function deleteCategory() {
 		$cid = $this->data['cid'];
 		if($cid > 0) {

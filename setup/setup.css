@@ -90,10 +90,10 @@ h4.alert {
   background-repeat:no-repeat !important;
   background-position:10px 50% !important;
 }
-h4.alert_info { background:#b5e5ef url(../images/icons/icn_alert_info.png); }
-h4.alert_warning { background:#f5f3ba url(../images/icons/icn_alert_warning.png); }
-h4.alert_error { background:#f3d9d9 url(../images/icons/icn_alert_error.png); }
-h4.alert_success { background:#e2f6c5 url(../images/icons/icn_alert_success.png); }
+h4.alert_info { background:#b5e5ef url(../images/example_icons/icn_alert_info.png); }
+h4.alert_warning { background:#f5f3ba url(../images/example_icons/icn_alert_warning.png); }
+h4.alert_error { background:#f3d9d9 url(../images/example_icons/icn_alert_error.png); }
+h4.alert_success { background:#e2f6c5 url(../images/example_icons/icn_alert_success.png); }
 @media only screen and (max-width: 768px) {
 }
 @media only screen and (max-width: 480px) {
@@ -156,6 +156,7 @@ label {
   margin-bottom:5px;
   cursor:text;
 }
+label.error { width: 250px; margin-left: 10px; color: #f57f20; }
 input:focus, select:focus, textarea:focus { border:1px solid #f57f20; }
 input:hover, select:hover, textarea:hover { border:1px solid #ffd915; }
 input[type=button]:focus, input[type=button]:hover, input[type=submit]:focus, input[type=submit]:hover { border:none; }

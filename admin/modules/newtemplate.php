@@ -7,7 +7,7 @@ if($pid != "") {
 	$template = new Template();
 }
 ?>
-<form method="post" action="scripts/action.php?action=newtemplate&to=newtemplate&pid=<?php echo $pid; ?>" id="admin_template_frm" onsubmit="return submitForm('admin_template_frm');">
+<form method="post" action="scripts/action.php?action=newtemplate&to=newtemplate&pid=<?php echo $pid; ?>" id="admin_template_frm">
 <article class="module width_full">
     <header><h3>New Email Template</h3></header>
     <div class="module_content">

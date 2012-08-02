@@ -1,11 +1,14 @@
 <?php
 class Post {
-    private $data;
+    private $data=array();
 	
+	/********************/
 	/* PUBLIC FUNCTIONS */
+	/********************/
 	public function __construct($pid=NULL) {
 		$wc = "";
 		if(isset($pid)) { $wc = "pid='$pid' "; }
+		$this->data['pid'] = "";
 		if($wc != "") {
 			if(!Member::isLoggedin('A')) { $wc .= " and p_publisheddate <= '" . date('Y-m-d H:i:s') . "' "; }
 			$rs = mq("select * from " . DB_TBL_POSTS . " where $wc and p_posttype != 'inherit'");
@@ -34,12 +37,16 @@ class Post {
 		}
 		$this->data[$arg] = $val;
     }
+	
+	/**************************/
+	/* PUBLIC UPDATE FUNCTION */
+	/**************************/
 	public function updatePost($post_array,$p_type='post') {
 		$post_array['p_type'] = $p_type;
 		foreach($post_array as $arg => $val) { $$arg = mres($val); }
 		
-	    if($this->data['p_slug'] != "") {  $sluggy = $this->data['p_slug']; } else { $sluggy = $p_title; }
-	    if($sluggy != "") { $p_slug = strToSlug($sluggy,$this->data['p_type'],$this->data['pid']); } else { $p_slug = "temp"; }
+	    if(isset($this->data['p_slug'])) {  $sluggy = $this->data['p_slug']; } else { $sluggy = $p_title; }
+	    if($sluggy != "") { $p_slug = strToSlug($sluggy,$p_type,$this->data['pid']); } else { $p_slug = "temp"; }
 		$post_array['p_slug'] = $p_slug;
 		
 	    if($this->data['pid'] != "") {
@@ -103,7 +110,22 @@ class Post {
 		return $pid;
 	}
 	
+	/************************/
+	/* GET HELPER FUNCTIONS */
+	/************************/
+	public function theShort($size=50) {
+		return mb_substr($this->data['p_content'],0,$size);
+	}
+	public function updatedDate() {
+		return $this->data['p_createDate'];
+	}
+	public function publishedDate() {
+		return $this->data['p_publisheddate'];
+	}
 	
+	/***************************/
+	/* POST CATEGORY FUNCTIONS */
+	/***************************/
 	public function categoryArray() {
 		if($this->data['pid'] != "") {
 			return getCategoryArray($this->data['pid'],'post');
@@ -115,17 +137,13 @@ class Post {
 	public function inCategory($catids) {
 		return inCategory($catids,$this->data['pid'],'post');
 	}
-	public function theShort($size=50) {
-		return mb_substr($this->data['p_content'],0,$size);
-	}
-	public function updatedDate() {
-		return $this->data['p_createDate'];
-	}
-	public function publishedDate() {
-		return $this->data['p_publisheddate'];
-	}
+	
+	/***********************/
+	/* META DATA FUNCTIONS */
+	/***********************/
 	public function metaData() {
 		if(isset($this->data['pid'])) {
+			if(!isset($this->data['p_type'])) $this->data['p_type'] = "post";
 			return getMetaData($this->data['pid'],$this->data['p_type']);
 		}
 		return array();
@@ -134,14 +152,9 @@ class Post {
 		insertMetaData($a,$v,$this->data['pid'],$this->data['p_type'],$ui);
 	}
 	
-	public function deletePost() {
-		if(isset($this->data['pid'])) {
-			$rs = mq("update " . DB_TBL_POSTS . " set p_active='0' where pid='" . $this->data['pid'] . "'");
-			$_SESSION['_mtype'] = "W";
-			$_SESSION['_msg'] = "deletedpost";
-		}
-	}
-	
+	/*************************/
+	/* NEXT / PREV FUNCTIONS */
+	/*************************/
 	public function nextPost($arr=array()) {
 		return $this->prevNext('asc',$arr);
 	}
@@ -173,11 +186,22 @@ class Post {
 		$lowhigh = "<";
 		if($ascdesc == "asc") { $lowhigh = ">"; }
 		
-		$rs = mq("select pid from " . DB_TBL_POSTS . " where p_publisheddate $lowhigh '$curPostDate' and p_posttype='published' $xsql order by p_createdate " . $ascdesc . " limit 0,1");
+		$rs = mq("select pid from " . DB_TBL_POSTS . " where p_publisheddate $lowhigh '$curPostDate' and p_posttype='published' and p_type='post' $xsql order by p_createdate " . $ascdesc . " limit 0,1");
 		$rw = mfa($rs);
 		$retPost = new Post($rw['pid']);
 		
 		return $retPost;		
+	}
+	
+	/*****************************/
+	/* POST ALTERATION FUNCTIONS */
+	/*****************************/
+	public function deletePost() {
+		if(isset($this->data['pid'])) {
+			$rs = mq("update " . DB_TBL_POSTS . " set p_active='0' where pid='" . $this->data['pid'] . "'");
+			$_SESSION['_mtype'] = "W";
+			$_SESSION['_msg'] = "deletedpost";
+		}
 	}
 }
 ?>

@@ -6,21 +6,28 @@
 <tr><td><pre>|- admin</pre><td><em class="noinfo">Deals with the backend admin interface</em></td></tr>
 <tr><td><pre>|- css</pre></td><td></td></tr>
 <tr><td><pre>&nbsp;&nbsp;|- core</pre></td><td><em class="noinfo">Core less and css files for the site</em></td></tr>
-<tr><td><pre>&nbsp;&nbsp;|- packages</pre></td><td><em class="noinfo">Holds the css for optional pre-built packages</em></td></tr>
+<tr><td><pre>&nbsp;&nbsp;&nbsp;&nbsp;|- less_incs</pre></td><td><em class="noinfo">Core less includes</em></td></tr>
+<tr><td><pre>&nbsp;&nbsp;|- packages</pre></td><td><em class="noinfo">Holds the css for optional pre-built packages / libraries</em></td></tr>
 <tr><td><pre>|- dev</pre></td><td><em class="noinfo">Holds any development work, such as photoshop files, specifications etc</em></td></tr>
 <tr><td><pre>|- images</pre></td><td><em class="noinfo">For the images</em></td></tr>
+<tr><td><pre>&nbsp;&nbsp;|- packages</pre></td><td><em class="noinfo">Holds example images for optional pre-build packages / libraries</em></td></tr>
 <tr><td><pre>|- incs</pre></td><td><em class="noinfo">Core include files, including headers, menu and the footer</em></td></tr>
 <tr><td><pre>|- js</pre></td><td></td></tr>
 <tr><td><pre>&nbsp;&nbsp;|- core</pre></td><td><em class="noinfo">Core javascript files</em></td></tr>
 <tr><td><pre>&nbsp;&nbsp;|- libs</pre</td><td><em class="noinfo">Holds the javascript for optional pre-build libraries</em></td></tr>
 <tr><td><pre>|- modules</pre></td><td><em class="noinfo">Holds all the sites modules</em></td></tr>
 <tr><td><pre>|- scripts</pre></td><td><em class="noinfo"></em></td></tr>
-<tr><td><pre>&nbsp;&nbsp;|- classes</pre></td><td><em class="noinfo">All core site classes</em></td></tr>
 <tr><td><pre>&nbsp;&nbsp;|- config</pre></td><td><em class="noinfo">The site config file that is used by the system. You would have changed this already</em></td></tr>
 <tr><td><pre>&nbsp;&nbsp;|- core</pre></td><td><em class="noinfo">A collection of Liquid Source core php function files</em></td></tr>
+<tr><td><pre>&nbsp;&nbsp;&nbsp;&nbsp;|- classes</pre></td><td><em class="noinfo">All core site classes</em></td></tr>
+<tr><td><pre>&nbsp;&nbsp;&nbsp;&nbsp;|- packages</pre></td><td><em class="noinfo">All optional package php files</em></td></tr>
+<tr><td><pre>&nbsp;&nbsp;|- extensions</pre></td><td><em class="noinfo">Holding folder for any niche site files</em></td></tr>
+<tr><td><pre>&nbsp;&nbsp;&nbsp;&nbsp;|- niche</pre></td><td><em class="noinfo">Holding folder for any niche site files</em></td></tr>
+<tr><td><pre>&nbsp;&nbsp;&nbsp;&nbsp;|- plugin</pre></td><td><em class="noinfo">Holding folder for any plugins</em></td></tr>
 <tr><td><pre>|- setup</pre></td><td><em class="noinfo">After setup this folder can be deleted. Used to setup the site.</em></td></tr>
 <tr><td><pre>|- uploads</pre></td><td><em class="noinfo">A folder to hold all media uploads. You should have enabled write permissions on this folder.</em></td></tr>
 <tr><td><pre>&nbsp;&nbsp;|- js_css_cache</pre></td><td><em class="noinfo">This holds all the js and css compiled code.</em></td></tr>
+<tr><td><pre>&nbsp;&nbsp;|- media</pre></td><td><em class="noinfo">This holds all media that gets uploaded to the site.</em></td></tr>
 </table>
 
 
@@ -35,8 +42,9 @@
 <p>to get the relevant text page content. In the base setup 'Login' and 'Register' are examples of bespoke pages, and 'About Us' is an example text page.</p>
 
 <p><strong>But how does the system know what to load up?</strong></p>
-<p>In the backend admin you can create pages and define them as bespoke or text. Just remember to set the page slug as the relevant url 'module slug'. If a page is not specified in the backend
-	the system will still try loading up the page, looking in the 'modules' folder for a bespoke page.</p>
+<p>In the backend admin you can create pages and define them as bespoke or text. When a page loads the system will look at the passed url <code>$_GET['module']</code> attribute, and see if a page has been created with
+	that has the <code>'slug'</code>. If so it will see if it is text, or bespoke and carry out the relevant functions.</p>
+<p>If a page is not specified in the backend the system will still try loading up the page, looking in the 'modules' folder for a bespoke page.</p>
 
 <h2>CSS and LESS</h2>
 <p>Liquid Source utilises the amazing work of Alexis Sellier and uses the LESS CSS framework. If you are unfamliar with LESS we suggest you check out the documentation on the LESS page that can be found
@@ -53,7 +61,7 @@
 <p>One of your first stops in the Backend Admin will be <em>'Admin > Site Options'</em> (located near the bottom of the menu). Here you can define a large portion of the meta tag information and
 	site options. This information is passed into every page and the page head section is built up bespokely for that page.</p>
 <p>For people who require more complex meta tagging your port of call will be the file located at</p>
-<ul><li><pre>scripts/functions/page_structure.php</pre></li></ul>
+<ul><li><pre>scripts/core/page_structure.php</pre></li></ul>
 <p>This file sorts out the css, javascript includes, page meta and the module loading mechanism.</p>
 
 
@@ -70,19 +78,19 @@
 	<li><pre style='display:inline'>Post</pre> - for displaying and echoing out posts.</li>
 	<li><pre style='display:inline'>Page</pre> - for displaying and echoing out pages.</li>
 	<li><pre style='display:inline'>Template</pre> - for building email templates than can be used to send base emails.</li>
-	<li><pre style='display:inline'>Menu</pre> - for storing and displaying menu structures for the site.</li>
 </ul>
-<p>As well as additional core classes. Documentation on how to use the classes is included in your core documentation.</p>
 
 <h2>Pre-Installed Packages and Modules</h2>
 <p>One the major advantages to Liquid Source is its initial group of core packages that come with the system, allowing the developer to save time and effort in figuring out and including
-	base elements again and again. All the packages can be seen from the <a href="elements/">Elements Page</a>, and more information is included in the core documentation. A list of included items is below:</p>
+	base elements again and again. All the packages can be seen from the <a href="elements/">Elements Page</a>, and more information is included in the core documentation.</p>
+<p>A large majority of these can be turned on / off in the <i>Admin > Site Options</i> as desired. A list of included items is below:</p>
 	
 <strong>Javascript Libraries</strong>
 <ul style="margin-left:20px">
 	<li>Jquery (v1.7.1 <a href="http://www.jquery.com/">here</a>)</li>
-	<li>Modernizr (v2.5.3 - <a href="http://www.modernizr.com/">here</a>)</li>
+	<li>Modernizr (v2.6.1 - <a href="http://www.modernizr.com/">here</a>)</li>
 	<li>Respond (<a href="https://github.com/scottjehl/Respond">here</a>)</li>
+	<li>JQuery Form Validation (<a href="http://bassistance.de/jquery-plugins/jquery-plugin-validation/">here</a>)</li>
 </ul>
 
 <strong>GUI Elements</strong>
@@ -118,7 +126,7 @@
 	we use Modernizr v2.5.3.</p>
 <p>The reset.css, .htaccess and web.config are based on code from HTML Boilerplate. More info <a href="http://html5boilerplate.com/">here</a>.</p>
 <p>All emails sent out via the email class are processed through a HTML Email boilerplate class, based on knowledge from <a href="http://htmlemailboilerplate.com/">here</a>.</p>
-<p>For IE6, we use belatedpng for a transparent png fix. There is also a conditional IE6 stylesheet in the 'css/core' folder.</p>
+<p>For IE6, we use belatedpng for a transparent png fix. There is also a conditional IE6 stylesheet in the <code>'css/core'</code> folder.</p>
 <p>The amazing timthumb.php script is included for generation of image thumbnails (location in 'scripts/functions' folder). More info <a href="http://code.google.com/p/timthumb/">here</a>.</p>
 <p>To aid with responsive layouts we also use Respond.js.</p>
 <p>For processing the LESS files into CSS via PHP we use lessphp v0.3.3 which can be found <a href="http://leafo.net/lessphp/docs/">here</a>.</p>

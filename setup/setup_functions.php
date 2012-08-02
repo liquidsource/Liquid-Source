@@ -246,19 +246,18 @@ INSERT INTO `" . DB_TBL_SITE_OPTIONS . "` VALUES('', 'EM_WIDTH', '600px', '0000-
 INSERT INTO `" . DB_TBL_SITE_OPTIONS . "` VALUES('', 'EM_FROM_NAME', 'This Company', '0000-00-00 00:00:00', 'define', 0, 'Email', '');
 INSERT INTO `" . DB_TBL_SITE_OPTIONS . "` VALUES('', 'EM_FROM_EMAIL', 'no-reply@thiscompany.com', '0000-00-00 00:00:00', 'define', 0, 'Email', '');
 INSERT INTO `" . DB_TBL_SITE_OPTIONS . "` VALUES('', 'EM_HOME_PAGE', 'http://www.site.com/', '0000-00-00 00:00:00', 'define', 0, 'Email', '');
-INSERT INTO `" . DB_TBL_SITE_OPTIONS . "` VALUES('', 'EM_LOGOURL', 'http://www.site.com/logo.png', '0000-00-00 00:00:00', 'define', 0, 'Email', '');
+INSERT INTO `" . DB_TBL_SITE_OPTIONS . "` VALUES('', 'EM_LOGOURL', 'http://www.site.com/images/logo.png', '0000-00-00 00:00:00', 'define', 0, 'Email', '');
 INSERT INTO `" . DB_TBL_SITE_OPTIONS . "` VALUES('', 'EM_HEADER_COLOR', '#0093cb', '0000-00-00 00:00:00', 'define', 0, 'Email', '');
 INSERT INTO `" . DB_TBL_SITE_OPTIONS . "` VALUES('', 'EM_LINK_COLOR', '#666', '0000-00-00 00:00:00', 'define', 0, 'Email', '');
 INSERT INTO `" . DB_TBL_SITE_OPTIONS . "` VALUES('', 'EM_LINK_HOVER_COLOR', '#333', '0000-00-00 00:00:00', 'define', 0, 'Email', '');
 INSERT INTO `" . DB_TBL_SITE_OPTIONS . "` VALUES('', 'HOMEPAGE', 'http://www.site.com/', '0000-00-00 00:00:00', 'define', 0, 'Core', '');
-INSERT INTO `" . DB_TBL_SITE_OPTIONS . "` VALUES('', 'BASE_HREF', '/template/', '0000-00-00 00:00:00', 'define', 0, 'Core', '');
 INSERT INTO `" . DB_TBL_SITE_OPTIONS . "` VALUES('', 'COMPANY_NAME', 'This Company', '0000-00-00 00:00:00', 'define', 0, 'Core', '');
 INSERT INTO `" . DB_TBL_SITE_OPTIONS . "` VALUES('', 'SITE_NAME', 'This Site', '0000-00-00 00:00:00', 'define', 0, 'SEO', '');
 INSERT INTO `" . DB_TBL_SITE_OPTIONS . "` VALUES('', 'SUB_TITLE', 'The coolest new site on the block', '0000-00-00 00:00:00', 'define', 0, 'SEO', '');
 INSERT INTO `" . DB_TBL_SITE_OPTIONS . "` VALUES('', 'PROJECT_NAME', 'Project Name', '0000-00-00 00:00:00', 'define', 0, 'SEO', '');
 INSERT INTO `" . DB_TBL_SITE_OPTIONS . "` VALUES('', 'PROJECT_ABOUT', 'What the project is about', '0000-00-00 00:00:00', 'define', 0, 'SEO', '');
 INSERT INTO `" . DB_TBL_SITE_OPTIONS . "` VALUES('', 'SITE_CATEGORY', '', '0000-00-00 00:00:00', 'define', 0, 'SEO', '');
-INSERT INTO `" . DB_TBL_SITE_OPTIONS . "` VALUES('', 'LOGO_URL', 'logo.png', '0000-00-00 00:00:00', 'define', 0, 'Core', '');
+INSERT INTO `" . DB_TBL_SITE_OPTIONS . "` VALUES('', 'LOGO_URL', 'images/logo.png', '0000-00-00 00:00:00', 'define', 0, 'Core', '');
 INSERT INTO `" . DB_TBL_SITE_OPTIONS . "` VALUES('', 'FACEBOOK_APP_ID', '', '0000-00-00 00:00:00', 'define', 0, 'Social', '');
 INSERT INTO `" . DB_TBL_SITE_OPTIONS . "` VALUES('', 'FACEBOOK_PAGE_URL', '', '0000-00-00 00:00:00', 'define', 0, 'Social', '');
 INSERT INTO `" . DB_TBL_SITE_OPTIONS . "` VALUES('', 'GOOGLE_PLUS_PAGE_ID', '', '0000-00-00 00:00:00', 'define', 0, 'Social', '');
@@ -280,6 +279,7 @@ INSERT INTO `" . DB_TBL_SITE_OPTIONS . "` VALUES('', 'USE_TOOLTIPS', 'true', '00
 INSERT INTO `" . DB_TBL_SITE_OPTIONS . "` VALUES('', 'USE_SHADOWBOX', 'true', '0000-00-00 00:00:00', 'define', 0, 'Modules', 'bool');
 INSERT INTO `" . DB_TBL_SITE_OPTIONS . "` VALUES('', 'USE_FLEX_SLIDER', 'true', '0000-00-00 00:00:00', 'define', 0, 'Modules', 'bool');
 INSERT INTO `" . DB_TBL_SITE_OPTIONS . "` VALUES('', 'USE_BX_SLIDER', 'true', '0000-00-00 00:00:00', 'define', 0, 'Modules', 'bool');
+INSERT INTO `" . DB_TBL_SITE_OPTIONS . "` VALUES('', 'USE_FORM_VALIDATION', 'true', '0000-00-00 00:00:00', 'define', 0, 'Modules', 'bool');
 INSERT INTO `" . DB_TBL_SITE_OPTIONS . "` VALUES('', 'LIQUID_SOURCE_VERSION', '1.0.0', '0000-00-00 00:00:00', 'define', 0, '', '');
 INSERT INTO `" . DB_TBL_SITE_OPTIONS . "` VALUES('', 'FORCE_RECREATE', 'true', '0000-00-00 00:00:00', 'define', 0, '', 'bool');
 INSERT INTO `" . DB_TBL_SITE_OPTIONS . "` VALUES('', 'SITE_AUTHOR', '', '0000-00-00 00:00:00', 'define', 0, 'SEO', '');
@@ -313,7 +313,7 @@ INSERT INTO `" . DB_TBL_MEMBER_PROFILE_ARGUMENTS . "` VALUES(3, 'm_email', 'Emai
 		
 		if(NICHE_SITE != "") {
 			register_niche_site(NICHE_SITE);
-			$fname = INCLUDE_WEB_ROOT . "scripts/niche/" . NICHE_SITE . "_install.php";
+			$fname = INCLUDE_WEB_ROOT . "scripts/extensions/niche/" . NICHE_SITE . "_install.php";
 			if(file_exists($fname)) {
 				include($fname);
 				$func = NICHE_SITE . "_install";

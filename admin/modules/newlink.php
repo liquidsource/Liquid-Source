@@ -7,7 +7,7 @@ if($lid != "") {
 	$link = new Link();
 }
 ?>
-<form method="post" action="scripts/action.php?action=newlink&to=newlink&lid=<?php echo $lid; ?>" id="admin_link_frm" onsubmit="return submitForm('admin_link_frm');">
+<form method="post" action="scripts/action.php?action=newlink&to=newlink&lid=<?php echo $lid; ?>" id="admin_link_frm">
 <article class="module width_full">
     <header><h3>New Link</h3></header>
     <div class="module_content">

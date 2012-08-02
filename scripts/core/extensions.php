@@ -2,7 +2,7 @@
 function check_plugin_install($pluginname) {
 	$rs = mq("select * from " . DB_TBL_OPTIONS . " where op_section='installedplugin' and op_arg='installedplugin' and op_val='$pluginname'");
 	if(mnr($rs) == 0)  {
-		$fname = INCLUDE_WEB_ROOT . "scripts/plugins/" . $pluginname . "/install.php";
+		$fname = INCLUDE_WEB_ROOT . "scripts/extensions/plugins/" . $pluginname . "/install.php";
 		if(file_exists($fname)) {
 			include($fname);
 			$rsi = mq("insert into " . DB_TBL_OPTIONS . " (op_section,op_arg,op_val) values ('installedplugin','installedplugin','$pluginname')");

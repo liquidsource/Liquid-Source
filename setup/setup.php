@@ -29,14 +29,15 @@ if($dbconnexfailed || (isset($_GET['dbconnection']) && $_GET['error'] == "dbconn
 		<link rel="apple-touch-icon" href="../apple-touch-icon-precomposed.png" />
 	    <link rel="stylesheet" href="../css/core/reset.css" />
 	    <link rel="stylesheet" href="setup.css" />
+	    <link rel="stylesheet" type="text/css" href="http://serprest.pt/jquery/ht5ifv/ht5ifv.css" />
 	    <!--[if lt IE 7 ]>
 	    <link rel="stylesheet" href="css/core/ie6.css" />
 	    <![endif]-->
 	    
-	    <script src="../js/libs/modernizr-2.0.6.min.js"></script>
+	    <script src="../js/libs/modernizr-latest.js"></script>
 	    <script src="../js/libs/respond.min.js"></script>
 	    <script src="../js/libs/latest_jquery.min.js"></script>
-	    <script src="../js/core/ls_forms.js"></script>
+	    <script src="http://ajax.aspnetcdn.com/ajax/jquery.validate/1.9/jquery.validate.js"></script>
     </head>
 <!--[if lt IE 7 ]> <body class="ie6"> <![endif]--> 
 <!--[if IE 7 ]>    <body class="ie7"> <![endif]--> 
@@ -57,17 +58,17 @@ if($dbconnexfailed || (isset($_GET['dbconnection']) && $_GET['error'] == "dbconn
 	        <?php if($failedDB) { ?>
 		        <p><strong>Oh no!</strong></p>
 		        <p>It doesn't look as though you've completed your core site config file, or the database connection details are incorrect.</p>
-		        <p>We need you to provide the database details in this file to setup Liquid Source. There's
-		        	more information and a walkthrough in the <a href="../../docs/readme.html">ReadMe documentation</a>.</p>
+		        <p>We need you to provide the database details in this file to setup Liquid Source.</p>
+		        <p>You can change these in the file <code>scripts/config/site_config.php</code>.</p>
 		        <p> ... <a href="setup.php">ok I've done that, lets try again</a> ...</p>
 	        <?php } elseif($failedWriteable) { ?>
 	        	<p><strong>Oh no!</strong></p>
-	        	<p>You need to allow Liquid Source write access to the following folders to complete setup:</p>
-	        	<code>/uploads/</code>
-	        	<p>One or some of these folders aren't writeable.</p>
-	        	<p> ... <a href="setup.php">ok I've done that, lets try again</a> ...</p>
+	        	<p>You need to allow Liquid Source write access to the following folder to complete setup:</p>
+	        	<code>uploads/</code>
+	        	<p>This folder, or one of its children, aren't writeable.</p>
+	        	<p> ... <a href="setup.php">ok I've changed that, lets try again</a> ...</p>
 	        <?php } else { ?>
-		        <form method="post" action="setup_action.php" onsubmit="return submitForm('ls_setup_form');" name="ls_setup_form" id="ls_setup_form" />
+		        <form method="post" action="setup_action.php" autocomplete="off" />
 		        	<input type="hidden" name="setup_from" id="setup_from" value="ls_setup_real" />
 			        <p>Welcome to the Liquid Source setup. You may wish to peruse the <a href="../../docs/readme.html">ReadMe documentation</a>, otherwise just fill in the form below and we'll
 			        	setup the base site for you.</p>
@@ -79,13 +80,13 @@ if($dbconnexfailed || (isset($_GET['dbconnection']) && $_GET['error'] == "dbconn
 			        	<i class='sub_info'>Usernames are case sensitive and can only contain alphanumeric characters (A-Z, 0-9) or an underscore.</i>
 			        	
 			        </fieldset>
-			        <fieldset><label for="admin_password">Admin password</label><input type="password" name="admin_password" id="admin_password" required /></fieldset>
+			        <fieldset><label for="admin_password">Admin password</label> <input type="password" name="admin_password" id="admin_password" required /></fieldset>
 			        <fieldset>
-			        	<label for="admin_password_r">Re-type password</label><input type="password" name="admin_password_r" id="admin_password_r" required /><br />
+			        	<label for="admin_password_r">Re-type password</label> <input type="password" name="admin_password_r" id="admin_password_r" required /><br />
 			        	<i class='sub_info'>Password are also case sensitive and can only contain alphanumeric characters (A-Z, 0-9) or an underscore.</i>
 			        </fieldset>
 			        <hr />
-			        <fieldset><label for="your_email">Your email</label><input type="email" name="your_email" id="your_email" required /></fieldset>
+			        <fieldset><label for="your_email">Your email</label> <input type="email" name="your_email" id="your_email" required /></fieldset>
 			        <hr />
 			        <input type="submit" value="Ok lets go" class="bluebtn action" style="margin-top:30px" />
 		        </form>
@@ -105,6 +106,31 @@ if($dbconnexfailed || (isset($_GET['dbconnection']) && $_GET['error'] == "dbconn
 <script src="js/libs/dd_belatedpng.js"></script>
 <script>DD_belatedPNG.fix('img, .png_bg');</script>
 <![endif]-->
+<script>
+$(document).ready(function(){
+	$('form').validate({
+		rules: {
+			admin_username: {
+				required: true,
+				minlength: 3
+			},
+			admin_password: {
+				required: true,
+				minlength: 6
+			},
+			admin_password_r: {
+				required: true,
+				minlength: 6,
+				equalTo: "#admin_password"
+			},
+			your_email: {
+				required: true,
+				email: true
+			}
+		}
+	});
+});
+</script>
 </body>
 </html>
 	

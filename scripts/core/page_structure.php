@@ -1,20 +1,4 @@
 <?php
-/* Called at the top of every page. Gets the current module or default one if a module is not passed */
-function getModule($module) {
-    if(empty($module)) {
-        $rs = mq("select pg_slug from " . DB_TBL_PAGES . " where isDefault='1' and isAdmin='0' order by pgid asc");
-        if(mnr($rs) > 0) {
-        	$rw = mfa($rs);
-        	$module = $rw['pg_slug']; 
-		} else { echo "Error 101. No defualt module chosen."; die; }
-    }
-	
-	if(Member::isLoggedin('A')) return $module;
-	$page = new Page($module);
-	if($page->pgid == "") return "404";
-	return $module;
-}
-
 /* This echos out all the text upto and including the body tag. Sets up all JS and CSS that is needed at the top. */
 function topPage($module) {
 	$description = getMetaInfo($module,'description');
@@ -71,35 +55,10 @@ function topPage($module) {
 	";
 }
 
-/* Styles and JS tags */
+/* Styles and JS tags that are to be included before the body tag */
 function stylesAndJsTop($module) {
-	/* This checks if any css (or less) files have changed and creates a new minified css file if needed */
-	$css_name_a = md5_of_dir('css/core/');
-	$css_name_b = md5_of_dir('css/core/less_incs/');
-	$css_name_c = md5_of_dir('css/packages/');
-	$css_name = md5($css_name_a . $css_name_b . $css_name_c);
-	if(!file_exists("uploads/js_css_cache/" . $css_name . ".css" ) || FORCE_RECREATE == "1") {
-		delete_old_md5s("uploads/js_css_cache/");
-		
-		require 'scripts/classes/lessphp/lessc.inc.php';
-			$less = new lessc('css/core/master.less');
-			file_put_contents('uploads/js_css_cache/_master.css', $less->parse());
-			$less = new lessc('css/core/forms.less');
-			file_put_contents('uploads/js_css_cache/_forms.css', $less->parse());
-			$less = new lessc('css/core/print.less');
-			file_put_contents('uploads/js_css_cache/print.css', $less->parse());
-		
-		$str = file_get_contents("css/core/reset.css");
-		$str .= file_get_contents("uploads/js_css_cache/_master.css");
-	    $str .= file_get_contents("uploads/js_css_cache/_forms.css");
-		if(USE_TABLE_PARSER) { $str .= file_get_contents("css/packages/dataTables.css"); }
-		if(USE_TOOLTIPS) { $str .= file_get_contents("css/packages/tooltips.css"); }
-		if(USE_SHADOWBOX) { $str .= file_get_contents("css/packages/shadowbox.css"); }
-		if(USE_FLEX_SLIDER) { $str .= file_get_contents("css/packages/flexslider.css"); }
-		
-		$fh = fopen("uploads/js_css_cache/$css_name.css","w");
-		fwrite($fh,$str);
-	}
+	
+	$css_name = createMergedCSS();
     echo "<link href=\"uploads/js_css_cache/$css_name.css\" rel=\"stylesheet\" type=\"text/css\" media=\"screen\" />\n\r";
     echo "<link href=\"uploads/js_css_cache/print.css\" rel=\"stylesheet\" type=\"text/css\" media=\"print\" />\n\r";
 	echo "<link rel=\"stylesheet\" href=\"http://ajax.googleapis.com/ajax/libs/jqueryui/1.8.16/themes/base/jquery-ui.css\" type=\"text/css\" media=\"all\" />\n\r";
@@ -119,13 +78,32 @@ function stylesAndJsTop($module) {
     <!--[if lt IE 7 ]>
     <link rel=\"stylesheet\" href=\"css/core/ie6.css\" />
     <![endif]-->
-    ";
     
-    echo "
-    <script src=\"js/libs/modernizr-2.5.3.min.js\"></script>
+    <script src=\"js/libs/modernizr-latest.js\"></script>
     <script src=\"js/libs/respond.min.js\"></script>
    	";
 
+}
+
+/* Open Graph Information. See http://ogp.me/ for more info */
+function openGraphInfo($module) {
+	echo "
+	<meta property=\"og:site_name\" content=\"" . SITE_NAME . "\" />
+	<meta property=\"og:type\" content=\"" . SITE_CATEGORY . "\" />
+	<meta property=\"og:title\" content=\"" . getMetaInfo($module,'title') . "\" />
+	<meta property=\"og:url\" content=\"" . curPageURL() . "\" />
+	<meta property=\"og:description\" content=\"" . getMetaInfo($module,'description') . "\" />
+    ";
+}
+
+/* A function to get the meta information from the page you are currently on */
+function getMetaInfo($module,$ret) {
+	$rs = mq("select pg_meta_$ret as n from " . DB_TBL_PAGES . " where pg_slug='$module'");
+    if(mnr($rs)>0) {
+        $rw = mfa($rs); return $rw['n'];
+    } else {
+        if($module == "home") { } else { return getMetaInfo("home",$ret); }
+    }
 }
 
 /* This echos out all the tags that are placed beneath the final html visual code. Ie most JS is placed here */
@@ -136,28 +114,12 @@ function bottomPage($module) {
     <script src=\"http://ajax.googleapis.com/ajax/libs/jqueryui/1.8.16/jquery-ui.min.js\"></script>
     ";
 	
-	$js_name = md5_of_dir('js/core/');
-	if(!file_exists("uploads/js_css_cache/" . $js_name . ".js") || FORCE_RECREATE == "1") {
-		delete_old_md5s("uploads/js_css_cache/");
-		$str = getParserJavascript();
-		$str .= file_get_contents("js/core/general.js");
-		$str .= file_get_contents("js/core/ls_forms.js");
-		if(USE_TOOLTIPS) { $str .= file_get_contents("js/libs/tooltips.js"); }
-		if(USE_SHADOWBOX) { $str .= file_get_contents("js/libs/shadowbox.js"); }
-		if(USE_FLEX_SLIDER) { $str .= file_get_contents("js/libs/jquery.flexslider-min.js"); }
-		
-		include_once("scripts/classes/core/js_minify.php");
-		$js = JSMin::minify($str);
-		
-		$fh = fopen("uploads/js_css_cache/$js_name.js","w");
-		fwrite($fh,$js);
-		
-		$rs = mq("update " . DB_TBL_SITE_OPTIONS . " set so_val='false' where so_arg='FORCE_RECREATE'");
-	}
+	$js_name = createMergedJs();
     echo "<script src=\"uploads/js_css_cache/$js_name.js\"></script>\n\r";
 	
 	if(USE_BX_SLIDER) { echo "<script src=\"http://bxslider.com/sites/default/files/jquery.bxSlider.min.js\"></script>\n\r"; }
 	if(USE_TABLE_PARSER) { echo "<script src=\"http://ajax.aspnetcdn.com/ajax/jquery.dataTables/1.8.2/jquery.dataTables.min.js\"></script>\n\r"; }
+	if(USE_FORM_VALIDATION) { echo "<script src=\"http://ajax.aspnetcdn.com/ajax/jquery.validate/1.9/jquery.validate.js\"></script>\n\r"; }
 	
 	echo "
     <!--[if lt IE 7 ]>
@@ -201,75 +163,5 @@ function bottomPage($module) {
 		</body>
 		</html>
 	";
-}
-
-/* Open Graph Information. See http://ogp.me/ for more info */
-function openGraphInfo($module) {
-	echo "
-	<meta property=\"og:site_name\" content=\"" . SITE_NAME . "\" />
-	<meta property=\"og:type\" content=\"" . SITE_CATEGORY . "\" />
-	<meta property=\"og:title\" content=\"" . getMetaInfo($module,'title') . "\" />
-	<meta property=\"og:url\" content=\"" . curPageURL() . "\" />
-	<meta property=\"og:description\" content=\"" . getMetaInfo($module,'description') . "\" />
-    ";
-}
-
-/* A function to get the meta information from the page you are currently on */
-function getMetaInfo($module,$ret) {
-	$rs = mq("select pg_meta_$ret as n from " . DB_TBL_PAGES . " where pg_slug='$module'");
-    if(mnr($rs)>0) {
-        $rw = mfa($rs); return $rw['n'];
-    } else {
-        if($module == "home") { } else { return getMetaInfo("home",$ret); }
-    }
-}
-
-/* The main body of the page is passed through this function. It takes a module as a parameter and ensures that the file exists. */
-function getModuleData($module) {
-	global $inAdmin;
-	$page = new Page($module);
-	$m_type = "bs";
-	if($page->pgid != "") {
-		$m_type = $page->pg_type;
-	}
-	/* Plugin option */
-	$plugin_code = "page_structure.module";
-	include(INCLUDE_PLUGIN_ROOT . "core.php");
-	
-	if($m_type == "bs") {
-		$fname = "modules/$module.php";
-		if($inAdmin) {
-			if(substr($module,0,2) == "_p") {
-				$fname_pt = substr($module,2);
-				$fname = "../scripts/plugins/" . $fname_pt . ".php";
-			}
-			if(substr($module,0,2) == "_n") {
-				$fname_pt = substr($module,2);
-				$fname = "../scripts/niche/" . $fname_pt . ".php";
-			}
-		}
-		if(file_exists($fname)) { $incFile = $fname; }
-		else { echo "<p>Error finding module <i>" . $module . ".php</i><p>"; }
-	} else {
-		$incFile = "modules/text.php";
-	}
-	
-	if(!empty($incFile)) {
-		ob_start();
-		include($incFile);
-		$f = ob_get_clean();
-		$newf = projectParsers($f);
-		echo $newf;
-	}
-}
-
-/* Used to add in which parsers are used to the javascript file, so javascript functions can call on the variables */ 
-function getParserJavascript() {
-	$ret = "";
-	$rs = mq("select * from " . DB_TBL_SITE_OPTIONS . " where (so_group='Modules' or so_group='APIs') and so_field_type='bool'");
-	while($rw = mfa($rs)) {
-		$ret .= "var " . strtolower($rw['so_arg']) . " = " . $rw['so_val'] . ";";
-	}
-	return $ret;
 }
 ?>

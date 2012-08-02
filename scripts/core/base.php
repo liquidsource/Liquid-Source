@@ -77,24 +77,34 @@ function getAlertMessage($mtype,$msg_e) {
     }
     return $msg;
 }
-function strToSlug($str,$module=NULL,$uid=NULL){
+function strToSlug($str,$module=NULL,$uid=NULL,$i=NULL){
     $str = strtolower(trim($str));
-    $str = preg_replace('/[^a-z0-9-]/', '-', $str);
+    $str = preg_replace('/[^a-z0-9-_]/', '-', $str);
     $str = preg_replace('/-+/', "-", $str);
 	
 	if(!empty($module)) {
 		switch ($module) {
 			case "page":
-				$rs = mq("select pg_slug from " . DB_TBL_PAGES . " where pg_slug='$str' and pgid <> '$uid' and pg_parent='0'");
+				$str_tocheck = $str;
+				if($i != NULL) $str_tocheck = $str . "_" . $i;
+				$rs = mq("select pg_slug from " . DB_TBL_PAGES . " where pg_slug='$str_tocheck' and pgid <> '$uid' and pg_parent='0'");
 				if(mnr($rs) > 0) {
-					return strToSlug($str . rand(0,100),$module,$uid);
+					if($i == NULL) $i=0;
+					$i++;
+					return strToSlug($str,$module,$uid,$i);
 				}
+				$str = $str_tocheck;
 				break;
 			case "post":
-				$rs = mq("select p_slug from " . DB_TBL_POSTS . " where p_slug='$str' and pid <> '$uid' and p_parent='0'");
+				$str_tocheck = $str;
+				if($i != NULL) $str_tocheck = $str . "_" . $i;
+				$rs = mq("select p_slug from " . DB_TBL_POSTS . " where p_slug='$str_tocheck' and pid <> '$uid' and p_parent='0'");
 				if(mnr($rs) > 0) {
-					return strToSlug($str . rand(0,100),$module,$uid);
+					if($i == NULL) $i=0;
+					$i++;
+					return strToSlug($str,$module,$uid,$i);
 				}
+				$str = $str_tocheck;
 				break;
 		}
 	}
@@ -105,26 +115,6 @@ function log_me($sc,$info=NULL) {
 	$ip = getRealIpAddr();
 	$ua = $_SERVER['HTTP_USER_AGENT'];
 	$rs = mq("insert into " . DB_TBL_SITE_LOG . " (sl_ip,sl_useragent,mid,sl_sc,sl_info) values ('$ip','$ua','$mid','$sc','$info')");
-}
-function md5_of_dir($folder) {
-	$dircontent = scandir($folder);
-	$ret='';
-	foreach($dircontent as $filename) {
-		if ($filename != '.' && $filename != '..') {
-			if (filemtime($folder.$filename) === false) return false;
-			$ret.=date("YmdHis", filemtime($folder.$filename)).$filename;
-		}
-	}
-	return md5($ret);
-}
-function delete_old_md5s($folder) {
-	$olddate=time() - 60;
-	$dircontent = scandir($folder);
-	foreach($dircontent as $filename) {
-		if (strlen($filename)==35 && filemtime($folder.$filename)<$olddate) {
-			unlink($folder.$filename);
-    	}
-	}
 }
 
 /**
@@ -244,4 +234,156 @@ function getFieldValue($sql,$arg='n') {
 	}
 	return "";
 }
+
+
+/**
+ * PAGE STRUCTURE FUNCTIONS
+ */
+ 
+/* Called at the top of every page. Gets the current module or default one if a module is not passed */
+function getModule($module) {
+    if(empty($module)) {
+        $rs = mq("select pg_slug from " . DB_TBL_PAGES . " where isDefault='1' and isAdmin='0' order by pgid asc");
+        if(mnr($rs) > 0) {
+        	$rw = mfa($rs);
+        	$module = $rw['pg_slug']; 
+		} else { echo "Error 101. No defualt module chosen."; die; }
+    }
+	
+	if(Member::isLoggedin('A')) return $module;
+	$page = new Page($module);
+	if($page->pgid == NULL) return "404";
+	return $module;
+}
+
+/* The main body of the page is passed through this function. It takes a module as a parameter and ensures that the file exists. */
+function getModuleData($module) {
+	global $inAdmin;
+	$page = new Page($module);
+	$m_type = "bs";
+	if($page->pgid != "") {
+		$m_type = $page->pg_type;
+	}
+	/* Plugin option */
+	$plugin_code = "page_structure.module";
+	include(INCLUDE_PLUGIN_ROOT . "core.php");
+	
+	if($m_type == "bs") {
+		$fname = "modules/$module.php";
+		if($inAdmin) {
+			if(!file_exists($fname)) {
+				$fname = "../scripts/extensions/niche/" . NICHE_SITE . "/" . $module . ".php";
+				if(!file_exists($fname)) {
+					$fname = "../scripts/extensions/plugins/" . $module . ".php";
+				}	
+			}
+		}
+		if(file_exists($fname)) { $incFile = $fname; }
+		else { echo "<p>Error finding module <i>" . $module . ".php</i><p>"; }
+	} else {
+		$incFile = "modules/text.php";
+	}
+	
+	if(!empty($incFile)) {
+		ob_start();
+		include($incFile);
+		$f = ob_get_clean();
+		$newf = projectParsers($f);
+		echo $newf;
+	}
+}
+
+/* Used to add in which parsers are used to the javascript file, so javascript functions can call on the variables */ 
+function getParserJavascript() {
+	$ret = "";
+	$rs = mq("select * from " . DB_TBL_SITE_OPTIONS . " where (so_group='Modules' or so_group='APIs') and so_field_type='bool'");
+	while($rw = mfa($rs)) {
+		$ret .= "var " . strtolower($rw['so_arg']) . " = " . $rw['so_val'] . ";";
+	}
+	return $ret;
+}
+/* This checks if any css (or less) files have changed and creates a new minified css file if needed */
+function createMergedCSS() {
+	$css_name_a = md5_of_dir('css/core/');
+	$css_name_b = md5_of_dir('css/core/less_incs/');
+	$css_name_c = md5_of_dir('css/packages/');
+	$css_name = md5($css_name_a . $css_name_b . $css_name_c);
+	if(!file_exists("uploads/js_css_cache/" . $css_name . ".css" ) || FORCE_RECREATE == "1") {
+		delete_old_md5s_css("uploads/js_css_cache/");
+		
+		require 'scripts/core/packages/lessphp/lessc.inc.php';
+			$less = new lessc('css/core/master.less');
+			file_put_contents('uploads/js_css_cache/_master.css', $less->parse());
+			$less = new lessc('css/core/forms.less');
+			file_put_contents('uploads/js_css_cache/_forms.css', $less->parse());
+			$less = new lessc('css/core/print.less');
+			file_put_contents('uploads/js_css_cache/print.css', $less->parse());
+		
+		$str = file_get_contents("css/core/reset.css");
+		$str .= file_get_contents("uploads/js_css_cache/_master.css");
+	    $str .= file_get_contents("uploads/js_css_cache/_forms.css");
+		if(USE_TABLE_PARSER) { $str .= file_get_contents("css/packages/dataTables.css"); }
+		if(USE_TOOLTIPS) { $str .= file_get_contents("css/packages/tooltips.css"); }
+		if(USE_SHADOWBOX) { $str .= file_get_contents("css/packages/shadowbox.css"); }
+		if(USE_FLEX_SLIDER) { $str .= file_get_contents("css/packages/flexslider.css"); }
+		
+		$fh = fopen("uploads/js_css_cache/$css_name.css","w");
+		fwrite($fh,$str);
+	}
+	return $css_name;
+}
+/* This checks if any js files have changed and creates a new minified js file if needed */
+function createMergedJS() {
+	$js_name_a = md5_of_dir('js/core/');
+	$js_name_b = md5_of_dir('js/libs/');
+	$js_name = md5($js_name_a . $js_name_b);
+	if(!file_exists("uploads/js_css_cache/" . $js_name . ".js") || FORCE_RECREATE == "1") {
+		delete_old_md5s_js("uploads/js_css_cache/");
+		$str = getParserJavascript();
+		$str .= file_get_contents("js/core/general.js");
+		if(USE_TOOLTIPS) { $str .= file_get_contents("js/libs/tooltips.js"); }
+		if(USE_SHADOWBOX) { $str .= file_get_contents("js/libs/shadowbox.js"); }
+		if(USE_FLEX_SLIDER) { $str .= file_get_contents("js/libs/jquery.flexslider-min.js"); }
+		
+		include_once("scripts/core/classes/js_minify.php");
+		$js = JSMin::minify($str);
+		
+		$fh = fopen("uploads/js_css_cache/$js_name.js","w");
+		fwrite($fh,$js);
+		
+		$rs = mq("update " . DB_TBL_SITE_OPTIONS . " set so_val='false' where so_arg='FORCE_RECREATE'");
+	}
+	return $js_name;
+}
+
+function md5_of_dir($folder) {
+	$dircontent = scandir($folder);
+	$ret='';
+	foreach($dircontent as $filename) {
+		if ($filename != '.' && $filename != '..') {
+			if (filemtime($folder.$filename) === false) return false;
+			$ret.=date("YmdHis", filemtime($folder.$filename)).$filename;
+		}
+	}
+	return md5($ret);
+}
+function delete_old_md5s_js($folder) {
+	$olddate=time() - 60;
+	$dircontent = scandir($folder);
+	foreach($dircontent as $filename) {
+		if (strlen($filename)==35 && filemtime($folder.$filename)<$olddate) {
+			unlink($folder.$filename);
+    	}
+	}
+}
+function delete_old_md5s_css($folder) {
+	$olddate=time() - 60;
+	$dircontent = scandir($folder);
+	foreach($dircontent as $filename) {
+		if (strlen($filename)==36 && filemtime($folder.$filename)<$olddate) {
+			unlink($folder.$filename);
+    	}
+	}
+}
+
 ?>

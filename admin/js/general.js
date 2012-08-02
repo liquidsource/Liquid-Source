@@ -1,14 +1,3 @@
-
-$(function() {
-    $(".timepicker").datetimepicker({
-        dateFormat: 'dd-mm-yy'
-    });
-});
-$(function() {
-    $(".datepicker").datepicker({
-        dateFormat: 'dd-mm-yy'
-    });
-});
 $(document).ready(function(){
 	$('.dataTable').dataTable({
 	    "bPaginate": true,
@@ -28,6 +17,18 @@ $(document).ready(function(){
             dontSort.push( null );
         }
     } );
+    
+    $('form').validate({
+		
+	});
+	
+    $(".timepicker").datetimepicker({
+        dateFormat: 'dd-mm-yy'
+    });
+    
+    $(".datepicker").datepicker({
+        dateFormat: 'dd-mm-yy'
+    });
 });
 
 var curUidNum = 0;

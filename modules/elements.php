@@ -14,7 +14,10 @@
 	<p>El illum dolore eu feugiat nulla facilisis at vero eros et accumsan et iusto odio dignissim 
 	qui blandit praesent luptatum zzril delenit augue duis dolore te feugait nulla facilisi. Nam 
 	liber tempor cum soluta nobis eleifend option congue nihil imperdiet doming id quod mazim 
-	placerat facer possim assum.</p>
+	placerat facer possim assum.Lorem ipsum dolor sit amet, consectetuer adipiscing elit, sed diam nonummy nibh euismod tincidunt ut laoreet dolore 
+	magna aliquam erat volutpat. Ut wisi enim ad minim veniam, quis nostrud exerci tation ullamcorper 
+	suscipit lobortis nisl ut aliquip ex ea commodo consequat. Duis autem vel eum iriure dolor in 
+	hendrerit in vulputate velit esse molestie consequat.</p>
 	<p>El illum dolore eu feugiat nulla facilisis at vero eros et accumsan et iusto odio dignissim 
 	qui blandit praesent luptatum zzril delenit augue duis dolore te feugait nulla facilisi. Nam 
 	liber tempor cum soluta nobis eleifend option congue nihil imperdiet doming id quod mazim 
@@ -26,7 +29,7 @@
 	<hr />
 	
 	<h4>Shadowbox</h4>
-	<a href="images/slider/toystory.jpg" rel="shadowbox">Images</a><br />
+	<a href="images/example_slider/toystory.jpg" rel="shadowbox">Images</a><br />
 	<a href="http://www.makemeacocktail.com" rel="shadowbox" title="Make me a Cocktail">Website</a><br />
 	<a href="http://vimeo.com/moogaloop.swf?clip_id=1039366" rel="shadowbox">Vimeo</a><br />
 	<a href="http://www.youtube.com/v/lSnWhsmlGec&hl=en&fs=1&rel=0&autoplay=1" rel="shadowbox">Youtube</a><br />
@@ -37,26 +40,26 @@
 	<hr />
 	
 	<h4>Image</h4>
-	<img src="images/slider/toystory.jpg" alt="" />
+	<img src="images/example_slider/toystory.jpg" alt="" />
     <hr />
     
     <h4>Flex Slider</h4>
 	<div class="flexslider">
 	    <ul class="slides">
 	    	<li>
-	    		<img src="images/slider/toystory.jpg" />
+	    		<img src="images/example_slider/toystory.jpg" />
 	    		<p class="flex-caption">Captions can go here.</p>
 	    	</li>
 	    	<li>
-	    		<a href="#"><img src="images/slider/up.jpg" /></a>
+	    		<a href="#"><img src="images/example_slider/up.jpg" /></a>
 	    		<p class="flex-caption">Lots of lovely captions</p>
 	    	</li>
 	    	<li>
-	    		<img src="images/slider/walle.jpg" />
+	    		<img src="images/example_slider/walle.jpg" />
 	    		<p class="flex-caption">Lots of lovely captions</p>
 	    	</li>
 	    	<li>
-	    		<img src="images/slider/nemo.jpg" />
+	    		<img src="images/example_slider/nemo.jpg" />
 	    		<p class="flex-caption">Lots of lovely captions</p>
 	    	</li>
 	    </ul>

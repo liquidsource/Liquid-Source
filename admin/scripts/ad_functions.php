@@ -23,7 +23,7 @@ function showCategoryRow($category,$lvl=0,$type='post') {
 }
 function showCategoryOption($category,$lvl=0,$cur_category,$hide=false,$selectparent=false) {
 	$catid = "";
-	if(!is_array($cur_category)) {
+	if(isset($cur_category) && !is_array($cur_category)) {
 		$chosen_uid = $cur_category->c_parent;
 		$catid = $cur_category->cid;
 	}
@@ -39,21 +39,24 @@ function showCategoryOption($category,$lvl=0,$cur_category,$hide=false,$selectpa
 		$ret .= " disabled ";
 	}
 	
-	if(is_array($cur_category)) {
-		foreach($cur_category as $cat) {
-			$chuid = $cat->cid;
-			if($cid == $chuid) { $ret .= " selected "; }
-		}
-	} else {
-		if($selectparent) {
-			$parent = $cur_category->c_parent;
-			if($parent == $category->cid) {
-				$ret .= " selected ";
+	if(isset($cur_category)) {
+		if(is_array($cur_category)) {
+			foreach($cur_category as $cat) {
+				$chuid = $cat->cid;
+				if($cid == $chuid) { $ret .= " selected "; }
 			}
 		} else {
-			if($cid == $cur_category->cid) { $ret .= " selected "; }
+			if($selectparent) {
+				$parent = $cur_category->c_parent;
+				if($parent == $category->cid) {
+					$ret .= " selected ";
+				}
+			} else {
+				if($cid == $cur_category->cid) { $ret .= " selected "; }
+			}
 		}
 	}
+	
 	$ret .= ">" . $dots . $category->c_name . "</option>";
     if($category->c_children) {
     	$lvl++;

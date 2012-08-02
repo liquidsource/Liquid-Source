@@ -9,18 +9,21 @@ Author: Nick Wilkins
 ********************************************************************* */
 
 /* CONFIGURATION BASE OPTIONS */
+error_reporting(E_ALL);
+ini_set('display_errors', '1');
+
 define('BASE_HREF',"/liquid_source/");
 
 define('USE_MYSQLI',true);
 define('DB_HOST',"localhost");
-define('DB_NAME',"liquid_recruitment");
+define('DB_NAME',"liquid_source");
 define('DB_USER',"root");
 define('DB_PASSWORD',"root");
 
-define('TABLE_PREFIX','lr_');
+define('TABLE_PREFIX','ls_');
 
 /* This is intentionally blank. It is used for niche site deployment, and can be ignored with this install */
-define('NICHE_SITE','recruitment');
+define('NICHE_SITE','');
 
 
 /* DO NOT EDIT BELOW THIS LINE */
@@ -29,8 +32,8 @@ include(INCLUDE_WEB_ROOT . "scripts/core/database.php");
 include(INCLUDE_WEB_ROOT . "scripts/core/dbconnex.php");
 include(INCLUDE_WEB_ROOT . "scripts/core/extensions.php");
 if(!defined('REDIRECT_ROOT_PATH')) define('REDIRECT_ROOT_PATH',"http://" . $_SERVER['HTTP_HOST'] . BASE_HREF);
-if(!defined('INCLUDE_PLUGIN_ROOT')) define('INCLUDE_PLUGIN_ROOT',INCLUDE_WEB_ROOT . "scripts/plugins/");
-if(!defined('INCLUDE_NICHE_ROOT')) define('INCLUDE_NICHE_ROOT',INCLUDE_WEB_ROOT . "scripts/niche/");
+if(!defined('INCLUDE_PLUGIN_ROOT')) define('INCLUDE_PLUGIN_ROOT',INCLUDE_WEB_ROOT . "scripts/extensions/plugins/");
+if(!defined('INCLUDE_NICHE_ROOT')) define('INCLUDE_NICHE_ROOT',INCLUDE_WEB_ROOT . "scripts/extensions/niche/");
 if(!defined('DB_SAFE_DATETIME')) define('DB_SAFE_DATETIME',date("Y-m-d H:i:s"));
 if(!defined('DB_SAFE_DATE')) define('DB_SAFE_DATE',date("Y-m-d"));
 
@@ -77,7 +80,6 @@ if($settingup != "true") {
 		if(!defined($arg)) define($arg,$val);
 	}
 	
-	if(function_exists('niche_config')) { niche_config(); }
 	if(!defined("ISO")) define("ISO","gb");
 	if(!defined("LANG")) define("LANG","en");
 	

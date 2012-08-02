@@ -945,3 +945,5 @@ table.dataTable tr.odd { background-color: #eee !important; }
 table.dataTable tr.odd td.sorting_1, table.dataTable tr.odd td.sorting_2, table.dataTable tr.odd td.sorting_3, table.dataTable tr.odd td.sorting_4 { background-color: #ccc !important; }
 table.dataTable tr.even { background-color: #fff !important; }
 table.dataTable tr.even td.sorting_1, table.dataTable tr.even td.sorting_2, table.dataTable tr.even td.sorting_3, table.dataTable tr.even td.sorting_4 { background-color: #ddd !important; }
+
+label.error { color: #f57f20; }

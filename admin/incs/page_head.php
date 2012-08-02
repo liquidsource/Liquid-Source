@@ -11,12 +11,12 @@
 	<![endif]-->
 	<script src="//ajax.googleapis.com/ajax/libs/jquery/1.7.1/jquery.min.js"></script>
 	<script src="js/hideshow.js" type="text/javascript"></script>
-	<script src="../js/core/ls_forms.js" type="text/javascript"></script>
     <script src="http://ajax.googleapis.com/ajax/libs/jqueryui/1.8.11/jquery-ui.min.js"></script>
     <script type="text/javascript" src="js/general.js"></script>
     <script type="text/javascript" src="js/timepicker.js"></script>
     <script type="text/javascript" src="tiny_mce/tiny_mce.js"></script>
     <script src="http://ajax.aspnetcdn.com/ajax/jquery.dataTables/1.8.2/jquery.dataTables.min.js"></script>
+    <script src="http://ajax.aspnetcdn.com/ajax/jquery.validate/1.9/jquery.validate.js"></script>
     <script><?php echo getParserJavascript(); ?></script>
 	<?php
     /* Plugin option */

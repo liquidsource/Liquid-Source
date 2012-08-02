@@ -1,9 +1,12 @@
 <?php
 class Media {
-    private $data;
+    protected $data=array();
 	
+	/********************/
 	/* PUBLIC FUNCTIONS */
+	/********************/
 	public function __construct($mdid=NULL) {
+		$this->data['mdid'] = $mdid;
 		if($mdid != NULL) {
 			$rs = mq("select * from " . DB_TBL_MEDIA . " where mdid='$mdid'");
 			if(mnr($rs) > 0) {
@@ -24,16 +27,17 @@ class Media {
     public function __set($arg, $val) {
         if($arg == "mdid") { return; }
 		
-        if (isset($this->data[$arg])) {
-        	$rs = mq("SELECT * FROM information_schema.COLUMNS WHERE TABLE_NAME = '" . DB_TBL_MEDIA . "' AND COLUMN_NAME = '$arg'");
-			if(mnr($rs) > 0) {
-        		$val = mres($val);
-				$rs = mq("update " . DB_TBL_MEDIA . " set $arg='$val' where mdid='" . $this->data['mdid'] . "'");
-			}
-        }
+    	$rs = mq("SELECT * FROM information_schema.COLUMNS WHERE TABLE_NAME = '" . DB_TBL_MEDIA . "' AND COLUMN_NAME = '$arg'");
+		if(mnr($rs) > 0) {
+    		$val = mres($val);
+			$rs = mq("update " . DB_TBL_MEDIA . " set $arg='$val' where mdid='" . $this->data['mdid'] . "'");
+		}
 		$this->data[$arg] = $val;
     }
 	
+	/**************************/
+	/* PUBLIC UPDATE FUNCTION */
+	/**************************/
 	public function updateMedia($post_array,$files_array=NULL) {
 		foreach($post_array as $arg => $val) { $$arg = mres($val); }
 		
@@ -44,7 +48,7 @@ class Media {
 			$this->data['mdid'] = $mdid;
 			$_SESSION['_msg'] = "newmedia";
 	    } else {
-	    	$this->deleteMediaFile();
+	    	if($files_array['newmedia']['name'] != '') $this->deleteMediaFile();
 			$_SESSION['_msg'] = "updatedmedia";
 	    }
 	    foreach($post_array as $arg => $val) {
@@ -53,25 +57,25 @@ class Media {
 		
 	    if($files_array['newmedia']['name'] != "") {
 			
-	        $target_path = $lvl . "uploads/media/" . date("Y") . "/";
+	        $target_path = INCLUDE_WEB_ROOT . "uploads/media/" . date("Y") . "/";
 	        if(!file_exists($target_path)) mkdir($target_path,0777);
 	        
-	        $target_path = $lvl . "uploads/media/" . date("Y") . "/" . date("m") . "/";
+	        $target_path = INCLUDE_WEB_ROOT . "uploads/media/" . date("Y") . "/" . date("m") . "/";
 	        if(!file_exists($target_path)) mkdir($target_path,0777);
-			
+			$base_target_path = "uploads/media/" . date("Y") . "/" . date("m") . "/";
 			
 	        $filename = basename($files_array['newmedia']['name']);
 	        $fullurl = $target_path . $filename; 
 	        while(file_exists($fullurl)) {
 	            $rantext = genRandomString(5);
-	            $filename = $rantext . "_" . basename($files['newmedia']['name']);
+	            $filename = $rantext . "_" . basename($files_array['newmedia']['name']);
 	            $fullurl = $target_path . $filename;
 	        }
 	
 	        if(move_uploaded_file($files_array['newmedia']['tmp_name'], $fullurl)) {
 	            $mdtype = $files_array['newmedia']['type'];
 	            $mdsize = $files_array['newmedia']['size'];
-	            $rs = mq("update " . DB_TBL_MEDIA . " set md_filename='$filename', md_type='$mdtype', md_filesize='$mdsize', md_folder='$target_path' where mdid='$mdid'");
+	            $rs = mq("update " . DB_TBL_MEDIA . " set md_filename='$filename', md_type='$mdtype', md_filesize='$mdsize', md_folder='$base_target_path' where mdid='$mdid'");
 	        }
 	    }
 	   	
@@ -80,6 +84,20 @@ class Media {
 		$_SESSION['_mtype'] = "S";
 		return $mdid;
 	}
+	
+	/************************/
+	/* GET HELPER FUNCTIONS */
+	/************************/
+	public function getLocation() {
+		if(isset($this->data['mdid'])) {
+			return $this->data['md_folder'] . $this->data['md_filename'];
+		}
+		return ;
+	}
+	
+	/****************************/
+	/* MEDIA CATEGORY FUNCTIONS */
+	/****************************/
 	public function categoryArray() {
 		if($this->data['mdid'] != "") {
 			return getCategoryArray($this->data['mdid'],'media');
@@ -92,13 +110,10 @@ class Media {
 	public function inCategory($catids) {
 		return inCategory($catids,$this->data['mdid'],'media');
 	}
-	public function getLocation() {
-		if($this->data['mdid'] != "") {
-			return $this->data['md_folder'] . $this->data['md_filename'];
-		}
-		return ;
-	}
-
+	
+	/******************************/
+	/* MEDIA ALTERATION FUNCTIONS */
+	/******************************/
 	public function deleteMedia() {
 		if(isset($this->data['mdid'])) {
 			$rs = mq("update " . DB_TBL_MEDIA . " set md_active='0' where mdid='" . $this->data['mdid'] . "'");

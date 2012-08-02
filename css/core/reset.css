@@ -203,7 +203,7 @@ td { vertical-align: top; }
    
 .f_left { float:left; }
 .f_right { float:right; }
-.input_error { background-color: #ffdddd; }
+label.error { color: #f57f20; }
 .dnone { display:none; }
 
 /* Contain floats: h5bp.com/q */ 

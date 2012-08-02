@@ -24,7 +24,7 @@ if($pgid != "") {
 $plugin_code = "admin.view.page.newpage.top_i"; include(INCLUDE_PLUGIN_ROOT . "core.php");
 ?>
 
-<form method="post" action="scripts/action.php?action=newpage&to=newpage&pgid=<?php echo $pgid; ?>" id="admin_page_frm" onsubmit="return submitForm('admin_page_frm');">
+<form method="post" action="scripts/action.php?action=newpage&to=newpage&pgid=<?php echo $pgid; ?>" id="admin_page_frm">
 <input type="hidden" id="pg_type" name="pg_type" value="<?php echo $pagetype; ?>" />
 
 <?php

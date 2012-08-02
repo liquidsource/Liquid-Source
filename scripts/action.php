@@ -1,7 +1,9 @@
 <?php
 include("system.php");
 
-$action = strtolower($_GET['action']);
+$action = "";
+if(isset($_GET['action'])) $action = strtolower($_GET['action']);
+
 if(isset($_GET['to'])) $to = $_GET['to'];
 $datetime = date("Y-m-d H:i:s");
 
@@ -15,9 +17,9 @@ switch ($action) {
 		if($mid > 0) {
 	        $member = new Member($mid);
 			$member->login();
-			$to = "home";
+			$to = "home/";
 		} else {
-			$to = "ex_login";
+			$to = "ex_login/";
 		}
         break;
     case "logout":
@@ -69,12 +71,12 @@ switch ($action) {
 				$member->sendForgotPassword();
 				$_SESSION['_msg'] = "forgotpswdsent";
 				$_SESSION['_mtype'] = "S";
-				$to = "ex_login";
+				$to = "ex_login/";
 			} else {
 				$_SESSION['_msg'] = "emailnotexist";
 				$_SESSION['_mtype'] = "E";
-				$to = "ex_login";
-			} 
+				$to = "ex_login/";
+			}
 		}
         break;
     case "contactus":
@@ -90,6 +92,8 @@ switch ($action) {
 			$email->sendRawEmail(EM_CONTACT_ADDRESS, COMPANY_NAME . " Contact Page", $msg);
 	        $_SESSION['_mtype'] = "S";
 	        $_SESSION['_msg'] = "contactsent";
+			
+			$to = "x_contactus/";
 		}
         break;
 }
