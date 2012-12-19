@@ -293,6 +293,45 @@ input[type=submit]:Hover, input[type=button]:Hover, button:Hover, .button:Hover 
   background:-o-linear-gradient(top,#3c7fed,#3777dd 100%);
   background:linear-gradient(top,#3c7fed,#3777dd 100%);
 }
+* {
+  -webkit-box-sizing:border-box;
+  -moz-box-sizing:border-box;
+  box-sizing:border-box;
+}
+.container { margin:0 auto; }
+.row:after, .col:after, .clr:after, .group:after {
+  content:"";
+  display:block;
+  height:0;
+  clear:both;
+  visibility:hidden;
+}
+.row { margin-bottom:1.5em; }
+.col {
+  display:block;
+  float:left;
+  width:100%;
+}
+@media ( min-width : 768px ) {
+  .col { margin-left:2%; }
+}
+.col:first-child { margin-left:0; }
+@media ( min-width : 768px ) {
+  .span_1 { width:6.5%; }
+  .span_2 { width:15.0%; }
+  .span_3 { width:23.5%; }
+  .span_4 { width:32.0%; }
+  .span_5 { width:40.5%; }
+  .span_6 { width:49.0%; }
+  .span_7 { width:57.5%; }
+  .span_8 { width:66.0%; }
+  .span_9 { width:74.5%; }
+  .span_10 { width:83.0%; }
+  .span_11 { width:91.5%; }
+  .span_12 { width:100%; }
+}
+.row, .clr, .group { zoom:1; }
+*:first-child+html .row, *:first-child+html .clr, *:first-child+html .group { zoom:1; }
 @font-face {
   font-family:'fontName';
   src:url('../../fonts/fontName.eot');

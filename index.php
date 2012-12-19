@@ -7,7 +7,6 @@ topPage(MODULE);
 
 /* You are now ready to roll with the page */
 ?>
-
 <header>
     <?php include("incs/header.php"); ?>
 </header>
