@@ -26,10 +26,10 @@ function highlight($sString, $aWords) {
     return preg_replace ('@\b('.$sWords.')\b@si', '<strong style="background-color:yellow">$1</strong>', $sString);
 }
 function genRandomString($length=NULL) {
-    if(empty($length)) $length = 10;
+    if(empty($length) || $length <= 0) $length = 10;
     $characters = '0123456789abcdefghijklmnopqrstuvwxyz';
-    $string = '';    
-    for ($p = 0; $p < $length; $p++) { $string .= $characters[mt_rand(0, strlen($characters))]; }
+    $string = '';
+    for ($p = 0; $p < $length; $p++) { $string .= $characters[mt_rand(0, strlen($characters)-1)]; }
     return $string;
 }
 function generatePassword($length=9, $strength=0) {

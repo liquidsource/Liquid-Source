@@ -21,9 +21,10 @@ include(INCLUDE_WEB_ROOT . "scripts/core/page_structure.php");
 include(INCLUDE_WEB_ROOT . "scripts/core/useful.php");
 
 
+php_error_reporting(PHP_ERROR_REPORTING);
 global $settingup;
 if(!$settingup) {
-	
+	checkLicenceKey();
 	if(NICHE_SITE != "") {
 		$fname = INCLUDE_WEB_ROOT . "scripts/extensions/niche/" . NICHE_SITE . ".php";
 		if(file_exists($fname)) include($fname);
@@ -31,5 +32,6 @@ if(!$settingup) {
 	
 	if(!isset($_GET['module'])) { $module_system = ""; } else { $module_system = $_GET['module']; }
 	define('MODULE', getModule($module_system));
+	
 }
 ?>

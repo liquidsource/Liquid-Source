@@ -1,32 +1,81 @@
 <?php
 /* *********************************************************************
-[PROJECT] by Liquid Source
-http://www.liquid-source.com
-
 File: site_config.php
-File description: Sets out base variables for the site
-Author: Nick Wilkins
+File description:
+The base configurations for Liquid Recruitment. This file has the following configuration options:
+ * REQUIRED
+ * - Licence key settings
+ * - Base directory settings
+ * - Database settings
+ * OPTIONAL:
+ * - Table prefix settings
+ * - Error reporting
+ * - Time zone settings
 ********************************************************************* */
 
-/* CONFIGURATION BASE OPTIONS */
-error_reporting(E_ALL);
-ini_set('display_errors', '1');
+/* CONFIGURATION BASE OPTIONS - REQUIRED */
 
+/**
+ * Licence key settings
+ */
+define('LICENCE_KEY','1234-5678-90AB');
+
+
+/**
+ * Base directory settings
+ */
 define('BASE_HREF',"/liquid_source/");
 
+/**
+ * MySQL settings - You can get this info from your web host
+ */
+/** Whether to use MySQLi or base MySQL commands. **/
 define('USE_MYSQLI',true);
+/** Database hostname **/
 define('DB_HOST',"localhost");
+/** The name of the database for Loiquid Recruitment **/
 define('DB_NAME',"liquid_source");
+/** Database username **/
 define('DB_USER',"root");
+/** Database password **/
 define('DB_PASSWORD',"root");
 
+
+
+/* CONFIGURATION BASE OPTIONS - OPTIONAL */
+
+
+/**
+ * Table prefix settings.
+ * You can have multiple installations in one database if you give each a unique
+ * prefix. Only numbers, letters, and underscores please!
+ */ 
 define('TABLE_PREFIX','ls_');
 
-/* This is intentionally blank. It is used for niche site deployment, and can be ignored with this install */
-define('NICHE_SITE','');
+/**
+ * Error reporting.
+ */ 
+/** Internal database recording of actions throughout the site. We recommend you leave this set to true **/
+define('SITE_LOGGING',true);
+/** Turn on / off PHP error warnings. During development we recommend you leave this set to true **/
+define('PHP_ERROR_REPORTING',true);
+
+
+/**
+ * Time zone settings
+ * Set this to the required Timezone for the website.
+ * A list of supported types can be found here: http://php.net/manual/en/timezones.php
+ */ 
+date_default_timezone_set('Europe/London');
+
+
 
 
 /* DO NOT EDIT BELOW THIS LINE */
+
+/* This is set to recruitment. It defines which Liquid Source 'niche' site you are using. */
+define('NICHE_SITE','');
+
 global $settingup, $failedDB;
 include(INCLUDE_WEB_ROOT . "scripts/core/database.php");
 include(INCLUDE_WEB_ROOT . "scripts/core/dbconnex.php");
@@ -37,7 +86,7 @@ if(!defined('INCLUDE_NICHE_ROOT')) define('INCLUDE_NICHE_ROOT',INCLUDE_WEB_ROOT 
 if(!defined('DB_SAFE_DATETIME')) define('DB_SAFE_DATETIME',date("Y-m-d H:i:s"));
 if(!defined('DB_SAFE_DATE')) define('DB_SAFE_DATE',date("Y-m-d"));
 
-$site_tables = array('alert_warnings','categories','category_link','links','log_shortcodes','media','members','member_profile','member_profile_arguments','meta_data','options','pages','posts','site_log','site_options');
+$site_tables = array('alert_warnings','categories','category_link','links','log_shortcodes','media','members','member_profile','member_profile_master','meta_data','options','pages','posts','selectbox','site_log','site_options');
 foreach($site_tables as $tbl) { if(!defined(TABLE_PREFIX . $tbl)) define('DB_TBL_' . strtoupper($tbl), TABLE_PREFIX . $tbl); }
 
 if($settingup != "true") {

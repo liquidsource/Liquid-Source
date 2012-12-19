@@ -1,73 +1,18 @@
 /**
  * This file is meant for all general js functions.
  * Pre-installed packages call their relevant options, if they are enabled in Site Options. If they are not enabled they will not call their initialization functions.
- * You can safely remove any if() { ... } statements if you wish to clean up the code, and if they are not enabled.
+ * You can safely remove any if() { ... } statements for the pre-installed packages if you wish to clean up the code, and if they are not enabled.
  */
 
 $(document).ready(function() {
 	
-	/* Jquery UI elements - http://jqueryui.com/ */
-    $('.datepicker').datepicker({
-        dateFormat: 'dd-mm-yy'
-    });
-    $('.slider').slider();
-    
-    /* Inline form validation - http://bassistance.de/jquery-plugins/jquery-plugin-validation/ */
-    if(use_form_validation) {
-    	$('form').validate({
-    		
-    	});
-    }
-    
-    /* Data tables  - http://datatables.net/ */
-    if(use_table_parser) {
-	    $('.dataTable').dataTable({
-	        "bPaginate": true,
-	        "bLengthChange": true,
-	        "bFilter": true,
-	        "bSort": true,
-	        "bInfo": true,
-	        "bAutoWidth": true,
-	        "iDisplayLength": 5
-			/*
-			 "bProcessing": true,
-	        "bServerSide": true,
-	        "sAjaxSource": "scripts/location_of_ajax.php"
-	        *
-			*/
-		});
-	}
-	
-	/* Shows google map - http://code.google.com/apis/maps/documentation/javascript/ */
-	if(use_google_maps) {
-		mpc_name = "map_canvas"
-		map_canvas = $('#' + mpc_name);
-		if(map_canvas.length != 0) {
-			var myOptions = {
-				center: new google.maps.LatLng(-34.397, 150.644),
-				zoom: 8,
-				mapTypeId: google.maps.MapTypeId.ROADMAP
-			};
-			var map = new google.maps.Map(document.getElementById(mpc_name),myOptions);
-		}
-	}
-	
-	/* Shadowbox - http://www.shadowbox-js.com/ */
-	if(use_shadowbox) {
-		Shadowbox.init();
-	}
-	
-	/* BX Content Slider - http://bxslider.com/ */
-	if(use_bx_slider) {
-		$('#slider1').bxSlider({
-			speed: 500,
-			auto: true,
-			pager: true
-		});
-	}
-	
-	/* Flex Slider - http://www.woothemes.com/flexslider/ */
-	if(use_flex_slider) {
-		$('.flexslider').flexslider();
-	}
 });
+
+/* This function is used on the example 'widgets' page. The function can safely be removed if you are not using the showWidget call that is found on that page */
+function showWidget(widget_name) {
+	$('#widget_example').hide('slow',function() {
+		$('#widget_example').load("incs/widgets/" + widget_name + ".php", function() {
+	    	$('#widget_example').show('slow');	
+	    });
+	});
+}

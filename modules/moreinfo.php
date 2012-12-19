@@ -21,7 +21,7 @@
 <tr><td><pre>&nbsp;&nbsp;|- core</pre></td><td><em class="noinfo">A collection of Liquid Source core php function files</em></td></tr>
 <tr><td><pre>&nbsp;&nbsp;&nbsp;&nbsp;|- classes</pre></td><td><em class="noinfo">All core site classes</em></td></tr>
 <tr><td><pre>&nbsp;&nbsp;&nbsp;&nbsp;|- packages</pre></td><td><em class="noinfo">All optional package php files</em></td></tr>
-<tr><td><pre>&nbsp;&nbsp;|- extensions</pre></td><td><em class="noinfo">Holding folder for any niche site files</em></td></tr>
+<tr><td><pre>&nbsp;&nbsp;|- extensions</pre></td><td><em class="noinfo">Holding folder for any niche or plugin files</em></td></tr>
 <tr><td><pre>&nbsp;&nbsp;&nbsp;&nbsp;|- niche</pre></td><td><em class="noinfo">Holding folder for any niche site files</em></td></tr>
 <tr><td><pre>&nbsp;&nbsp;&nbsp;&nbsp;|- plugin</pre></td><td><em class="noinfo">Holding folder for any plugins</em></td></tr>
 <tr><td><pre>|- setup</pre></td><td><em class="noinfo">After setup this folder can be deleted. Used to setup the site.</em></td></tr>
@@ -31,25 +31,24 @@
 </table>
 
 
-</em>
-
 <h2>The Module System</h2>
-<p>Liquid source can be driven through two seperate page types; 'Text' and 'Bespoke'. Bespoke pages are held in the</p>
+<p>Liquid Source can be driven through two seperate page types; 'Text' and 'Bespoke'. Bespoke pages are held in the</p>
 <pre>modules/</pre>
-<p>folder and are specifically designed pages that are included into the index.php.</p>
+<p>folder and are specifically designed pages that are included into the index.php (i.e. jobsearch.php, or contactus.php).</p>
 <p>Text pages are textual pages that have a title and content (and optional meta data). All text pages are driven through index.php, which in turn loads up</p>
 <pre>modules/text.php</pre>
-<p>to get the relevant text page content. In the base setup 'Login' and 'Register' are examples of bespoke pages, and 'About Us' is an example text page.</p>
+<p>to get the relevant text page content.</p>
 
 <p><strong>But how does the system know what to load up?</strong></p>
-<p>In the backend admin you can create pages and define them as bespoke or text. When a page loads the system will look at the passed url <code>$_GET['module']</code> attribute, and see if a page has been created with
-	that has the <code>'slug'</code>. If so it will see if it is text, or bespoke and carry out the relevant functions.</p>
+<p>In the backend admin you can create pages and define them as bespoke or text. When a page loads the system will look at the passed url <code>$_GET['module']</code> attribute, and see if a page has been created
+	that has that <code>'module'</code> (called <code>'slug' in the backend</code>). If so it will see if it is text, or bespoke and carry out the relevant functions.</p>
 <p>If a page is not specified in the backend the system will still try loading up the page, looking in the 'modules' folder for a bespoke page.</p>
 
 <h2>CSS and LESS</h2>
 <p>Liquid Source utilises the amazing work of Alexis Sellier and uses the LESS CSS framework. If you are unfamliar with LESS we suggest you check out the documentation on the LESS page that can be found
 	<a href="http://lesscss.org/">here</a>.</p>
-<p>With Liquid Source we use a LESS PHP driven Pre-processor to dynamically build the needed css files and spit them out as one file for the browser to use. All .less files can be found in the</p>
+<p>With Liquid Source we use a LESS PHP driven Pre-processor to dynamically build the needed css files and spit them out as one file for the browser to use. This file gets generated in the <code>'uploads/js_css_cache'</code>
+	folder (and gets given a unique name based on hash values of files timestamps). All .less files can be found in the</p>
 <ul><li><pre>css/core/</pre></li></ul>
 <p>folder. The main files that you will want to edit to start with will be</p>
 <ul>
@@ -62,11 +61,11 @@
 	site options. This information is passed into every page and the page head section is built up bespokely for that page.</p>
 <p>For people who require more complex meta tagging your port of call will be the file located at</p>
 <ul><li><pre>scripts/core/page_structure.php</pre></li></ul>
-<p>This file sorts out the css, javascript includes, page meta and the module loading mechanism.</p>
+<p>This file sorts out the css, javascript includes and page meta.</p>
 
 
 <h2>Classes</h2>
-<p>Liquid Source comes with an array of classes ready for you to use. Installed in the base package are the following classes:</p>
+<p>Liquid Source utilises Liquid Sources core classes, that come ready for you to use. Installed in the base package are the following classes:</p>
 <ul style="margin-left:20px">
 	<li><pre style='display:inline'>Category</pre> - deals with categories for various other classes.</li>
 	<li><pre style='display:inline'>Email</pre> - class to build and send out emails.</li>
@@ -81,8 +80,8 @@
 </ul>
 
 <h2>Pre-Installed Packages and Modules</h2>
-<p>One the major advantages to Liquid Source is its initial group of core packages that come with the system, allowing the developer to save time and effort in figuring out and including
-	base elements again and again. All the packages can be seen from the <a href="elements/">Elements Page</a>, and more information is included in the core documentation.</p>
+<p>One the major advantages to Liquid Source is its initial group of core 3rd party packages that come with the system, allowing the developer to save time and effort in figuring out and including
+	base elements again and again.</p>
 <p>A large majority of these can be turned on / off in the <i>Admin > Site Options</i> as desired. A list of included items is below:</p>
 	
 <strong>Javascript Libraries</strong>

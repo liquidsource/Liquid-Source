@@ -1,0 +1,6 @@
+/* *********************************************************************
+File: ie_67.css
+File description: Fixes ie6/7 specific anomolies and bugs
+Author: Nick Wilkins
+********************************************************************* */
+img { width: 100%; }

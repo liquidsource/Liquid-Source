@@ -12,12 +12,12 @@ if($cid != "") {
 <article class="module width_full">
 <header><h3 class="tabs_involved"><?php echo $l_type; ?> Categories</h3></header>
 <div class="tab_container">
-    <table class="tablesorter datatTable" cellspacing="0"> 
+    <table class="tablesorter dataTable" cellspacing="0"> 
     <thead> 
         <tr> 
-            <th>cid</th> 
-            <th>Category</th> 
-            <th>Actions</th> 
+            <th> cid</th> 
+            <th> Category</th> 
+            <th> Actions</th> 
         </tr> 
     </thead> 
     <tbody>

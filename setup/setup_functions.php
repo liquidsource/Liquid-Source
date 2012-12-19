@@ -72,7 +72,7 @@ function setup_database($posty) {
 			
 			CREATE TABLE `" . DB_TBL_MEMBERS . "` (
 			  `mid` int(11) NOT NULL AUTO_INCREMENT,
-			  `m_username` varchar(20) NOT NULL,
+			  `m_username` varchar(250) NOT NULL,
 			  `m_hash` varchar(256) DEFAULT NULL,
 			  `m_createdate` timestamp NOT NULL DEFAULT CURRENT_TIMESTAMP,
 			  `m_type` char(2) NOT NULL,
@@ -81,8 +81,6 @@ function setup_database($posty) {
 			  `m_lastlogin` datetime DEFAULT NULL,
 			  PRIMARY KEY (`mid`)
 			) ENGINE=InnoDB  DEFAULT CHARSET=utf8;
-			
-
 
 			CREATE TABLE `" . DB_TBL_MEMBER_PROFILE . "` (
 			  `mpid` int(11) NOT NULL AUTO_INCREMENT,
@@ -92,14 +90,13 @@ function setup_database($posty) {
 			  PRIMARY KEY (`mpid`)
 			) ENGINE=InnoDB DEFAULT CHARSET=latin1 AUTO_INCREMENT=1 ;
 
-
-			CREATE TABLE `" . DB_TBL_MEMBER_PROFILE_ARGUMENTS . "` (
+			CREATE TABLE `" . DB_TBL_MEMBER_PROFILE_MASTER . "` (
 			  `mpaid` int(11) NOT NULL AUTO_INCREMENT,
 			  `mpa_sc` varchar(50) NOT NULL,
 			  `mpa_english` varchar(100) NOT NULL,
+	  		  `mpa_inputtype` varchar(300) DEFAULT 'text',
 			  PRIMARY KEY (`mpaid`)
 			) ENGINE=InnoDB  DEFAULT CHARSET=latin1 AUTO_INCREMENT=3 ;
-			
 			
 			CREATE TABLE `" . DB_TBL_META_DATA . "` (
 			  `mdid` int(11) NOT NULL AUTO_INCREMENT,
@@ -177,9 +174,19 @@ function setup_database($posty) {
 			  `so_userid` int(11) NOT NULL,
 			  `so_group` varchar(30) NOT NULL,
 			  `so_field_type` varchar(30) NOT NULL,
+			  `so_help_text` varchar(500) NOT NULL,
 			  PRIMARY KEY (`soid`),
 			  KEY `so_userid` (`so_userid`,`so_group`)
 			) ENGINE=InnoDB  DEFAULT CHARSET=utf8 ;
+			
+			CREATE TABLE `" . DB_TBL_SELECTBOX . "` (
+			  `sid` int(11) NOT NULL AUTO_INCREMENT,
+			  `s_type` varchar(30) DEFAULT NULL,
+			  `s_val` varchar(300) DEFAULT NULL,
+			  `s_default` int(11) DEFAULT '0',
+			  PRIMARY KEY (`sid`),
+			  KEY `sid` (`sid`,`s_type`)
+			) ENGINE=MyISAM  DEFAULT CHARSET=utf8 ;
 		";
 		
 		$insert_sql = "
@@ -226,6 +233,12 @@ INSERT INTO `" . DB_TBL_LOG_SHORTCODES . "` VALUES('LGF', 'Login failure');
 INSERT INTO `" . DB_TBL_LOG_SHORTCODES . "` VALUES('LGO', 'User logged out');
 INSERT INTO `" . DB_TBL_LOG_SHORTCODES . "` VALUES('LGS', 'Login success');
 INSERT INTO `" . DB_TBL_LOG_SHORTCODES . "` VALUES('RMM', 'Member permanently removed');
+INSERT INTO `" . DB_TBL_LOG_SHORTCODES . "` VALUES('RGA', 'Registration attempt');
+INSERT INTO `" . DB_TBL_LOG_SHORTCODES . "` VALUES('RGS', 'Registration success');
+INSERT INTO `" . DB_TBL_LOG_SHORTCODES . "` VALUES('RGF', 'Registration failure');
+INSERT INTO `" . DB_TBL_LOG_SHORTCODES . "` VALUES('RGB', 'Registration bot');
+INSERT INTO `" . DB_TBL_LOG_SHORTCODES . "` VALUES('UPP', 'Update profile attempt');
+INSERT INTO `" . DB_TBL_LOG_SHORTCODES . "` VALUES('RGB', 'Registration bot');
 
 INSERT INTO `" . DB_TBL_PAGES . "` VALUES(1, 'Home', 'home', 'This is the generic module setup', 'keyword1,keyword2', 1, 0, '2012-01-01 00:00:01', '2012-01-01 00:00:01', 'bs', '', 1,'0','published','');
 INSERT INTO `" . DB_TBL_PAGES . "` VALUES(2, 'About Us', 'aboutus', 'About us description', 'kw1,kw2,about', 0, 0, '2012-01-01 00:00:01', '2012-01-01 00:00:01', 'tx', '<p>This is the about us page. The text is derived from the backend Page screen.</p>', 1,'0','published','');
@@ -238,55 +251,56 @@ INSERT INTO `" . DB_TBL_PAGES . "` VALUES(7, 'More Info', 'moreinfo', 'des', 'ke
 INSERT INTO `" . DB_TBL_POSTS . "` VALUES(1, 'Registration', 'registration', '<p>This is what gets sent out to new registrants</p>\r\n<p>[r_username]</p>\r\n<p>[r_email]</p>\r\n<p>[r_password]</p>\r\n<p>[r_fname]</p>\r\n<p>[r_lname]</p>\r\n<p>[tel]</p>', '2012-01-01 00:00:01', '2012-01-01 00:00:01', 1, 'template', 'en','0','published','');
 INSERT INTO `" . DB_TBL_POSTS . "` VALUES(2, 'Forgot Password', 'forgot-password', '<p>This is what gets sent out to people who forget their password</p>\r\n<p>[password]</p>\r\n<p>[mp_fname]</p>\r\n<p>[mp_lname]</p>\r\n<p>[uname]</p>', '2012-01-01 00:00:01', '2012-01-01 00:00:01', 1, 'template', 'en','0','published','');
 
-INSERT INTO `" . DB_TBL_SITE_OPTIONS . "` VALUES('', 'GOOGLE_MAPS_API_KEY', 'AIzaSyCeFju_W41SnogvXDmFFHinp63yKs9DMME', '0000-00-00 00:00:00', 'define', 0, 'APIs', '');
-INSERT INTO `" . DB_TBL_SITE_OPTIONS . "` VALUES('', 'GOOGLE_ANALYTICS_CODE', 'UA-xxxxxxxx-x', '0000-00-00 00:00:00', 'define', 0, 'SEO', '');
-INSERT INTO `" . DB_TBL_SITE_OPTIONS . "` VALUES('', 'EM_CONTACT_ADDRESS', 'contact@thiscompany.com', '0000-00-00 00:00:00', 'define', 0, 'Email', '');
-INSERT INTO `" . DB_TBL_SITE_OPTIONS . "` VALUES('', 'EM_FEED_ADDRESS', 'webmaster@thiscompany.com', '0000-00-00 00:00:00', 'define', 0, 'Feeds', '');
-INSERT INTO `" . DB_TBL_SITE_OPTIONS . "` VALUES('', 'EM_WIDTH', '600px', '0000-00-00 00:00:00', 'define', 0, 'Email', '');
-INSERT INTO `" . DB_TBL_SITE_OPTIONS . "` VALUES('', 'EM_FROM_NAME', 'This Company', '0000-00-00 00:00:00', 'define', 0, 'Email', '');
-INSERT INTO `" . DB_TBL_SITE_OPTIONS . "` VALUES('', 'EM_FROM_EMAIL', 'no-reply@thiscompany.com', '0000-00-00 00:00:00', 'define', 0, 'Email', '');
-INSERT INTO `" . DB_TBL_SITE_OPTIONS . "` VALUES('', 'EM_HOME_PAGE', 'http://www.site.com/', '0000-00-00 00:00:00', 'define', 0, 'Email', '');
-INSERT INTO `" . DB_TBL_SITE_OPTIONS . "` VALUES('', 'EM_LOGOURL', 'http://www.site.com/images/logo.png', '0000-00-00 00:00:00', 'define', 0, 'Email', '');
-INSERT INTO `" . DB_TBL_SITE_OPTIONS . "` VALUES('', 'EM_HEADER_COLOR', '#0093cb', '0000-00-00 00:00:00', 'define', 0, 'Email', '');
-INSERT INTO `" . DB_TBL_SITE_OPTIONS . "` VALUES('', 'EM_LINK_COLOR', '#666', '0000-00-00 00:00:00', 'define', 0, 'Email', '');
-INSERT INTO `" . DB_TBL_SITE_OPTIONS . "` VALUES('', 'EM_LINK_HOVER_COLOR', '#333', '0000-00-00 00:00:00', 'define', 0, 'Email', '');
-INSERT INTO `" . DB_TBL_SITE_OPTIONS . "` VALUES('', 'HOMEPAGE', 'http://www.site.com/', '0000-00-00 00:00:00', 'define', 0, 'Core', '');
-INSERT INTO `" . DB_TBL_SITE_OPTIONS . "` VALUES('', 'COMPANY_NAME', 'This Company', '0000-00-00 00:00:00', 'define', 0, 'Core', '');
-INSERT INTO `" . DB_TBL_SITE_OPTIONS . "` VALUES('', 'SITE_NAME', 'This Site', '0000-00-00 00:00:00', 'define', 0, 'SEO', '');
-INSERT INTO `" . DB_TBL_SITE_OPTIONS . "` VALUES('', 'SUB_TITLE', 'The coolest new site on the block', '0000-00-00 00:00:00', 'define', 0, 'SEO', '');
-INSERT INTO `" . DB_TBL_SITE_OPTIONS . "` VALUES('', 'PROJECT_NAME', 'Project Name', '0000-00-00 00:00:00', 'define', 0, 'SEO', '');
-INSERT INTO `" . DB_TBL_SITE_OPTIONS . "` VALUES('', 'PROJECT_ABOUT', 'What the project is about', '0000-00-00 00:00:00', 'define', 0, 'SEO', '');
-INSERT INTO `" . DB_TBL_SITE_OPTIONS . "` VALUES('', 'SITE_CATEGORY', '', '0000-00-00 00:00:00', 'define', 0, 'SEO', '');
-INSERT INTO `" . DB_TBL_SITE_OPTIONS . "` VALUES('', 'LOGO_URL', 'images/logo.png', '0000-00-00 00:00:00', 'define', 0, 'Core', '');
-INSERT INTO `" . DB_TBL_SITE_OPTIONS . "` VALUES('', 'FACEBOOK_APP_ID', '', '0000-00-00 00:00:00', 'define', 0, 'Social', '');
-INSERT INTO `" . DB_TBL_SITE_OPTIONS . "` VALUES('', 'FACEBOOK_PAGE_URL', '', '0000-00-00 00:00:00', 'define', 0, 'Social', '');
-INSERT INTO `" . DB_TBL_SITE_OPTIONS . "` VALUES('', 'GOOGLE_PLUS_PAGE_ID', '', '0000-00-00 00:00:00', 'define', 0, 'Social', '');
-INSERT INTO `" . DB_TBL_SITE_OPTIONS . "` VALUES('', 'LINKEDIN_PAGE_URL', '', '0000-00-00 00:00:00', 'define', 0, 'Social', '');
-INSERT INTO `" . DB_TBL_SITE_OPTIONS . "` VALUES('', 'TWITTER_NAME', '', '0000-00-00 00:00:00', 'define', 0, 'Social', '');
-INSERT INTO `" . DB_TBL_SITE_OPTIONS . "` VALUES('', 'USE_PINTEREST', 'true', '0000-00-00 00:00:00', 'define', 0, 'Social', 'bool');
-INSERT INTO `" . DB_TBL_SITE_OPTIONS . "` VALUES('', 'USE_LINKEDIN', 'true', '0000-00-00 00:00:00', 'define', 0, 'Social', 'bool');
-INSERT INTO `" . DB_TBL_SITE_OPTIONS . "` VALUES('', 'USE_TWITTER', 'true', '0000-00-00 00:00:00', 'define', 0, 'Social', 'bool');
-INSERT INTO `" . DB_TBL_SITE_OPTIONS . "` VALUES('', 'USE_GOOGLE_PLUS', 'true', '0000-00-00 00:00:00', 'define', 0, 'Social', 'bool');
-INSERT INTO `" . DB_TBL_SITE_OPTIONS . "` VALUES('', 'USE_FACEBOOK_LIKE', 'true', '0000-00-00 00:00:00', 'define', 0, 'Social', 'bool');
-INSERT INTO `" . DB_TBL_SITE_OPTIONS . "` VALUES('', 'GOOGLE_SITE_VERIFICATION_KEY', '', '0000-00-00 00:00:00', 'define', 0, 'SEO', '');
-INSERT INTO `" . DB_TBL_SITE_OPTIONS . "` VALUES('', 'MS_VALIDATE_KEY', '', '0000-00-00 00:00:00', 'define', 0, 'SEO', '');
-INSERT INTO `" . DB_TBL_SITE_OPTIONS . "` VALUES('', 'RSS_LOCATION', 'feeds/rss.xml', '0000-00-00 00:00:00', 'define', 0, 'Feeds', '');
-INSERT INTO `" . DB_TBL_SITE_OPTIONS . "` VALUES('', 'SITEMAP_LOCATION', 'sitemap.xml', '0000-00-00 00:00:00', 'define', 0, 'Feeds', '');
-INSERT INTO `" . DB_TBL_SITE_OPTIONS . "` VALUES('', 'USE_FORM_PARSER', 'true', '0000-00-00 00:00:00', 'define', 0, 'Modules', 'bool');
-INSERT INTO `" . DB_TBL_SITE_OPTIONS . "` VALUES('', 'USE_GOOGLE_MAPS', 'true', '0000-00-00 00:00:00', 'define', 0, 'APIs', 'bool');
-INSERT INTO `" . DB_TBL_SITE_OPTIONS . "` VALUES('', 'USE_TABLE_PARSER', 'true', '0000-00-00 00:00:00', 'define', 0, 'Modules', 'bool');
-INSERT INTO `" . DB_TBL_SITE_OPTIONS . "` VALUES('', 'USE_TOOLTIPS', 'true', '0000-00-00 00:00:00', 'define', 0, 'Modules', 'bool');
-INSERT INTO `" . DB_TBL_SITE_OPTIONS . "` VALUES('', 'USE_SHADOWBOX', 'true', '0000-00-00 00:00:00', 'define', 0, 'Modules', 'bool');
-INSERT INTO `" . DB_TBL_SITE_OPTIONS . "` VALUES('', 'USE_FLEX_SLIDER', 'true', '0000-00-00 00:00:00', 'define', 0, 'Modules', 'bool');
-INSERT INTO `" . DB_TBL_SITE_OPTIONS . "` VALUES('', 'USE_BX_SLIDER', 'true', '0000-00-00 00:00:00', 'define', 0, 'Modules', 'bool');
-INSERT INTO `" . DB_TBL_SITE_OPTIONS . "` VALUES('', 'USE_FORM_VALIDATION', 'true', '0000-00-00 00:00:00', 'define', 0, 'Modules', 'bool');
-INSERT INTO `" . DB_TBL_SITE_OPTIONS . "` VALUES('', 'LIQUID_SOURCE_VERSION', '1.0.0', '0000-00-00 00:00:00', 'define', 0, '', '');
-INSERT INTO `" . DB_TBL_SITE_OPTIONS . "` VALUES('', 'FORCE_RECREATE', 'true', '0000-00-00 00:00:00', 'define', 0, '', 'bool');
-INSERT INTO `" . DB_TBL_SITE_OPTIONS . "` VALUES('', 'SITE_AUTHOR', '', '0000-00-00 00:00:00', 'define', 0, 'SEO', '');
+INSERT INTO `" . DB_TBL_SITE_OPTIONS . "` VALUES('', 'GOOGLE_MAPS_API_KEY', 'AIzaSyCeFju_W41SnogvXDmFFHinp63yKs9DMME', '0000-00-00 00:00:00', 'define', 0, 'APIs', '','');
+INSERT INTO `" . DB_TBL_SITE_OPTIONS . "` VALUES('', 'GOOGLE_ANALYTICS_CODE', 'UA-xxxxxxxx-x', '0000-00-00 00:00:00', 'define', 0, 'SEO', '','');
+INSERT INTO `" . DB_TBL_SITE_OPTIONS . "` VALUES('', 'EM_CONTACT_ADDRESS', 'contact@thiscompany.com', '0000-00-00 00:00:00', 'define', 0, 'Email', '','');
+INSERT INTO `" . DB_TBL_SITE_OPTIONS . "` VALUES('', 'EM_FEED_ADDRESS', 'webmaster@thiscompany.com', '0000-00-00 00:00:00', 'define', 0, 'Feeds', '','');
+INSERT INTO `" . DB_TBL_SITE_OPTIONS . "` VALUES('', 'EM_WIDTH', '600px', '0000-00-00 00:00:00', 'define', 0, 'Email', '','');
+INSERT INTO `" . DB_TBL_SITE_OPTIONS . "` VALUES('', 'EM_FROM_NAME', 'This Company', '0000-00-00 00:00:00', 'define', 0, 'Email', '','');
+INSERT INTO `" . DB_TBL_SITE_OPTIONS . "` VALUES('', 'EM_FROM_EMAIL', 'no-reply@thiscompany.com', '0000-00-00 00:00:00', 'define', 0, 'Email', '','');
+INSERT INTO `" . DB_TBL_SITE_OPTIONS . "` VALUES('', 'EM_HOME_PAGE', 'http://www.site.com/', '0000-00-00 00:00:00', 'define', 0, 'Email', '','');
+INSERT INTO `" . DB_TBL_SITE_OPTIONS . "` VALUES('', 'EM_LOGOURL', 'http://www.site.com/images/logo.png', '0000-00-00 00:00:00', 'define', 0, 'Email', '','');
+INSERT INTO `" . DB_TBL_SITE_OPTIONS . "` VALUES('', 'EM_HEADER_COLOR', '#0093cb', '0000-00-00 00:00:00', 'define', 0, 'Email', '','');
+INSERT INTO `" . DB_TBL_SITE_OPTIONS . "` VALUES('', 'EM_LINK_COLOR', '#666', '0000-00-00 00:00:00', 'define', 0, 'Email', '','');
+INSERT INTO `" . DB_TBL_SITE_OPTIONS . "` VALUES('', 'EM_LINK_HOVER_COLOR', '#333', '0000-00-00 00:00:00', 'define', 0, 'Email', '','');
+INSERT INTO `" . DB_TBL_SITE_OPTIONS . "` VALUES('', 'HOMEPAGE', 'http://www.site.com/', '0000-00-00 00:00:00', 'define', 0, 'Core', '','');
+INSERT INTO `" . DB_TBL_SITE_OPTIONS . "` VALUES('', 'COMPANY_NAME', 'This Company', '0000-00-00 00:00:00', 'define', 0, 'Core', '','');
+INSERT INTO `" . DB_TBL_SITE_OPTIONS . "` VALUES('', 'SITE_NAME', 'This Site', '0000-00-00 00:00:00', 'define', 0, 'SEO', '','');
+INSERT INTO `" . DB_TBL_SITE_OPTIONS . "` VALUES('', 'SUB_TITLE', 'The coolest new site on the block', '0000-00-00 00:00:00', 'define', 0, 'SEO', '','');
+INSERT INTO `" . DB_TBL_SITE_OPTIONS . "` VALUES('', 'PROJECT_NAME', 'Project Name', '0000-00-00 00:00:00', 'define', 0, 'SEO', '','');
+INSERT INTO `" . DB_TBL_SITE_OPTIONS . "` VALUES('', 'PROJECT_ABOUT', 'What the project is about', '0000-00-00 00:00:00', 'define', 0, 'SEO', '','');
+INSERT INTO `" . DB_TBL_SITE_OPTIONS . "` VALUES('', 'SITE_CATEGORY', '', '0000-00-00 00:00:00', 'define', 0, 'SEO', '','');
+INSERT INTO `" . DB_TBL_SITE_OPTIONS . "` VALUES('', 'LOGO_URL', 'images/logo.png', '0000-00-00 00:00:00', 'define', 0, 'Core', '','');
+INSERT INTO `" . DB_TBL_SITE_OPTIONS . "` VALUES('', 'FACEBOOK_APP_ID', '', '0000-00-00 00:00:00', 'define', 0, 'Social', '','');
+INSERT INTO `" . DB_TBL_SITE_OPTIONS . "` VALUES('', 'FACEBOOK_PAGE_URL', '', '0000-00-00 00:00:00', 'define', 0, 'Social', '','');
+INSERT INTO `" . DB_TBL_SITE_OPTIONS . "` VALUES('', 'GOOGLE_PLUS_PAGE_ID', '', '0000-00-00 00:00:00', 'define', 0, 'Social', '','');
+INSERT INTO `" . DB_TBL_SITE_OPTIONS . "` VALUES('', 'LINKEDIN_PAGE_URL', '', '0000-00-00 00:00:00', 'define', 0, 'Social', '','');
+INSERT INTO `" . DB_TBL_SITE_OPTIONS . "` VALUES('', 'TWITTER_NAME', '', '0000-00-00 00:00:00', 'define', 0, 'Social', '','');
+INSERT INTO `" . DB_TBL_SITE_OPTIONS . "` VALUES('', 'USE_PINTEREST', 'true', '0000-00-00 00:00:00', 'define', 0, 'Social', 'bool','');
+INSERT INTO `" . DB_TBL_SITE_OPTIONS . "` VALUES('', 'USE_LINKEDIN', 'true', '0000-00-00 00:00:00', 'define', 0, 'Social', 'bool','');
+INSERT INTO `" . DB_TBL_SITE_OPTIONS . "` VALUES('', 'USE_TWITTER', 'true', '0000-00-00 00:00:00', 'define', 0, 'Social', 'bool','');
+INSERT INTO `" . DB_TBL_SITE_OPTIONS . "` VALUES('', 'USE_GOOGLE_PLUS', 'true', '0000-00-00 00:00:00', 'define', 0, 'Social', 'bool','');
+INSERT INTO `" . DB_TBL_SITE_OPTIONS . "` VALUES('', 'USE_FACEBOOK_LIKE', 'true', '0000-00-00 00:00:00', 'define', 0, 'Social', 'bool','');
+INSERT INTO `" . DB_TBL_SITE_OPTIONS . "` VALUES('', 'GOOGLE_SITE_VERIFICATION_KEY', '', '0000-00-00 00:00:00', 'define', 0, 'SEO', '','');
+INSERT INTO `" . DB_TBL_SITE_OPTIONS . "` VALUES('', 'MS_VALIDATE_KEY', '', '0000-00-00 00:00:00', 'define', 0, 'SEO', '','');
+INSERT INTO `" . DB_TBL_SITE_OPTIONS . "` VALUES('', 'RSS_LOCATION', 'feeds/rss.xml', '0000-00-00 00:00:00', 'define', 0, 'Feeds', '','');
+INSERT INTO `" . DB_TBL_SITE_OPTIONS . "` VALUES('', 'SITEMAP_LOCATION', 'sitemap.xml', '0000-00-00 00:00:00', 'define', 0, 'Feeds', '','');
+INSERT INTO `" . DB_TBL_SITE_OPTIONS . "` VALUES('', 'USE_AJAXINCLUDE', 'true', '0000-00-00 00:00:00', 'define', 0, 'Modules', 'bool','');
+INSERT INTO `" . DB_TBL_SITE_OPTIONS . "` VALUES('', 'USE_FORM_PARSER', 'true', '0000-00-00 00:00:00', 'define', 0, 'Modules', 'bool','');
+INSERT INTO `" . DB_TBL_SITE_OPTIONS . "` VALUES('', 'USE_GOOGLE_MAPS', 'true', '0000-00-00 00:00:00', 'define', 0, 'APIs', 'bool','');
+INSERT INTO `" . DB_TBL_SITE_OPTIONS . "` VALUES('', 'USE_TABLE_PARSER', 'true', '0000-00-00 00:00:00', 'define', 0, 'Modules', 'bool','');
+INSERT INTO `" . DB_TBL_SITE_OPTIONS . "` VALUES('', 'USE_TOOLTIPS', 'true', '0000-00-00 00:00:00', 'define', 0, 'Modules', 'bool','');
+INSERT INTO `" . DB_TBL_SITE_OPTIONS . "` VALUES('', 'USE_SHADOWBOX', 'true', '0000-00-00 00:00:00', 'define', 0, 'Modules', 'bool','');
+INSERT INTO `" . DB_TBL_SITE_OPTIONS . "` VALUES('', 'USE_FLEX_SLIDER', 'true', '0000-00-00 00:00:00', 'define', 0, 'Modules', 'bool','');
+INSERT INTO `" . DB_TBL_SITE_OPTIONS . "` VALUES('', 'USE_BX_SLIDER', 'true', '0000-00-00 00:00:00', 'define', 0, 'Modules', 'bool','');
+INSERT INTO `" . DB_TBL_SITE_OPTIONS . "` VALUES('', 'USE_FORM_VALIDATION', 'true', '0000-00-00 00:00:00', 'define', 0, 'Modules', 'bool','');
+INSERT INTO `" . DB_TBL_SITE_OPTIONS . "` VALUES('', 'LIQUID_SOURCE_VERSION', '1.0.0', '0000-00-00 00:00:00', 'define', 0, '', '','');
+INSERT INTO `" . DB_TBL_SITE_OPTIONS . "` VALUES('', 'FORCE_RECREATE', 'true', '0000-00-00 00:00:00', 'define', 0, '', 'bool','');
+INSERT INTO `" . DB_TBL_SITE_OPTIONS . "` VALUES('', 'SITE_AUTHOR', '', '0000-00-00 00:00:00', 'define', 0, 'SEO', '','');
 
-INSERT INTO `" . DB_TBL_MEMBER_PROFILE_ARGUMENTS . "` VALUES(1, 'm_fname', 'Member first name');
-INSERT INTO `" . DB_TBL_MEMBER_PROFILE_ARGUMENTS . "` VALUES(2, 'm_lname', 'Member last name');
-INSERT INTO `" . DB_TBL_MEMBER_PROFILE_ARGUMENTS . "` VALUES(3, 'm_email', 'Email');
+INSERT INTO `" . DB_TBL_MEMBER_PROFILE_MASTER . "` VALUES('', 'm_fname', 'Member first name','text');
+INSERT INTO `" . DB_TBL_MEMBER_PROFILE_MASTER . "` VALUES('', 'm_lname', 'Member last name','text');
+INSERT INTO `" . DB_TBL_MEMBER_PROFILE_MASTER . "` VALUES('', 'm_email', 'Email','email');
 		";
 		
 		$sqls = explode(';',$create_sql);
@@ -306,7 +320,7 @@ INSERT INTO `" . DB_TBL_MEMBER_PROFILE_ARGUMENTS . "` VALUES(3, 'm_email', 'Emai
 		$mem_email = $posty['your_email'];
 		
 		$member = new Member();
-		$post_array = array('m_username' => $mem_username, 'm_email' => $mem_email, 'm_password' => $mem_password, 'm_level' => '10', 'm_fname' => "Base", 'm_lname' => "Admin");
+		$post_array = array('m_username' => $mem_username, 'm_email' => $mem_email, 'm_password' => $mem_password, 'm_level' => '10', 'm_fname' => "Admin", 'm_lname' => "Admin");
 		$member->updateUser($post_array,'A');
 		
 		echo "<p><h4 class='alert alert_success'>Admin user created succesfully</h4></p>";

@@ -23,13 +23,6 @@
 </ul>
 <hr />
 
-<h3 id="users">Users</h3>
-<ul class="toggle" id="sh_users">
-    <li class="icn_view_users"><a href="?module=editusers">Edit Users</a></li>
-    <li class="icn_add_user"><a href="?module=newuser">Add New User</a></li>
-</ul>
-<hr />
-
 <h3 id="email">Email Templates</h3>
 <ul class="toggle" id="sh_email">
     <li class="icn_edit_article"><a href="?module=edittemplates">Edit Email Templates</a></li>
@@ -37,13 +30,17 @@
 </ul>
 <hr />
 
-<?php
-/* Plugin option */
-$plugin_code = "admin.view.menu"; include(INCLUDE_PLUGIN_ROOT . "core.php");
-?>
+
+<h3 id="r_users">Users</h3>
+<ul class="toggle" id="sh_r_users">
+    <li class="icn_edit_article"><a href="?module=editusers">Edit Users</a></li>
+    <li class="icn_new_article"><a href="?module=newuser">New User</a></li>
+</ul>
+<hr />
 
 <h3 id="admin">Admin</h3>
-<ul>
+<ul class="toggle" id="sh_admin">
     <li class="icn_edit_article"><a href="?module=editsiteoptions">Site Options</a></li>
-    <li class="icn_jump_back"><a href="scripts/action.php?action=logout">Logout</a></li>
+    <li class="icn_edit_article"><a href="?module=editmemberprofile">Member Profiles</a></li>
 </ul>
+<ul><li class="icn_jump_back"><a href="scripts/action.php?action=logout">Logout</a></li></ul>

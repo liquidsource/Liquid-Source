@@ -17,7 +17,7 @@ class Member {
 				foreach($rw as $arg=>$val) {
 					$this->data[$arg] = stripslashes($val);
 				}
-				$rsi = mq("select * from " . DB_TBL_MEMBER_PROFILE . " p inner join " . DB_TBL_MEMBER_PROFILE_ARGUMENTS . " a on p.mpa_sc = a.mpa_sc where mid='$mid'");
+				$rsi = mq("select * from " . DB_TBL_MEMBER_PROFILE . " p inner join " . DB_TBL_MEMBER_PROFILE_MASTER . " a on p.mpa_sc = a.mpa_sc where mid='$mid'");
 				while($rwi = mfa($rsi)) {
 					$this->data[$rwi['mpa_sc']] = stripslashes($rwi['mp_val']);
 				}
@@ -42,7 +42,7 @@ class Member {
 			if(mnr($rs) > 0) {
 				$rsu = mq("update " . DB_TBL_MEMBERS . " set $arg='$val' where mid='" . $this->data['mid'] . "'");
 			} else {
-				$rs = mq("SELECT mpaid FROM " . DB_TBL_MEMBER_PROFILE_ARGUMENTS . " WHERE mpa_sc = '$arg'");
+				$rs = mq("SELECT mpaid FROM " . DB_TBL_MEMBER_PROFILE_MASTER . " WHERE mpa_sc = '$arg'");
 				if(mnr($rs) > 0) {
 					$mpid = $this->userHasProfileArgument($this->data['mid'],$arg);
 					if($mpid > 0) {
@@ -69,7 +69,6 @@ class Member {
 			$failed = false;
 			if(!isset($m_username) || !isset($m_password)) { $failed = true; }
 			if(!$failed) {
-				
 				// check username isn't taken
 			    $rs = mq("SELECT mid, m_active FROM " . DB_TBL_MEMBERS . " WHERE m_username='$m_username' LIMIT 1");
 			    if(mnr($rs) > 0) {
@@ -114,8 +113,11 @@ class Member {
 		} else {
 			// Update User
 			if(isset($m_username) && $m_username != "") {
+				unset($post_array['m_username']);
 		        $rw = mgr("select count(mid) as n from " . DB_TBL_MEMBERS . " where m_username='$m_username' and mid <> '$mid'");
-		        if($rw['n'] == 0) { $post_array['m_username'] = $m_username; }
+		        if($rw['n'] == 0) { $post_array['m_username'] = $m_username; } else {
+		        	$_SESSION['_msg'] = "r_emailtaken";
+		        }
 			}
 			
 			if(isset($m_password) && $m_password != "") {
@@ -133,7 +135,7 @@ class Member {
 	
 	public function getMemberProfileArray() {
 		$ret = array();
-		$rsi = mq("select * from " . DB_TBL_MEMBER_PROFILE_ARGUMENTS);
+		$rsi = mq("select * from " . DB_TBL_MEMBER_PROFILE_MASTER);
 		while($rwi = mfa($rsi)) {
 			$arg = $rwi['mpa_sc'];
 			$val = "";
@@ -155,7 +157,10 @@ class Member {
         $_SESSION['m_type'] = $this->data['m_type'];
 	}
 	public function sendUserRegistrationEmail() {
-		$arr = array('r_username' => $this->data['m_username'], 'r_email' => $this->data['m_email'], 'r_password' => $this->data['password']);
+		$pswd = "";
+		if(isset($this->data['m_password'])) $pswd = $this->data['m_password'];
+		
+		$arr = array('r_username' => $this->data['m_username'], 'r_email' => $this->data['m_email'], 'r_password' => $pswd);
     	$email = new Email('registration',$arr,$this->data['m_username'],"Welcome to " . COMPANY_NAME);
     	$success = $email->sendEmail();
         if($success) {
@@ -181,11 +186,18 @@ class Member {
     	$success = $email->sendEmail();
 		return $success;
 	}
-    public function changePassword($newPassword) {
+    public function changePassword($newPassword,$oldPassword=NULL) {
 		if($this->data['mid'] > 0) {
-    		$hash = $this->createUserHash($this->data['m_username'], $newPassword);
-			$rsu = mq("update " . DB_TBL_MEMBERS . " set m_hash='$hash' where mid='" . $this->data['mid'] . "'");
-			return true;
+			$change = true;
+			if(isset($oldPassword)) {
+				$change = $this->checkPassword($oldPassword);
+			}
+			
+			if($change) {
+	    		$hash = $this->createUserHash($this->data['m_username'], $newPassword);
+				$rsu = mq("update " . DB_TBL_MEMBERS . " set m_hash='$hash' where mid='" . $this->data['mid'] . "'");
+				return true;
+			}
 		}
 		return false;
     }
@@ -237,6 +249,7 @@ class Member {
         session_destroy();
 	}
 	public static function checkLogin($u,$p,$m_type="U") {
+		$_SESSION['tried'] = 0;
 		if(!isset($_SESSION['tried'])) { $_SESSION['tried'] = 0; }
 		if($_SESSION['tried'] < 9) {
 	        $rs = mq("SELECT m_hash, mid from " . DB_TBL_MEMBERS . " where m_username='$u' and m_type='$m_type'");
@@ -244,6 +257,7 @@ class Member {
 	            $rw = mfa($rs);
 	            if(Member::isCorrectPassword($p,$rw['m_hash'])) {
 					return $rw['mid'];
+					$_SESSION['tried'] = 0;
 	            }
 			}
 	    }
@@ -284,5 +298,90 @@ class Member {
 		}
 		return 0;
 	}
+}
+
+function showMemberInput($in,$idname=NULL,$val=NULL,$it=NULL) {
+	$ret = "";
+	
+	// Special case for job categories
+	if($in == "category_multiple" || $in == "category_single") {
+		$cm_extra = ""; $cm_brakets = "";
+		if($in == "category_multiple") { $cm_extra = " multiple "; $cm_brakets = "[]"; }
+		
+		if($idname == NULL) { $idname = 'cid'; }
+		$ret .= "<select id=\"$idname\" name=\"$idname" . $cm_brakets . "\" $cm_extra>";
+        $arr = getCategories(array('type' => 'job'));
+		foreach($arr as $category) {
+			$ret .= showCategoryOption($category,'',$val);
+		}
+        $ret .= "</select>";
+		return $ret;
+	}
+	
+	$foundinput = false;
+	$rs = mq("SELECT COLUMN_NAME as c FROM information_schema.COLUMNS WHERE TABLE_NAME = '" . DB_TBL_MEMBERS . "' and COLUMN_NAME='$in'");
+	if(mnr($rs) > 0) {
+		$rw = mfa($rs);
+		if($idname == NULL) { $idname = $rw['c']; }
+		$ret = "<input type=\"text\" id=\"$idname\" name=\"$idname\" value=\"$val\" />";
+		$foundinput = true;
+	}
+	
+	
+	// All other job properties
+	if(!$foundinput) {
+		$rs = mq("select * from " . DB_TBL_MEMBER_PROFILE_MASTER . " where mpa_sc='$in'");
+		if(mnr($rs) > 0) {
+			$rw = mfa($rs);
+			if($idname == NULL) { $idname = $rw['mpa_sc']; }
+			if($it == NULL) $it = $rw['mpa_inputtype'];
+			switch ($it) {
+				case "text":
+					$ret = "<input type=\"text\" id=\"$idname\" name=\"$idname\" value=\"$val\" />";
+					break;
+				case "email":
+					$ret = "<input type=\"email\" id=\"$idname\" name=\"$idname\" value=\"$val\" />";
+					break;
+				case "password":
+					$ret = "<input type=\"password\" id=\"$idname\" name=\"$idname\" value=\"$val\" />";
+					break;
+				case "select":
+					$ret = "<select name=\"$idname\" id=\"$idname\">";
+					$rss = mq("select * from " . DB_TBL_SELECTBOX . " where s_type='" . $rw['mpa_sc'] . "' order by s_val");
+					while($rws = mfa($rss)) {
+						$ret .= "<option value=\"" . $rws['s_val'] . "\"";
+						if($val != NULL) {
+							 if($rws['s_val'] == $val) $ret .= " selected ";
+						} else {
+							if($rws['s_default'] == "1") $ret .= " selected";
+						}
+						$ret .= ">" . $rws['s_val'] . "</option>";
+					}
+					$ret .= "</select>";
+					break;
+				case "textarea":
+					$ret = "<textarea id=\"$idname\" name=\"$idname\">$val</textarea>";
+					break;
+				case "bool":
+					$checked = false;
+					$ret = "Yes <input type=\"radio\" value=\"1\" name=\"$idname\" id=\"$idname\" ";
+					if($val == "1") { $ret .= " checked=\"checked\" "; $checked = true; }
+					$ret .= "> &nbsp; &nbsp; ";
+					$ret .= "No <input type=\"radio\" value=\"0\" name=\"$idname\" id=\"$idname\" ";
+					if(!$checked) $ret .= " checked=\"checked\" ";
+					$ret .= ">";
+					break;
+				case "special":
+					break;
+			}
+			$foundinput = true;
+		}
+	}
+
+	if(!$foundinput) {
+		if($it == NULL) $it = "text";
+		$ret = "<input type=\"$it\" id=\"$idname\" name=\"$idname\" value=\"$val\" />";
+	}
+	return $ret;
 }
 ?>

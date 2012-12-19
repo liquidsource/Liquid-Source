@@ -29,11 +29,6 @@ function topPage($module) {
         <meta name=\"robots\" content=\"index,follow\" /> 
         <meta name=\"revisit-after\" content=\"28 days\" />
         
-		<meta name=\"DC.title\" content=\"" . PROJECT_NAME . "\" />
-		<meta name=\"DC.subject\" content=\"" . PROJECT_ABOUT . "\" />
-        <meta name=\"DC.langugae\" content=\"en-gb\" />
-		<meta name=\"DC.creator\" content=\"" . SITE_AUTHOR . "\" />
-		
 		<meta itemprop=\"name\" content=\"" . $title . "\" />
 		<meta itemprop=\"description\" content=\"" . $description . "\" />
     ";
@@ -44,6 +39,7 @@ function topPage($module) {
 	
     stylesAndJsTop($module);
 	openGraphInfo($module);
+	dublinCore($module);
 	
     echo "
     	</head>
@@ -75,8 +71,8 @@ function stylesAndJsTop($module) {
 	if(SITEMAP_LOCATION != "") echo "<link rel=\"sitemap\" type=\"application/xml\" title=\"Sitemap\" href=\"" . SITEMAP_LOCATION . "\" />\n\r";
 	
 	echo "
-    <!--[if lt IE 7 ]>
-    <link rel=\"stylesheet\" href=\"css/core/ie6.css\" />
+    <!--[if lt IE * ]>
+    <link rel=\"stylesheet\" href=\"css/core/ie67.css\" />
     <![endif]-->
     
     <script src=\"js/libs/modernizr-latest.js\"></script>
@@ -96,17 +92,16 @@ function openGraphInfo($module) {
     ";
 }
 
-/* A function to get the meta information from the page you are currently on */
-function getMetaInfo($module,$ret) {
-	$rs = mq("select pg_meta_$ret as n from " . DB_TBL_PAGES . " where pg_slug='$module'");
-    if(mnr($rs)>0) {
-        $rw = mfa($rs); return $rw['n'];
-    } else {
-        if($module == "home") { } else { return getMetaInfo("home",$ret); }
-    }
+function dublinCore($module) {
+	echo "
+	<meta name=\"DC.title\" content=\"" . getMetaInfo($module,'title') . "\" />
+	<meta name=\"DC.subject\" content=\"" . PROJECT_ABOUT . "\" />
+    <meta name=\"DC.langugae\" content=\"en-gb\" />
+	<meta name=\"DC.creator\" content=\"" . SITE_AUTHOR . "\" />
+	";
 }
 
-/* This echos out all the tags that are placed beneath the final html visual code. Ie most JS is placed here */
+/* This echos out all the tags that are placed beneath the final html visual code. Ie most JS should be placed here */
 function bottomPage($module) {
 	echo "
 	<script src=\"//ajax.googleapis.com/ajax/libs/jquery/1.7.1/jquery.min.js\"></script>

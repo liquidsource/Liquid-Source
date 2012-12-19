@@ -332,6 +332,8 @@ FileETag None
   RewriteCond %{REQUEST_URI} !(.*)/$
   RewriteRule ^(.*)$ $1/ [L,R=301]
   
+  RewriteRule ^blog/([0-9]+)/(.*)/$ index.php?module=blog&pid=$1 [L]
+  
   RewriteRule ^admin/$ admin/index.php [NC]
   RewriteRule ^setup/$ setup/setup.php [NC]
   RewriteRule ^(.*)/$ index.php?module=$1 [NC]

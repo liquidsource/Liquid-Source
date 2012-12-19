@@ -942,8 +942,18 @@ tr.posttype_draft td { color: #666; }
 .dataTables_info, .dataTables_paginate { padding: 15px 10px 0; } 
 
 table.dataTable tr.odd { background-color: #eee !important; }
+table.dataTable_min tr.odd { background-color: #eee !important; }
 table.dataTable tr.odd td.sorting_1, table.dataTable tr.odd td.sorting_2, table.dataTable tr.odd td.sorting_3, table.dataTable tr.odd td.sorting_4 { background-color: #ccc !important; }
+table.dataTable_min tr.odd td.sorting_1, table.dataTable_min tr.odd td.sorting_2, table.dataTable_min tr.odd td.sorting_3, table.dataTable_min tr.odd td.sorting_4 { background-color: #ccc !important; }
 table.dataTable tr.even { background-color: #fff !important; }
+table.dataTable_min tr.even { background-color: #fff !important; }
 table.dataTable tr.even td.sorting_1, table.dataTable tr.even td.sorting_2, table.dataTable tr.even td.sorting_3, table.dataTable tr.even td.sorting_4 { background-color: #ddd !important; }
+table.dataTable_min tr.even td.sorting_1, table.dataTable_min tr.even td.sorting_2, table.dataTable_min tr.even td.sorting_3, table.dataTable_min tr.even td.sorting_4 { background-color: #ddd !important; }
 
 label.error { color: #f57f20; }
+
+#dashboard_stats div.outer_stat { width: 32%; background: #ddd; text-align:center; margin: 1px; display:inline-block; border: 1px solid #ccc;}
+#dashboard_stats div.inner_stat { padding:20px; }
+
+#dashboard_stats span.num { font-size: 4em; display:block; color: #111; }
+#dashboard_stats span.explanation { font-size: 1.4em; font-weight:bold; color: #888 }

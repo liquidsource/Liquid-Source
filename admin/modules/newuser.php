@@ -38,9 +38,14 @@ if($mid != "") {
 			?>
             <div class="clear" style="padding:1px;">&nbsp;</div>
             <label style="width:150px"><?php echo $arg; ?></label>
-            <input type="text" name="<?php echo $val[1]; ?>" id="<?php echo $val[1]; ?>" value="<?php echo $val[0]; ?>" style="width:300px" />
+	        <?php echo showMemberInput($val[1],$val[1],$val[0]); ?>
             <?php } ?>
         </fieldset>
+        
+        <?php
+        /* Plugin option */
+		$plugin_code = "admin.view.page.newuser.fieldsets"; include(INCLUDE_PLUGIN_ROOT . "core.php");
+        ?>
     </div>
     <footer>
         <div class="submit_link">

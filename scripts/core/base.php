@@ -10,13 +10,12 @@
  */
 function checkFormBot($arr) {
 	$nohtml = "";
-	if($_GET['g_timeloaded'] != $_POST['p_timeloaded']) return true;
 	if($_POST['aformfield'] != "") return true;
 	
 	extract($arr);
 	if($timecheck > 0) {
-		if(isset($_GET['g_timeloaded'])) {
-			if(time() - $_GET['g_timeloaded'] < $timecheck) return true;
+		if(isset($_POST['p_timeloaded'])) {
+			if(time() - $_POST['p_timeloaded'] < $timecheck) return true;
 		} else {
 			return true;
 		}
@@ -41,6 +40,7 @@ function checkBotFromUserAgent() {
 /**
  * MISCELANIOUS HELPER FUNCTIONS
  */
+function lr_urlencode($str) { return str_replace("%2F","",str_replace("+", "_", urlencode($str))); } 
 function projectParsers($newf) {
 	if(USE_FORM_PARSER) {
 		$newf = str_replace("</form>",
@@ -110,11 +110,37 @@ function strToSlug($str,$module=NULL,$uid=NULL,$i=NULL){
 	}
     return $str;
 }
+function php_error_reporting($tf = true) {
+	if($tf) {
+		error_reporting(E_ALL);
+		ini_set('display_errors', '1');
+	}
+}
 function log_me($sc,$info=NULL) {
-	$mid = getMid();
-	$ip = getRealIpAddr();
-	$ua = $_SERVER['HTTP_USER_AGENT'];
-	$rs = mq("insert into " . DB_TBL_SITE_LOG . " (sl_ip,sl_useragent,mid,sl_sc,sl_info) values ('$ip','$ua','$mid','$sc','$info')");
+	if(SITE_LOGGING) {
+		$mid = Member::getMid();
+		$ip = getRealIpAddr();
+		$ua = $_SERVER['HTTP_USER_AGENT'];
+		$rs = mq("insert into " . DB_TBL_SITE_LOG . " (sl_ip,sl_useragent,mid,sl_sc,sl_info) values ('$ip','$ua','$mid','$sc','$info')");
+	}
+}
+function checkLicenceKey() {
+	$error = true;
+	if(!defined('LICENCE_KEY_HOST_KEY')) {
+		$host_key = lc_getHostKey();
+		$rs = mq("insert into " . DB_TBL_SITE_OPTIONS . " (so_arg,so_val,so_updatedate,so_type,so_userid,so_group,so_field_type,so_help_text) values ('LICENCE_KEY_HOST_KEY','$host_key','" . DB_SAFE_DATETIME . "','define','0','Licence','','')");
+		define('LICENCE_KEY_HOST_KEY',$host_key);
+	}
+	$hashofkey = hash('sha256', LICENCE_KEY_HOST_KEY . LICENCE_KEY);
+	if($hashofkey == "74b43d389c826aa539ce933bbcdbabbbf687725d606c0d480be9996b47ba5e2b") {
+		$error = false;
+	}
+	if(!$error) return true;
+	echo "Error in licence key activation";
+	die;
+}
+function lc_getHostKey() {
+	return "Going to server and getting key";
 }
 
 /**
@@ -181,6 +207,49 @@ function updateCategoryLink($cids,$uid,$l_type) {
 		$rsd = mq("delete from " . DB_TBL_CATEGORY_LINK . " where jcid='" . $rw['jcid'] . "'");
 	}
 }
+function showCategoryOption($category,$lvl=1,$cur_category=NULL,$hide=false,$selectparent=false) {
+	$catid = "";
+	if(!is_array($cur_category) && isset($cur_category)) {
+		$chosen_uid = $cur_category->c_parent;
+		$catid = $cur_category->cid;
+	}
+	
+	
+	$cid = $category->cid;
+	$ret = "";
+	
+	$dots = "";
+	for($i=0;$i<$lvl;$i++) { $dots .= "-  "; }
+	$ret .= "<option value=\"$cid\"";
+	if($catid == $cid && $hide) {
+		$ret .= " disabled ";
+	}
+	
+	if(is_array($cur_category)) {
+		foreach($cur_category as $cat) {
+			$chuid = $cat->cid;
+			if($cid == $chuid) { $ret .= " selected "; }
+		}
+	} else {
+		if($selectparent) {
+			$parent = $cur_category->c_parent;
+			if($parent == $category->cid) {
+				$ret .= " selected ";
+			}
+		} else {
+			if(isset($cur_category) && $cid == $cur_category->cid) { $ret .= " selected "; }
+		}
+	}
+	$ret .= ">" . $dots . $category->c_name . "</option>";
+    if($category->c_children) {
+    	$lvl++;
+    	foreach($category->c_children as $child_category) {
+    		$ret .= showCategoryOption($child_category,$lvl,$cur_category,$hide,$selectparent);
+    	}
+	}
+	return $ret;
+}
+
 
 /**
  * META DATA HELPER FUNCTIONS
@@ -214,25 +283,6 @@ function getMetaData($uid,$typee) {
 		$i++;
 	}
 	return $ret_arr;
-}
-
-/**
- * DATABASE HELPER FUNCTIONS
- */
-function getFieldValue($sql,$arg='n') {
-	$rs = mq($sql);
-	if(mnr($rs) > 0) {
-		if(mnr($rs) > 1) {
-			while($rw=mfa($rs)) {
-				$ret_arr[] = $rw[$arg];
-			}
-			return $ret_arr;
-		} else {
-			$rw = mfa($rs);
-			return $rw[$arg];
-		}
-	}
-	return "";
 }
 
 
@@ -293,7 +343,49 @@ function getModuleData($module) {
 	}
 }
 
-/* Used to add in which parsers are used to the javascript file, so javascript functions can call on the variables */ 
+/* A function to get the meta information from the page you are currently on */
+function getMetaInfo($module,$ret) {
+	if(defined($module . "_" . $ret)) return constant($module . "_" . $ret);
+	
+	$to_return = "";
+	switch($module) {
+		case "job":
+			$jid = ""; if(isset($_GET['jid'])) $jid = $_GET['jid'];
+			if($jid != "") {
+				$job = new Job($jid);
+				switch ($ret) {
+					case "title":
+					case "description":
+						$to_return = $job->j_title . " in " . $job->getPublicAddress();
+						break;
+					case "keywords":
+						$to_return = $job->j_title . ", " . $job->getPublicAddress() . ", " . $job->j_title . " jobs, job, job listing, job posting, recruitment";
+						break;
+				}
+			}
+			break;
+		case "jobresults":
+			$to_return = getBaseMetaInfo($module,$ret);
+			break;
+		default:
+			$to_return = getBaseMetaInfo($module,$ret);
+			break;
+	}
+	
+	if(!defined($module . "_" . $ret)) define($module . "_" . $ret,$to_return);
+	return $to_return;
+}
+
+/* Used to add in which parsers are used to the javascript file, so javascript functions can call on the variables */
+function getBaseMetaInfo($module,$ret) {
+	$rs = mq("select pg_meta_$ret as txt from " . DB_TBL_PAGES . " where pg_slug='$module'");
+    if(mnr($rs)>0) {
+        $rw = mfa($rs); 
+    	return stripslashes($rw['txt']);
+    } else {
+        if($module == "home") { } else { return getBaseMetaInfo("home",$ret); }
+    }
+}
 function getParserJavascript() {
 	$ret = "";
 	$rs = mq("select * from " . DB_TBL_SITE_OPTIONS . " where (so_group='Modules' or so_group='APIs') and so_field_type='bool'");
@@ -312,16 +404,20 @@ function createMergedCSS() {
 		delete_old_md5s_css("uploads/js_css_cache/");
 		
 		require 'scripts/core/packages/lessphp/lessc.inc.php';
-			$less = new lessc('css/core/master.less');
-			file_put_contents('uploads/js_css_cache/_master.css', $less->parse());
-			$less = new lessc('css/core/forms.less');
-			file_put_contents('uploads/js_css_cache/_forms.css', $less->parse());
 			$less = new lessc('css/core/print.less');
 			file_put_contents('uploads/js_css_cache/print.css', $less->parse());
 		
 		$str = file_get_contents("css/core/reset.css");
-		$str .= file_get_contents("uploads/js_css_cache/_master.css");
-	    $str .= file_get_contents("uploads/js_css_cache/_forms.css");
+		
+		foreach(glob('css/core/*.less') as $cssfile) {
+			if(substr($cssfile,9,4) != "mod_" && substr($cssfile,9,1) != "_" &&  substr($cssfile,9,10) != "print.less") {
+				$newlocation = 'uploads/js_css_cache/_' . substr($cssfile,9,-5) . '.css';
+				$less = new lessc($cssfile);
+				file_put_contents($newlocation, $less->parse());
+				$str .= file_get_contents($newlocation);
+			}
+		}
+		
 		if(USE_TABLE_PARSER) { $str .= file_get_contents("css/packages/dataTables.css"); }
 		if(USE_TOOLTIPS) { $str .= file_get_contents("css/packages/tooltips.css"); }
 		if(USE_SHADOWBOX) { $str .= file_get_contents("css/packages/shadowbox.css"); }
@@ -340,7 +436,14 @@ function createMergedJS() {
 	if(!file_exists("uploads/js_css_cache/" . $js_name . ".js") || FORCE_RECREATE == "1") {
 		delete_old_md5s_js("uploads/js_css_cache/");
 		$str = getParserJavascript();
-		$str .= file_get_contents("js/core/general.js");
+		
+		foreach(glob('js/core/*.js') as $jsfile) {
+			if(substr($jsfile,8,4) != "mod_") {
+				$str .= file_get_contents($jsfile);
+			}
+		}
+		
+		if(USE_AJAXINCLUDE) { $str .= file_get_contents("js/libs/ajaxInclude.js"); }
 		if(USE_TOOLTIPS) { $str .= file_get_contents("js/libs/tooltips.js"); }
 		if(USE_SHADOWBOX) { $str .= file_get_contents("js/libs/shadowbox.js"); }
 		if(USE_FLEX_SLIDER) { $str .= file_get_contents("js/libs/jquery.flexslider-min.js"); }

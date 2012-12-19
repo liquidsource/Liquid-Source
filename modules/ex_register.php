@@ -9,34 +9,34 @@
 	<h4>Logon Details</h4>
 	    <fieldset>
 		    <label>Username:</label>
-		    <input type="text" name="r_username" id="r_username" value="" />
+	    	<?php echo showMemberInput('m_username'); ?>
 	    </fieldset>  
 	    <fieldset>
 		    <label>Password:</label>
-		    <input type="password" name="r_password" id="r_password" />
+	    	<?php echo showMemberInput('m_password','m_password','','password'); ?>
 		</fieldset>
 	    <fieldset>
 		    <label>Confirm Password:</label>
-		    <input type="password" name="r_password_t" id="r_password_t" />
+	    	<?php echo showMemberInput('m_password_t','m_password_t','','password'); ?>
 		</fieldset>
 	    <fieldset>
 		    <label>Email:</label>
-		    <input type="email" name="r_email" id="r_email" value="" />
+	    	<?php echo showMemberInput('m_email'); ?>
 		</fieldset>
 	    <fieldset>
 		    <label>Confirm Email:</label>
-		    <input type="email" name="r_email_t" id="r_email_t" />
+	    	<?php echo showMemberInput('m_email_t','m_email_t','','email'); ?>
 		</fieldset>
 	    <fieldset>
 	    	
 	<h4>Personal Details</h4>
 	    <fieldset>
 		    <label>First Name:</label>
-		    <input type="text" name="r_fname" id="r_fname" value="" />
+	    	<?php echo showMemberInput('m_fname'); ?>
 		</fieldset>
 	    <fieldset>
 		    <label>Last Name:</label>
-		    <input type="text" name="r_lname" id="r_lname" value="" />
+	    	<?php echo showMemberInput('m_fname'); ?>
 		</fieldset>
 	    <fieldset>
 	    	<input type="submit" value="Submit" />

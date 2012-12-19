@@ -2,10 +2,9 @@
 include("../../scripts/system.php");
 include("../scripts/ad_functions.php");
 
-$action = $_GET['action'];
 $to = "";
+$action = $_GET['action'];
 if(isset($_GET['to'])) $to = $_GET['to'];
-
 if(Member::isLoggedin('A')) {
     switch ($action) {
         case "logout":
@@ -137,6 +136,41 @@ if(Member::isLoggedin('A')) {
 			$to = "editsiteoptions";
         	/* Plugin option */
 			$plugin_code = "admin.action.siteoptions.update"; include(INCLUDE_PLUGIN_ROOT . "core.php");
+			break;
+		case "newmemberprofile":
+			foreach($_POST as $arg => $val) { $$arg = mres($val); }
+			$rs = mq("insert into " . DB_TBL_MEMBER_PROFILE_MASTER . " (mpa_english, mpa_sc, mpa_inputtype) values ('$mpa_english', '$mpa_sc', '$mpa_inputtype')");
+			$to = "editmemberprofile";
+			break;
+		case "deletememberprofile":
+			$mpaid = $_GET['mpaid'];
+			$rw = mfa(mq("select mpa_sc from " . DB_TBL_MEMBER_PROFILE_MASTER . " where mpaid='$mpaid'"));
+			$mpasc = $rw['mpa_sc'];
+			$rs = mq("delete from " . DB_TBL_MEMBER_PROFILE_MASTER . " where mpaid='$mpaid'");
+			$rs = mq("delete from " . DB_TBL_MEMBER_PROFILE . " where mpa_sc='$mpasc'");
+			$to = "editmemberprofile";
+			break;
+		case "updatememberprofile":
+			$rs = mq("select * from " . DB_TBL_MEMBER_PROFILE_MASTER);
+			while($rw = mfa($rs)) {
+				$mpaid = $rw['mpaid'];
+				$mpae = mres($_POST['mpa_english_' . $mpaid]);
+				$mpas = mres($_POST['mpa_sc_' . $mpaid]);
+				$mpai = mres($_POST['mpa_inputtype_' . $mpaid]);
+				$rsu = mq("update " . DB_TBL_MEMBER_PROFILE_MASTER . " set mpa_english='$mpae', mpa_sc='$mpas', mpa_inputtype='$mpai' where mpaid='$mpaid'");
+				
+				$os = $_POST['mpa_options_' . $mpaid];
+				if($mpai == "select" && $os != "") {
+					$rsd = mq("delete from " . DB_TBL_SELECTBOX . " where s_type='$mpas'");
+					$sl_arr = explode(";",$os);
+					foreach($sl_arr as $sl) {
+						$sl = trim(mres($sl));
+						if($sl != "") {
+							$rsi = mq("insert into " . DB_TBL_SELECTBOX . " (s_type,s_val,s_default) values ('$mpas','$sl','0')");
+						}
+					}
+				}
+			}
 			break;
 		default:
 			/* Plugin option */

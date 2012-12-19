@@ -6,7 +6,16 @@ $(document).ready(function(){
 	    "bSort": true,
 	    "bInfo": true,
 	    "bAutoWidth": true,
-	    "iDisplayLength": 20
+	    "iDisplayLength": 25
+	});
+	$('.dataTable_min').dataTable({
+	    "bPaginate": false,
+	    "bLengthChange": false,
+	    "bFilter": false,
+	    "bSort": true,
+	    "bInfo": false,
+	    "bAutoWidth": true,
+	    "iDisplayLength": 25
 	});
 	
 	var dontSort = [];

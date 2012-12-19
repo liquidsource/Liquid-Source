@@ -7,7 +7,7 @@ File description: Core Less file, setting out various rules for the site
 Author: Nick Wilkins
 ********************************************************************* */
 
-@import url(core.less);
+@import url(_core.less);
 
 
 /* Base style definition for font on the site. Everything else inherits from here */
@@ -38,7 +38,7 @@ header { background: #eee; }
 footer { background: #999; border-top: 2px solid #888; border-bottom:2px solid #333; }
 
 /* Header */
-#top_header { height: 70px; padding:5px 0px 0px 10px; width: 100%; background: #222222; }
+#top_header { height: 70px; padding:5px 0px 0px 10px;  background: #222222; }
 
 /* Footer */
 footer {
@@ -55,13 +55,32 @@ footer {
 /* Site wide classes */
 .wrap { margin: 0 auto; max-width: 1580px; }
 .noinfo { color: #666; font-style;italic; margin-left: 50px; font-size: 0.9em; }
+.lr_info { margin: 30px 0 20px; padding: 10px; font-family: arial; background-color: #eee; border: 1px solid #ccc; font-size: 0.9em; }
 
 /* Menu */
 #nav {
-  li { z-index: 99; font-weight: bold; float:left; position:relative;
-      a { padding: 10px 20px; display:block; }
+  margin: 0; padding: 0;
+  li { z-index: 99; font-weight: bold; float:left; position:relative; list-style-type:none; margin: 0; padding: 0; 
+      a { padding: 15px 15px; display:block; text-decoration:none; }
       a:Hover { background: #ddd; color: #333; }
+  }
+  ul {
+    position:absolute; left:-9999px; .box-shadow();
+    li {
+      float:none;
+      a { white-space:nowrap; padding: 8px 15px;}
     }
+  }
+  li:hover ul { left: 0px; }
+  li:hover ul a { background:#ddd; }
+  
+  li:hover > a { background: #ddd; color: #333;}
+}
+
+#right_nav {
+  list-style:none; float:right;
+  li { float:left; margin-top: 8px;}
+  a { padding: 6px 10px; display:block; text-decoration:none; color: #fff; margin-right: 10px; }
 }
 
 /* Alert Warning Messages */
@@ -70,6 +89,12 @@ h4.alert_info { background: #B5E5EF url(../../images/example_icons/icn_alert_inf
 h4.alert_warning { background: #F5F3BA url(../../images/example_icons/icn_alert_warning.png); }
 h4.alert_error { background: #F3D9D9 url(../../images/example_icons/icn_alert_error.png); }
 h4.alert_success { background: #E2F6C5 url(../../images/example_icons/icn_alert_success.png); }
+
+
+/* Job Results */
+.jobresult { border-bottom: 2px solid #aaa; padding: 10px; }
+.jobresult.grey { background-color: #eee; } 
+.jobresult.colour { background-color: #ddd; } 
 
 
 /* Media Queries */

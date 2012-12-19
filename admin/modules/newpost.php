@@ -22,6 +22,7 @@ if($pid != "") {
         </fieldset>
         <fieldset>
             <label>Content</label>
+            <div class="clear"></div>
             <textarea rows="12" name="p_content" id="p_content"><?php echo $post->p_content; ?></textarea>
         </fieldset>
         <fieldset style="width:48%; float:left; margin-right: 10px">

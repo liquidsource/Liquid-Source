@@ -17,6 +17,7 @@ class Post {
 				foreach($rw as $arg=>$val) {
 					$this->data[$arg] = stripslashes($val);
 				}
+				$this->data['link'] = "blog/" . $this->data['pid'] . "/" . lr_urlencode($this->data['p_title']) . "/";
 			}
 		}
 	}
@@ -80,7 +81,7 @@ class Post {
 			$_SESSION['_msg'] = "updatedpost";
 		} else {
 			if($p_posttype == "published") {
-				if(isset($p_publisheddate)) {
+				if(isset($p_publisheddate) && $p_publisheddate != "") {
 					$pub_datetime = date("Y-m-d H:i:s",strtotime($p_publisheddate));
 				} else {
 					$pub_datetime = DB_SAFE_DATETIME;
@@ -114,7 +115,7 @@ class Post {
 	/* GET HELPER FUNCTIONS */
 	/************************/
 	public function theShort($size=50) {
-		return mb_substr($this->data['p_content'],0,$size);
+		return mb_substr(strip_tags($this->data['p_content']),0,$size);
 	}
 	public function updatedDate() {
 		return $this->data['p_createDate'];
@@ -163,7 +164,8 @@ class Post {
 	}
 	private function prevNext($ascdesc,$arr=array()) {
 		extract($arr);
-		if($category_id != NULL) {
+		$xsql = "";
+		if(isset($category_id)) {
 			$i_cat = $category_id;
 			$icats = explode(",",$i_cat);
 			$xsql = " and pid in (select uid from " . DB_TBL_CATEGORY_LINK . " where l_type='post' and (";

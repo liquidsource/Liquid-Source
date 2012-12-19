@@ -5,8 +5,9 @@ class Feed {
 	/********************/
 	/* PUBLIC FUNCTIONS */
 	/********************/
-	public function __construct($filename=NULL,$typee=NULL) {
+	public function __construct($filename=NULL,$typee=NULL,$localLocation=NULL) {
 		if($filename != NULL) {
+			if(empty($localLocation)) $localLocation = $filename;
 			$this->datetime = date("D, d M Y H:i:s");
 			$this->title = SITE_NAME;
 			$this->subtitle = SUB_TITLE;
@@ -19,18 +20,15 @@ class Feed {
 			
 			$this->homepage = $homepage;
 			
-			$fh = fopen($filename,"w");
+			$fh = fopen($localLocation,"w");
 				$headstr = $this->getFeedHead($typee);
 				fwrite($fh, $headstr);
 				
-				/**
-		 		 * Normally you'd append a loop here to run through all the relevant pages / posts / rss items on your site.
-				 * You could pass an id, or an object to getFeedInner() as the 3rd paramter for that funciton to use
-				 */
-				$innerstr = $this->getFeedInner($typee,$fh);
-				/**
-				 * End of loop
-				 */
+				$arr = array('orderby' => 'jid desc');
+				$jobs = getJobs($arr);				
+				foreach($jobs as $job) {
+					$innerstr = $this->getFeedInner($typee,$fh,$job);
+				}
 				
 				$footerstr = $this->getFeedFooter($typee);
 				fwrite($fh, $footerstr);   
@@ -85,18 +83,58 @@ class Feed {
 	                <id><![CDATA[$feedurl]]></id>
 	                <link rel=\"self\" type=\"application/atom+xml\" href=\"$feedurl\" />";
 	            break;
+	        case "googlebase":
+	            $str = "<?xml version=\"1.0\" encoding=\"UTF-8\" ?>
+	            <rss version=\"2.0\" xmlns:g=\"http://base.google.com/ns/1.0\" xmlns:c=\"http://base.google.com/ns/1.0\">
+	            <channel>
+	                <title>$title</title>
+	                <link><![CDATA[$homepage]]></link>
+	                <description><![CDATA[$title]]></description>\"
+	                ";
+	            break;
+				
+			case "trovit":
+	            $str = "<?xml version=\"1.0\" encoding=\"utf-8\"?>
+	            <trovit>";
+	            break;
+	        case "jobisjob":
+	            $str = "<?xml version=\"1.0\" encoding=\"utf-8\"?>
+	            <trovit>";
+	            break;
+	        case "simplyhired":
+	            $str = "<?xml version=\"1.0\" encoding=\"utf-8\"?>
+	            <jobs>";
+	            break;
+	        case "twitter_job_search":
+	            $str = "<?xml version=\"1.0\"?>
+	            <jobs>
+	              <publisher-name>$title</publisher-name>
+	              <publisher-url>$homepage</publisher-url>
+	            ";
+	            break;
+	        case "indeed":
+	            $str = "<?xml version=\"1.0\" encoding=\"utf-8\"?>
+	            <source>
+	            <publisher>$title</publisher>
+	            <publisherurl><![CDATA[$homepage]]></publisherurl>
+	            <lastBuildDate>$datetime</lastBuildDate>";
+	            break;
+			case "regional":
+				$str = "<?xml version=\"1.0\" encoding=\"utf-8\"?>
+						<source>
+							<publisher>$title</publisher>
+							<publisherurl><![CDATA[$homepage]]></publisherurl>
+							<lastBuildDate>$datetime</lastBuildDate>";
+	            break;
+			case "oodle":
+				$str = "<?xml version=\"1.0\" encoding=\"utf-8\"?>
+						<listings>";
+				break;
 		}
 		return $str;
 	}
-	private function getFeedInner($typee,$fh,$obj=NULL) {
+	protected function getFeedInner($typee,$fh,$job=NULL) {
 		$homepage = $this->homepage;
-		/**
-		 * Needed in this function:
-		 * 	i_title, i_details, i_link, atom_id, i_pubdate
-		 * 
-		 * Also you may need to escape ascii control characters
-		 * $i_details = preg_replace('/[\x00-\x09\x0B\x0C\x0E-\x1F\x7F]/', '', $i_details);
-		 */
 		$str = "";
 		switch($typee) {
 			case "rss":
@@ -105,11 +143,11 @@ class Feed {
 				 */
 	            $str = "
 	            <item>
-	                <title><![CDATA[$i_title]]></title>
-	                <link><![CDATA[" . $homepage . "$i_link]]></link>
-	                <description><![CDATA[$i_details]]></description>
-	                <pubDate>$i_pubdate GMT</pubDate>
-	                <guid><![CDATA[" . $homepage . "$i_link]]></guid>
+	                <title><![CDATA[" . $job->j_title . "]]></title>
+	                <link><![CDATA[" . $homepage . $job->link . "]]></link>
+	                <description><![CDATA[" . $job->j_details . "]]></description>
+	                <pubDate>" . date("D, d M Y H:i:s",strtotime($job->j_startdate)) . " GMT</pubDate>
+	                <guid><![CDATA[" . $homepage .  $job->link . "]]></guid>
 	            </item>";
 	            break;
 	        case "sitemap":
@@ -127,32 +165,273 @@ class Feed {
 				 */
 				$str = "
 	            <entry>
-					<title><![CDATA[$i_title]]</title>
-				    <link href=\"" . $homepage . "$i_link\" />
-				    <id>$atom_id</id>
-				    <updated>$atom_pubdate</updated>
-				    <summary type=\"html\"><![CDATA[$i_details]]></summary>
+					<title><![CDATA[" . $job->j_title . "]]</title>
+				    <link href=\"" . $homepage . $job->link . "\" />
+				    <id>tag:" . $homepage . "," . $job->link . "</id>
+				    <updated>" . date("Y-m-d\TH:i:s",strtotime($job->j_startdate)) . "</updated>
+				    <summary type=\"html\"><![CDATA[" . $job->j_details . "]]></summary>
 	            </entry>
 	            ";
 				break;
+			case "googlebase":
+	            $str = "
+	            <item>
+	                <title><![CDATA[" . $job->j_title . "]]></title>
+	                <link><![CDATA[" . $homepage . "" . $job->link . "]]></link>
+	                <description><![CDATA[" . $job->j_details . "]]></description>
+	                <g:id><![CDATA[" . $job->jid . "]]></g:id>
+	                <g:employer><![CDATA[" . $job->getCompany()->cm_name . "]]></g:employer>
+	                <g:job_function><![CDATA[" . $job->j_title . "]]></g:job_function>
+	                <g:job_industry><![CDATA[" . $job->categoryNames() . "]]></g:job_industry>
+	                <g:location><![CDATA[" . $job->getPublicAddress() . "]]></g:location>
+	                <g:salary><![CDATA[" . $job->currency . " " . $job->salary . "]]></g:salary>
+	                <g:job_type><![CDATA[" . $job->jobtype . "]]></g:job_type>
+	                <c:company type=\"string\"><![CDATA[" . $job->getCompany()->cm_name . "]]></c:company>
+	                <c:city type=\"string\"><![CDATA[" . $job->town . "]]></c:city>
+	                <c:state type=\"string\"><![CDATA[" . $job->county . "]]></c:state>
+	                <c:postalcode type=\"string\"><![CDATA[" . $job->postcode . "]]></c:postalcode>
+	            </item>
+	            ";
+	            break;
+	        case "trovit":
+	            $str = "
+	            <ad>
+	                <id><![CDATA[" . $job->jid . "]]></id>
+	                <title><![CDATA[" . $job->j_title . "]]></title>
+	                <url><![CDATA[" . $homepage . "" . $job->link . "]]></url>
+	
+	                <content><![CDATA[" . $job->j_details . "]]></content>
+	
+	                <city><![CDATA[" . $job->town . "]]></city>
+	                <region><![CDATA[" . $job->county . "]]></region>
+	                <postcode><![CDATA[" . $job->postcode . "]]></postcode>
+	
+	                <salary><![CDATA[" . $job->currency . " " . $job->salary . "]]></salary>
+	                <salary_numeric><![CDATA[" . $job->currency . " " . $job->salary . "]]></salary_numeric>
+	                <contract><![CDATA[" . $job->j_jobtype . "]]></contract>
+	                <company><![CDATA[" . $job->getCompany()->cm_name . "]]></company>
+	
+	                <experience><![CDATA[]]></experience>
+	                <requirements><![CDATA[]]></requirements>
+	                <category><![CDATA[" . $job->categoryNames() . "]]></category>
+	                <date><![CDATA[" . $job->j_startdate . "]]></date>
+	            </ad>
+	            ";
+	            break;
+	        case "jobisjob":
+	            $str = "
+	            <ad>
+	                <id><![CDATA[" . $job->jid . "]]></id>
+	                <title><![CDATA[" . $job->j_title . "]]></title>
+	                <url><![CDATA[" . $homepage . "" . $job->link . "]]></url>
+	
+	                <content><![CDATA[" . $job->j_details . "]]></content>
+	
+	                <city><![CDATA[" . $job->town . "]]></city>
+	                <region><![CDATA[" . $job->county . "]]></region>
+	                <postcode><![CDATA[" . $job->postcode . "]]></postcode>
+	
+	                <salary><![CDATA[" . $job->currency . " " . $job->salary . "]]></salary>
+	                <salary_numeric><![CDATA[" . $job->currency . " " . $job->salary . "]]></salary_numeric>
+	                <contract><![CDATA[" . $job->jobtype . "]]></contract>
+	                <company><![CDATA[" . $job->getCompany()->cm_name . "]]></company>
+	
+	                <experience><![CDATA[]]></experience>
+	                <requirements><![CDATA[]]></requirements>
+	                <category><![CDATA[" . $job->categoryNames() . "]]></category>
+	                <date><![CDATA[" . $job->j_startdate . "]]></date>
+	            </ad>
+	            ";
+	            break;
+	        case "simplyhired":
+	            $str = "
+	            <job>
+	                <title><![CDATA[" . $job->j_title . "]]></title>
+	                <job-code>" . $job->jid . "</job-code>
+	                <job-board-name>" . SITE_NAME . "</job-board-name>
+	                <job-board-url><![CDATA[" . $homepage . "]]></job-board-url>
+	                <detail-url><![CDATA[" . $homepage . "" . $job->link . "]]></detail-url>
+	                <apply-url/>
+	                <job-category><![CDATA[" . $job->categoryNames() . "]]></job-category>
+	
+	                <description>
+	                    <summary><![CDATA[" . $job->j_details . "]]></summary>
+	                    <required-skills><![CDATA[]]></required-skills>
+	                    <required-education/>
+	                    <required-experience/>
+	                    
+	                    <full-time><![CDATA[]]></full-time>
+	                    <part-time><![CDATA[]]></part-time>
+	                    <flex-time/>
+	                    <internship><![CDATA[]]></internship>
+	                    <volunteer/>
+	                    <exempt/>
+	                    <contract><![CDATA[]]></contract>
+	                    <permanent/>
+	                    <temporary><![CDATA[]]></temporary>
+	                    <telecommute/>
+	                </description>
+	
+	                <compensation>
+	                    <salary-range/>
+	                    <salary-amount><![CDATA[" . $job->currency . " " . $job->salary . "]]></salary-amount>
+	                    <salary-currency></salary-currency>
+	                    <benefits/>
+	                </compensation>
+	
+	                <posted-date>" . $job->j_startdate . "</posted-date>
+	                <close-date>" . $job->j_expirydate . "</close-date>
+	
+	                <location>
+	                    <address><![CDATA[" . $job->getPublicAddress() . "]]></address>
+	                    <city><![CDATA[" . $job->town . "]]></city>
+	                    <state><![CDATA[" . $job->county . "]]></state>
+	                    <zip><![CDATA[" . $job->postcode . "]]></zip>
+	                    <country><![CDATA[" . $job->country . "]]></country>
+	                    <area-code/>
+	                </location>
+	
+	                <contact>
+	                    <name><![CDATA[" . $job->contact_name . "]]></name>
+	                    <email>" . $job->contact_email . "</email>
+	                    <hiring-manager-name/>
+	                    <hiring-manager-email/>
+	                    <phone></phone>
+	                    <fax/>
+	                </contact>
+	
+	                <company>
+	                    <name><![CDATA[" . $job->getCompany()->cm_name . "]]></name>
+	                    <description><![CDATA[" . $job->getCompany()->cm_details . "]]></description>
+	                    <industry/>
+	                    <url><![CDATA[" . $homepage .  $job->getCompany()->link . "]]></url>
+	                </company>
+	            </job>
+	            ";
+	            break;
+	        case "twitter_job_search":
+	            $str = "
+	            <job>
+	                <id><![CDATA[" . $job->jid . "]]></id>
+	                <date><![CDATA[" . $job->j_startdate . "]]></date>
+	                <title><![CDATA[" . $job->j_title . "]]></title>
+	                <company><![CDATA[" . $job->getCompany()->cm_name . "]]></company>
+	                <url><![CDATA[" . $homepage . "" . $job->link . "]]></url>
+	                <salary><![CDATA[" . $job->currency . " " . $job->salary . "]]></salary>
+	                <jobtype><![CDATA[" . $job->jobtype . "]]></jobtype>
+	                <education></education>
+	                <experience></experience>
+	                <location><![CDATA[" . $job->getPublicAddress() . "]]></location>
+	                <postcode><![CDATA[" . $job->postcode . "]]></postcode>
+	                <description><![CDATA[" . $job->j_details . "]]></description>
+	                <category><![CDATA[" . $job->categoryNames() . "]]></category>
+	            </job>
+	            ";
+	            break;
+	        case "indeed":
+	            $str = "<job>
+		            <title><![CDATA[" . $job->j_title . "]]></title>
+		            <date><![CDATA[" . $job->j_startdate . "]]></date>
+		            <referencenumber><![CDATA[" . $job->jid . "]]></referencenumber>
+		            <url><![CDATA[" . $homepage . "" . $job->link . "]]></url>
+		            <company><![CDATA[" . $job->getCompany()->cm_name . "]]></company>
+		            <city><![CDATA[" . $job->town . "]]></city>
+		            <state><![CDATA[" . $job->county . "]]></state>
+		            <country><![CDATA[" . $job->country . "]]></country>
+		            <postalcode><![CDATA[" . $job->postcode . "]]></postalcode>
+		            <description><![CDATA[" . $job->j_details . "]]></description>
+		            <salary><![CDATA[" . $job->currency . " " . $job->salary . "]]></salary>
+		            <education><![CDATA[]]></education>
+		            <jobtype><![CDATA[" . $job->jobtype . "]]></jobtype>
+		            <category><![CDATA[" . $job->categoryNames() . "]]></category>
+		            <experience><![CDATA[]]></experience>
+	            </job>
+	            ";
+	            break;
+			case "regional":
+				$str = "<job>
+				    <title><![CDATA[" . $job->j_title . "]]></title>
+				    <date><![CDATA[" . $job->j_startdate . "]]></date>
+				    <referencenumber><![CDATA[" . $job->jid . "]]></referencenumber>
+				    <url><![CDATA[" . $homepage . "" . $job->link . "]]></url>
+				    <city><![CDATA[" . $job->town . "]]></city>
+				    <country><![CDATA[" . $job->country . "]]></country>
+				    <description><![CDATA[" . $job->j_details . "]]></description>
+				    <salary><![CDATA[" . $job->currency . " " . $job->salary . "]]></salary>
+				    <jobtype><![CDATA[" . $job->jobtype . "]]></jobtype>
+				    <category><![CDATA[" . $job->categoryNames() . "]]></category>
+					<email><![CDATA[" . $job->contact_email . "]]></email>
+				</job>";
+				break;
+			case "oodle":
+				$str = "<listing>
+					<category>Recruiter Jobs</category>
+					<description><![CDATA[" . $job->j_details . "]]></description>
+					<id>" . $job->jid . "</id>
+					<title><![CDATA[" . $job->j_title . "]]></title>
+					<url><![CDATA[" . $homepage . "" . $job->link . "]]></url>
+					<city><![CDATA[" . $job->town . "]]></city>
+					<country><![CDATA[" . $job->country . "]]></country>
+					<zip_code><![CDATA[" . $job->postcode . "]]></zip_code>
+					<company><![CDATA[" . $job->getCompany()->cm_name . "]]></company>
+					<create_time>" . $job->j_startdate . "</create_time>
+					<industry><![CDATA[" . $job->categoryNames() . "]]></industry>
+					<salary><![CDATA[" . $job->currency . " " . $job->salary . "]]></salary>
+					<seller_email>" . $job->contact_email . "</seller_email>
+				</listing>";
+				break;
 		}
 		fwrite($fh, $str);
-		/*
-		 * loop end
-		 */
 	}
-	private function getFeedFooter($typee) {
+	protected function getFeedFooter($typee) {
+		$str = "";
 		switch($typee) {
-			case "wpatom":
-	            $str = "</feed>";
+			case "atom":
+	            $str = "
+	            </feed>";
 	            break;
 	        case "sitemap":
-	            $str = "</urlset>";
+	            $str = "
+	            </urlset>";
 	            break;
 			case "rss":
-	            $str = "</channel>
+	            $str = "
+	            </channel>
 	            </rss>";
 				break;
+		    case "trovit":
+		        $str = "
+		        </trovit>";
+		        break;
+		    case "jobisjob":
+		        $str = "
+		        </trovit>";
+		        break;
+		    case "simplyhired":
+		        $str = "
+		        </jobs>";
+		        break;
+		    case "twitter_job_search":
+		        $str = "
+		        </jobs>";
+		        break;
+		    case "indeed":
+		        $str = "
+		        </source>";
+		        break;
+			case "regional":
+				$str = "
+				</source>";
+				break;
+			case "oodle":
+				$str = "
+				</listings>";
+				break;
+		    default:
+		        $str = "
+		        </channel>
+		        </rss>";
+		        break;
 		}
 		return $str;
 	}
